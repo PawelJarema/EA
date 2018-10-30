@@ -1,0 +1,135 @@
+.registration-panel {
+    display: flex;
+    margin: 0 var(--page-margin);
+    
+    background: -moz-linear-gradient(248deg, rgba(252,133,10,1) 0%, rgba(163,218,255,1) 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(252,133,10,1)), color-stop(100%, rgba(163,218,255,1))); /* safari4+,chrome */
+    background: -webkit-linear-gradient(248deg, rgba(252,133,10,1) 0%, rgba(163,218,255,1) 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(248deg, rgba(252,133,10,1) 0%, rgba(163,218,255,1) 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(248deg, rgba(252,133,10,1) 0%, rgba(163,218,255,1) 100%); /* ie10+ */
+    background: linear-gradient(202deg, rgba(252,133,10,1) 0%, rgba(163,218,255,1) 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FC850A', endColorstr='#A3DAFF',GradientType=0 ); /* ie6-9 */
+}
+
+.registration-panel .column {
+    flex: 0 0 50%;
+}
+.registration-panel .column:first-child .container {
+    padding-top: 100px;
+    padding-left: 100px;
+}
+.registration-panel .column .container {
+    padding: 30px;
+}
+
+.registration-panel h1 {
+    color: white;
+    
+    text-align: center;
+    font-size: 40px;
+}
+
+.registration-panel img {
+    max-width: 100%;
+}
+
+.registration-panel label {
+    position: relative;
+    display: block;
+    margin: 20px 0;
+    padding-left: 5px;
+    color: white;
+}
+.registration-panel label:first-child {
+    
+    margin-bottom: 10px;
+}
+.registration-panel label .checkbox-value {
+    position: absolute;
+    left: 0;
+    top: -1px;
+    
+    width: 15px;
+    height: 15px;
+    
+    border: 1px solid #fff;
+    cursor: pointer;
+}
+.registration-panel label input[type='checkbox'] {
+    margin-right: 10px;
+    opacity: 0;
+}
+.registration-panel label input[type='checkbox']:checked ~ .checkbox-value {
+
+}
+.registration-panel label input[type='checkbox']:checked ~ .checkbox-value:after {
+    position: relative;
+    top: -1px;
+    left: -0.5px;
+    font-family: 'Material Icons';
+    content: 'done';
+    color: white;
+}
+
+.registration-panel .oauth {
+    display: flex;
+}
+.registration-panel .oauth div {
+    flex: 0 0 calc(50% - 70px);
+    position: relative;
+    height: var(--input-h);
+    font-size: 13px;
+    line-height: var(--input-h);
+    
+    margin-bottom: 20px;
+    padding-left: 60px;
+    
+    color: white;
+    border-radius: 5px;
+    
+}
+.registration-panel .oauth div:first-child {
+    margin-right: 10px;
+}
+.registration-panel .oauth div:last-child {
+    margin-left: 10px;
+}
+.registration-panel .oauth div img {
+    position: absolute;
+    width: 24px;
+    top: 8px;
+    left: 10px;
+}
+.registration-panel .oauth div span {
+    
+}
+.facebook {
+    background: var(--facebook);
+}
+.linkedin {
+    background: var(--linkedin);
+}
+.registration-panel input:not([type='checkbox']) {
+    display: block;
+    width: calc(100% - 40px);
+}
+.registration-panel button {
+    width: 100%;
+}
+.registration-panel button, .registration-panel input:not([type='checkbox']) {
+   
+    height: var(--input-h);
+    
+    margin-bottom: 15px;
+    padding: 0 20px;
+    border: none;
+}
+.registration-panel button, .registration-panel .oauth div {
+    cursor: pointer;
+}
+
+.registration-panel button {
+    color: white;
+    background: var(--facebook);
+    border-radius: 5px;
+}

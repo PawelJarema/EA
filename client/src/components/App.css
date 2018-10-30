@@ -1,0 +1,259 @@
+html, body, header, footer, nav, div, section, article, h1, h2, h3, h4, h5, h6, form, input, textarea, p, ol, ul, li, a, span, aside, button {
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+:root {
+    --orange: rgb(252,133,10);
+    --hot-orange: rgb(249,65,18);
+    --facebook: rgb(52,81,163);
+    --linkedin: rgb(13,98,166);
+    
+    --page-margin: 100px;
+    
+    --nav-h: 100px;
+    --input-h: 40px;
+}
+
+body {
+    font-family: sans-serif;
+    font-weight: 100;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+i {
+    vertical-align: middle;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    height: var(--nav-h);
+}
+
+
+.logo {
+    margin-left: var(--page-margin);
+    font-weight: 400;
+    font-size: 24px;
+    text-align: center;
+}
+.logo i {
+    display: block;
+    font-size: 36px;
+    color: var(--orange);
+}
+
+.search-auctions div {
+    display: inline-block;
+}
+.search-auctions .inputs {
+    position: relative;
+}
+.search-auctions .inputs i {
+    position: absolute;
+    
+    top: 5px;
+    left: 10px;
+    
+    font-size: 34px;
+    color: var(--orange);
+    opacity: .5;
+}
+.search-auctions input {
+    width: 240px;
+    height: var(--input-h);
+    
+    padding-left: 50px;
+    border: 1px solid #eee;
+    
+    border-radius: 25px 0 0 25px;
+}
+.search-auctions select {
+    width: 140px;
+    height: var(--input-h);
+    cursor: pointer;
+    opacity: 0;
+}
+.search-auctions .select-value {
+    display: inline-block;
+    
+    width: 180px;
+    height: var(--input-h);
+    font-size: 13px;
+    line-height: var(--input-h);
+    
+    padding-left: 10px;
+    
+    border: 1px solid #eee;
+    border-left: none;
+    border-radius: 0 25px 25px 0;
+    
+    color: var(--orange);
+}
+.search-auctions .select {
+    position: absolute;
+    left: 0;
+}
+.search-auctions .select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #eee;
+    background: white;
+    
+    z-index: 5;
+}
+.search-auctions .select div {
+    display: block;
+    cursor: pointer;
+}
+.search-auctions .select .main {
+    font-weight: 400;
+    margin: 5px 0;
+}
+.search-auctions .select .main:after {
+    position: relative;
+    top: 2px;
+    
+    font-family: 'Material Icons';
+    content: 'arrow_drop_down';
+    
+    opacity: .5;
+}
+
+.search-auctions .select .child {
+    display: none;
+    margin-left: 5px;
+    margin-bottom: 4px;
+}
+.search-auctions .select-value:after {
+    position: absolute;
+    right: 10px;
+    
+    font-family: 'Material Icons';
+    font-size: 22px;
+    
+    content: 'arrow_drop_down';
+    color: black;
+    opacity: .3;
+}
+.search-auctions button {
+    width: 90px;
+    height: var(--input-h);
+    
+    font-size: 13px;
+    font-weight: 100;
+    
+    margin-left: 20px;
+    
+    background: var(--hot-orange);
+    color: white;
+    
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+
+
+.user-links {
+    margin-right: var(--page-margin);
+    font-weight: 100;
+}
+.user-links i {
+    color: var(--orange);
+    font-size: 44px;
+}
+.user-links a:not(:first-child) {
+    margin-left: 50px;
+}
+
+.breadcrumbs {
+    width: auto;
+    margin-top: 10px;
+    margin-left: var(--page-margin);
+    padding: 10px;
+    max-width: 300px;
+    font-size: 14px;
+    background: #eee;
+    opacity: 0.5;
+}
+
+.breadcrumbs span:not(:last-child):after {
+    content: '>';
+    margin: 0 5px;
+}
+
+footer {
+    margin-top: 30px;
+}
+.category-links {
+    
+}
+
+.category-links .row {
+    display: flex;
+    padding: 20px var(--page-margin);
+}
+.category-links .row:first-child {
+    border-top: 10px solid rgb(247,248,252);
+}
+.category-links .row:last-child {
+    background: rgb(247,248,252);
+}
+
+.category-links .row .column {
+    flex: 0 0 18.66%;
+    position: relative;
+}
+
+.category-links .row .categories {
+
+}
+
+.category-links .row .column .logo {
+    position: absolute;
+    top: 50%;
+    
+    transform: translateY(-50%);
+    
+    width: 98px;
+    margin: 0px;
+}
+
+.footer-bar {
+    display: flex;
+    
+    height: var(--input-h);
+    line-height: var(--input-h);
+    
+    background: rgb(193,199,203);
+}
+
+.footer-bar div {
+    flex: 0 0 33%;
+    text-align: center;
+}
+
+.category-links a {
+    display: block;
+    opacity: .6;
+}
+.category-links a:hover {
+    opacity: 1;
+}
+
+.category-links a strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+strong {
+    font-weight: 600;
+}
