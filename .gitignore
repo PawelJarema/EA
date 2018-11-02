@@ -1,5 +1,9 @@
 node_modules
 
+# config
+development.js
+production.js
+
 # testing
 coverage
 

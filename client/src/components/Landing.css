@@ -18,6 +18,10 @@
     padding-top: 100px;
     padding-left: 100px;
 }
+.registration-panel.login .column:first-child .container {
+    padding-top: 180px;
+}
+
 .registration-panel .column .container {
     padding: 30px;
 }
@@ -40,7 +44,7 @@
     padding-left: 5px;
     color: white;
 }
-.registration-panel label:first-child {
+.registration-panel .rodo label:first-of-type {
     
     margin-bottom: 10px;
 }
@@ -74,8 +78,11 @@
 .registration-panel .oauth {
     display: flex;
 }
-.registration-panel .oauth div {
-    flex: 0 0 calc(50% - 70px);
+.registration-panel .oauth div a {
+    width: 100%;
+}
+.registration-panel .oauth div, .registration-panel .oauth a {
+    flex: 0 0 calc(50% - 65px);
     position: relative;
     height: var(--input-h);
     font-size: 13px;
@@ -94,7 +101,7 @@
 .registration-panel .oauth div:last-child {
     margin-left: 10px;
 }
-.registration-panel .oauth div img {
+.registration-panel .oauth div img, .registration-panel .oauth a img {
     position: absolute;
     width: 24px;
     top: 8px;
@@ -113,14 +120,38 @@
     display: block;
     width: calc(100% - 40px);
 }
+.registration-panel .email > span, .registration-panel .rodo {
+    display: block;
+    position: relative;
+}
+.registration-panel .message {
+    display: none;
+}
+.registration-panel input:focus ~ .message {
+    display: block;
+}
+
+.registration-panel .email > span .message, .registration-panel .rodo .message {
+    position: absolute;
+    top: var(--input-h);
+    left: 0;
+    
+    padding-top: 2px;
+    font-size: 11px;
+    color: white;
+    opacity: .8;
+}
+.registration-panel .rodo .message {
+    top: 17.5px;
+    left: 0px;
+}
 .registration-panel button {
     width: 100%;
 }
 .registration-panel button, .registration-panel input:not([type='checkbox']) {
-   
     height: var(--input-h);
     
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     padding: 0 20px;
     border: none;
 }
@@ -132,4 +163,19 @@
     color: white;
     background: var(--facebook);
     border-radius: 5px;
+}
+
+.registration-panel .options {
+    display: flex !important;
+    justify-content: space-between;
+}
+.registration-panel .options span {
+    display: block;
+}
+.registration-panel .options span a, .registration-panel .options label {
+    color: white;
+    margin: 20px 0;
+    margin-top: 0;
+    
+    display: inline-block;
 }

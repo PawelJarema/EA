@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import { RegistrationLanding } from './Landing';
+
+import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import * as userActions from '../actions/userActions';
+import * as categoryActions from '../actions/categoryActions';
+import * as flashActions from '../actions/flashActions';
+
+import { RegistrationLanding, LoginLanding } from './Landing';
 
 const ProductCategories = {
     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
@@ -31,15 +38,6 @@ class SearchField extends Component {
         this.handleCategory = this.handleCategory.bind(this);
         this.openSelect = this.openSelect.bind(this);
         this.showSubcategories = this.showSubcategories.bind(this);
-        
-        let categories = [];
-        
-        for (let key in ProductCategories) {
-            categories.push(key);
-            categories = categories.concat(...ProductCategories[key]);
-        }
-        
-        this.categories = categories;
     }
     
     componentDidMount() {
@@ -79,6 +77,16 @@ class SearchField extends Component {
     }
     
     render() {
+        if (this.props.categories === null || this.props.categories === false)
+            return null;
+        
+        let categories = [];
+        
+        this.props.categories.map(category => {
+            categories.push({ type: 'main', name: category.name });
+            categories = categories.concat(category.subcategories.map(subcategory => ({ type: 'child', name: subcategory.name })));
+        });
+        
         return (
             <div className="search-auctions">
                 <div className="inputs">
@@ -91,13 +99,13 @@ class SearchField extends Component {
                         { 
                             this.state.select && (<div className="select">
                                 {
-                                    this.categories
+                                    categories && categories
                                         .map(category => (
-                                           category in ProductCategories 
+                                           category.type === 'main' 
                                            ?
-                                           <div className="main" onClick={this.showSubcategories}>{ category }</div>
+                                           <div className="main" onClick={this.showSubcategories}>{ category.name }</div>
                                            :
-                                           <div className="child" style={{ display: 'none' }} onClick={this.handleCategory}>{ category }</div>
+                                           <div className="child" style={{ display: 'none' }} onClick={this.handleCategory}>{ category.name }</div>
 
                                         ))
                                 }
@@ -112,17 +120,38 @@ class SearchField extends Component {
         )
     }
 }
+SearchField = connect(mapCategoryStateToProps)(SearchField);
 
 class UserLinks extends Component {
     render() {
-        return (
-            <div className="user-links">
-                <a href="#">Moje aukcje</a>
-                <a href="#"><i className="material-icons">account_circle</i></a>
-            </div>
-        );
+        const user = this.props.user;
+        
+        if (user !== false && user !== null) {
+            return (
+                <div className="user-links">
+                    <a href="#">Moje aukcje</a>
+                    <a href="#">
+                        <i className="material-icons">account_circle</i>
+                        <div className="dropdown">
+                            <a href="/api/logout">Wyloguj</a>
+                            <a href="/aukcje/dodaj">Dodaj Aukcję</a>
+                        </div>
+                    </a>
+                </div>
+            );
+        } else if (user !== null) {
+            return (
+                <div className="user-links">
+                    <a href="/konto/zaloguj">Zaloguj się</a>
+                    <a href="/konto/zarejestruj">Zarejestruj się</a>
+                </div>
+            );
+        } else {
+            return null
+        }
     }
 }
+UserLinks = connect(mapUserStateToProps)(UserLinks);
 
 class Navi extends Component {
     render() {
@@ -152,14 +181,14 @@ class Breadcrumbs extends Component {
 
 class CategoryLink extends Component {
     render() {
-        const main_category = this.props.data;
-        const data = ProductCategories[main_category];
+        const category = this.props.data;
+        const subcategories = category.subcategories;
         
         return (
             <div className="categories">
-                <a href="#"><strong>{main_category}</strong></a>
+                <a href="#"><strong>{category.name}</strong></a>
                 {
-                    data.map(category => <a href="#">{ category }</a>)
+                    subcategories.map(subcategory => <a key={subcategory.name} href="#">{ subcategory.name }</a>)
                 }
             </div>
         );
@@ -168,7 +197,11 @@ class CategoryLink extends Component {
 
 class CategoryLinks extends Component {
     render() {
-        const categories = Object.keys(ProductCategories);
+        const categories = this.props.categories;
+        
+        if (categories === null || categories === false)
+            return null;
+ 
         const top = categories.slice(0, 6);
         const bottom = categories.slice(6);
         
@@ -177,7 +210,7 @@ class CategoryLinks extends Component {
                 <div className="row">
                     {
                         top.map(category => (
-                            <div className="column">
+                            <div key={category.name} className="column">
                                 <CategoryLink data={category} />
                             </div>
                         ))
@@ -189,7 +222,7 @@ class CategoryLinks extends Component {
                     </div>
                     {
                         bottom.map(category => (
-                            <div className="column">
+                            <div key={category.name} className="column">
                                 <CategoryLink data={category} />
                             </div>
                         ))
@@ -199,6 +232,8 @@ class CategoryLinks extends Component {
         )
     }
 }
+
+CategoryLinks = connect(mapCategoryStateToProps)(CategoryLinks);
 
 class FooterBar extends Component {
     render() {
@@ -213,16 +248,35 @@ class FooterBar extends Component {
 }
 
 class App extends Component {
+  componentDidMount() {
+      this.props.fetchCategories();
+      this.props.fetchUser();
+      this.props.fetchMessage();
+  }
+    
   render() {
+    const message = this.props.flash;
+
     return (
       <div className="App">
+        { 
+            message !== null && message !== false && <div className={ "flash-message " + message.type }>{ message.message }</div>
+        }
+        
+        
         <header className="App-header">
           <Navi />
           <Breadcrumbs />
+          { this.props.categories }
         </header>
         
         <div className="content" style={{ marginTop: 30 }}>
-            <RegistrationLanding />
+            <BrowserRouter>
+                <div>
+                    <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
+                    <Route path="/konto/zaloguj" component={ LoginLanding } />
+                </div>
+            </BrowserRouter>
         </div>
         
         <footer>
@@ -234,4 +288,20 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapUserStateToProps({ user }) {
+    return { user };
+}
+
+function mapCategoryStateToProps({ categories }) {
+    return { categories };
+}
+
+function mapFlashToProps({ flash }) {
+    return { flash };
+}
+
+function aggregateProps({ user, categories, flash }) {
+    return { user, categories, flash };
+}
+
+export default connect(mapFlashToProps, { ...userActions, ...categoryActions, ...flashActions })(App);
