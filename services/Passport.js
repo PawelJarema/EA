@@ -26,7 +26,7 @@ passport.deserializeUser((id, done) => {
             done(null, user);
         });
 });
-
+     
 passport.use(new LinkedInStrategy({
     clientID: keys.linkedinKey,
     clientSecret: keys.linkedinSecret,
