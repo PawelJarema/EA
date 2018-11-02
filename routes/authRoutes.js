@@ -5,7 +5,7 @@ const { ObjectId } = mongoose.Types;
 require('../models/User');
 const User = mongoose.model('user');
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 const Mailer = require('../services/Mailer');
