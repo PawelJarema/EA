@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
 const bidSchema = new Schema({
-    date: number,
+    date: Number,
     _user: ObjectId,
     price: Number
 });

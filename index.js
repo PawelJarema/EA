@@ -30,6 +30,7 @@ require('./routes/flashRoutes')(app);
 require('./routes/authRoutes')(app);
 require('./routes/userRoutes')(app);
 require('./routes/categoryRoutes')(app);
+require('./routes/auctionRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     console.log('in production');

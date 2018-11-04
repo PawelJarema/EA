@@ -7,13 +7,15 @@ const attributeSchema = require('./Attribute');
 const bidSchema = require('./Bid');
 
 const auctionSchema = new Schema({
+    _user: ObjectId,
     title: String,
     description: String,
     price: {
         start_price: Number,
         min_price: Number,
         buy_now_price: Number,
-        current_price: Number
+        current_price: Number,
+        hide_min_price: Boolean
     },
     date: {
         start_date: Number,
@@ -24,8 +26,8 @@ const auctionSchema = new Schema({
     photos: [photoSchema],
     attributes: [attributeSchema],
     categories: {
-        _main: ObjectId,
-        _sub: ObjectId
+        main: String,
+        sub: String
     },
     bids: [bidSchema],
     verified: Boolean

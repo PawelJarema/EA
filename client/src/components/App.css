@@ -1,4 +1,4 @@
-html, body, header, footer, nav, div, section, article, h1, h2, h3, h4, h5, h6, form, input, textarea, p, ol, ul, li, a, span, aside, button {
+html, body, header, footer, nav, div, section, article, h1, h2, h3, h4, h5, h6, form, input, textarea, p, ol, ul, li, a, span, aside, button, select {
     margin: 0;
     padding: 0;
     outline: none;
@@ -72,7 +72,7 @@ nav {
     height: var(--input-h);
     
     padding-left: 50px;
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
     
     border-radius: 25px 0 0 25px;
 }
@@ -92,7 +92,7 @@ nav {
     
     padding-left: 10px;
     
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
     border-left: none;
     border-radius: 0 25px 25px 0;
     
@@ -170,15 +170,16 @@ nav {
     color: var(--orange);
     font-size: 44px;
 }
-.user-links a:not(:first-child) {
+.user-links a:not(:first-child), .user-links span.link:not(:first-child) {
     margin-left: 50px;
 }
 
-.user-links a {
+.user-links a, .user-links span.link {
     position: relative;
+    cursor: pointer;
 }
 
-.user-links a .dropdown {
+.user-links a .dropdown, .user-links span.link .dropdown {
     position: absolute;
     width: 190px;
     
@@ -188,31 +189,34 @@ nav {
     opacity: 0;
     pointer-events: none;
 }
-.user-links a:hover .dropdown {
+.user-links a:hover .dropdown, .user-links span.link:hover .dropdown {
     opacity: 1;
     pointer-events: all;
 }
 
-.user-links a .dropdown a {
+.user-links a .dropdown a, .user-links span.link .dropdown a {
     display: block;
     text-align: right;
     padding: 10px;
     margin: 0;
 }
-.user-links a .dropdown a:hover {
+.user-links a .dropdown a:hover, .user-links span.link .dropdown a:hover {
     background: #f0f0f0;
 }
-.user-links a .dropdown a:after {
+.user-links a .dropdown a:after, .user-links span.link .dropdown a:after {
     position: relative;
     top: 2px;
     font-family: 'Material Icons';
-    margin-left: 5px;
+    margin-left: 7px;
     opacity: .8;
 }
-.user-links a .dropdown a:first-child:after {
+.user-links a.logout:after {
     content: 'expand_more';
 }
-.user-links a .dropdown a:last-child:after {
+.user-links a.settings:after {
+    content: 'settings';
+}
+.user-links a.add-auction:after {
     content: 'add_circle_outline';
 }
 
@@ -311,4 +315,12 @@ strong {
 }
 .flash-message.error {
     background: #FF0523;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    transform: translateX(-50%) translateY(-50%);
 }

@@ -8,6 +8,7 @@ const balanceSchema = require('./Balance');
 const userSchema = new Schema({
     firstname: String,
     lastname: String,
+    birthdate: Number,
     address: addressSchema,
     auth: {
         linkedinId: String,

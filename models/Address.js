@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const addressSchema = new Schema({
     street: String,
     postal: String,
-    phone: String
+    city: String
 });
 
 module.exports = addressSchema;

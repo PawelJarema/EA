@@ -52,7 +52,7 @@ async (accessToken, refreshToken, profile, done) => {
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
             contact: { email: email },
-            security: { password: password, verified: true },
+            security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }
         });
             
@@ -92,7 +92,7 @@ async (accessToken, refreshToken, profile, done) => {
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
             contact: { email: email },
-            security: { password: password, verified: true },
+            security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }
         });
         
@@ -127,7 +127,7 @@ async (accessToken, refreshToken, profile, done) => {
 //            firstName: profile.name.givenName,
 //            lastName: profile.name.familyName,
 //            contact: { email: email },
-//            security: { password: password, verified: true },
+//            security: { password: null, verified: true },
 //            agreements: { rodo_1: true, rodo_2: true }
 //        });
 //        
@@ -161,7 +161,7 @@ async (accessToken, refreshToken, profile, done) => {
             auth: { twitterId: profile.id },
             firstName: profile.displayName,
             contact: { email: email },
-            security: { password: password, verified: true },
+            security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }
         });
         

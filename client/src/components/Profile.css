@@ -1,0 +1,156 @@
+.Profile {
+    display: flex;
+}
+
+.Profile .links {
+    font-size: 18px;
+    padding: 20px;
+    margin: 0 var(--page-margin);
+    
+    max-height: 300px;
+    background: #f0f0f0;
+}
+.Profile .links > a {
+    display: block;
+    width: 280px;
+    margin-bottom: 5px;
+}
+.Profile .dropdown {
+    display: none;
+}
+.Profile .dropdown:hover {
+    display: block;
+}
+.Profile .dropdown a {
+    display: block;
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+.Profile .links > a:hover + .dropdown {
+    display: block;
+}
+.Profile .links > a.active {
+    font-weight: bold;
+}
+.Profile .links > a:nth-child(2):after {
+    font-family: 'Material Icons';
+    content: 'arrow_drop_down';
+}
+
+
+.Profile .user-settings {
+    max-width: 600px;
+}
+
+.Profile .user-settings fieldset {
+    border: none;
+    margin-bottom: 30px;
+}
+.Profile .user-settings fieldset p {
+    display: flex;
+}
+.Profile .user-settings fieldset p > span {
+    position: relative;
+}
+.Profile .user-settings input[name='postal'] {
+    width: 100px;
+    margin-right: 15px;
+}
+.Profile .user-settings fieldset input:not([type='checkbox']) {
+    height: var(--input-h);
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    border: 1px solid #ddd;
+    flex-grow: 1;
+}
+
+
+.Profile .user-settings fieldset legend {
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.user-settings i {
+    position: relative;
+    margin-right: 5px;
+    top: -2px;
+}
+
+.user-settings h1 i {
+     top: -4px;
+}
+
+.user-settings h1 {
+    margin-bottom: 30px;
+}
+
+
+.user-settings h1 i {
+    font-size: 36px;
+   
+}
+
+.Profile .user-settings button[type='submit'] {
+    padding: 2px 30px;
+    height: var(--input-h);
+    
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+.Profile .user-settings button[type='submit']:hover {
+    background: var(--orange);
+    border: none;
+    color: white;
+}
+
+.Profile .user-settings button.destroy {
+    margin-top: 15px;  
+}
+.Profile .user-settings button.destroy:hover {
+    background: var(--hot-orange);
+}
+
+.user-settings .label {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.user-settings .text {
+    padding: 0 5px;
+}
+
+.user-settings span, .user-settings input {
+    vertical-align: middle;
+}
+
+.user-settings .checkbox-value {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    
+    width: 15px;
+    height: 15px;
+    
+    border: 1px solid #ccc;
+    pointer-events: none;
+    cursor: pointer;
+}
+.user-settings input[type='checkbox'] {
+    height: 40px;
+    margin-right: 10px;
+    opacity: 0;
+    cursor: pointer;
+}
+.user-settings input[type='checkbox']:checked ~ .checkbox-value {
+
+}
+.user-settings input[type='checkbox']:checked ~ .checkbox-value:after {
+    position: relative;
+    top: -1px;
+    left: -0.5px;
+    font-family: 'Material Icons';
+    content: 'done';
+    color: #ccc;
+}

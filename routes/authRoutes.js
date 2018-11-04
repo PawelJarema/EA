@@ -15,7 +15,9 @@ module.exports = app => {
         let email = req.body.email;
         let password = req.body.password;
         
-        const user = await User.findOne({ contact: { email }});
+        const user = await User.findOne({ 'contact.email' : email });
+
+        console.log(email, password, user);
         
         if (!user) {
             req.session.error = "Nie znaleziono użytkownika";

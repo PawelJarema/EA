@@ -1,0 +1,155 @@
+.user-settings {
+    width: 600px;
+}
+
+.rich-text-editor {
+    min-height: 300px;
+}
+
+.drag-and-drop-images {
+    position: relative;
+    
+    width: 100%;
+    height: 300px;
+    
+    border: 2px dashed #ddd;
+    cursor: pointer;
+}
+
+.drag-and-drop-images:hover:after {
+    position: absolute;
+    
+    top: 50%;
+    left: 50%;
+    
+    transform: translateX(-50%) translateY(-50%);
+    
+    font-family: 'Material Icons';
+    font-size: 40px;
+    
+    content: 'add_photo_alternate';
+    opacity: 0.4;
+}
+
+.thumbnails {
+    overflow: hidden;
+}
+
+.thumbnails .container {
+    display: inline-block;
+    position: relative;
+    
+    width: 111px;
+    height: 111px;
+    overflow: hidden;
+    
+    margin: 20px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    
+    border: 1px solid #eee;
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.thumbnails .image-preview {
+    max-height: 111px;
+    
+}
+.user-settings fieldset .add {
+    cursor: pointer;
+    color: #ddd;
+}
+.user-settings fieldset .add:hover {
+    color: black;
+}
+.user-settings fieldset .add i {
+    font-size: 16px;
+}
+.user-settings fieldset .attributes {
+    flex-wrap: wrap;
+}
+.user-settings fieldset .attributes input {
+    width: 100%;
+    display: block;
+}
+
+.user-settings fieldset p select {
+    height: var(--input-h);
+    border: 1px solid #ddd;
+    width: 50%;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.user-settings fieldset select + .label {
+    line-height: var(--input-h);
+    padding-left: 10px;
+}
+
+.AuctionList {
+    margin: var(--page-margin);
+}
+
+.AuctionList .auction {
+    display: flex;
+}
+
+.AuctionList .auction img {
+    max-height: 220px;
+}
+
+.AuctionList .auction .text {
+    display: flex;
+    flex-direction: column;
+    max-width: 50%;
+}
+
+.AuctionList .auction .text h3 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+.AuctionList .auction .text div {
+    margin-bottom: 30px;
+}
+.AuctionList .auction .text .price {
+    color: var(--orange);
+    font-size: 20px;
+}
+.AuctionList .auction .text .value:after {
+    content: ' zł';
+}
+
+.AuctionList .auction .actions {
+    position: relative;
+    flex-grow: 1;
+    
+    display: none;
+}
+.AuctionList .auction:hover .actions {
+    display: block;
+}
+.AuctionList .auction .actions div {
+    position: absolute;
+    bottom: 50px;
+}
+.AuctionList .auction .actions i {
+    margin-right: 15px;
+    color: var(--hot-orange);
+    cursor: pointer;
+}
+
+.AuctionList .auction .actions button {
+    
+    
+    margin: 0 5px;
+    padding: 10px 40px;
+    cursor: pointer;
+    
+    border: 1px solid #ccc;
+}
+
+.AuctionList .auction .actions button:hover {
+    background: var(--orange);
+    color: white;
+}

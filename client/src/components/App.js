@@ -7,7 +7,10 @@ import * as userActions from '../actions/userActions';
 import * as categoryActions from '../actions/categoryActions';
 import * as flashActions from '../actions/flashActions';
 
+import { AuctionList } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
+import { Settings, CreateUpdateAction } from './Profile';
+
 
 const ProductCategories = {
     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
@@ -25,7 +28,7 @@ const ProductCategories = {
 class Logo extends Component {
     render() {
         return (
-            <div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div>
+            <a href="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></a>
         );
     }
 }
@@ -130,13 +133,14 @@ class UserLinks extends Component {
             return (
                 <div className="user-links">
                     <a href="#">Moje aukcje</a>
-                    <a href="#">
+                    <span className="link">
                         <i className="material-icons">account_circle</i>
                         <div className="dropdown">
-                            <a href="/api/logout">Wyloguj</a>
-                            <a href="/aukcje/dodaj">Dodaj Aukcję</a>
+                            <a href="/api/logout" className="logout">Wyloguj</a>
+                            <a href="/konto/ustawienia" className="settings">Ustawienia</a>
+                            <a href="/konto/aukcje/dodaj" className="add-auction">Dodaj Aukcję</a>
                         </div>
-                    </a>
+                    </span>
                 </div>
             );
         } else if (user !== null) {
@@ -172,7 +176,7 @@ class Breadcrumbs extends Component {
         return (
             <div className="breadcrumbs">
                 {
-                    current_path.map(frag => <span>{ frag }</span>)
+                    current_path.map(frag => <span key={frag}>{ frag }</span>)
                 }
             </div>
         );
@@ -273,8 +277,11 @@ class App extends Component {
         <div className="content" style={{ marginTop: 30 }}>
             <BrowserRouter>
                 <div>
+                    <Route exact path="/" component={ AuctionList } />
                     <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
                     <Route path="/konto/zaloguj" component={ LoginLanding } />
+                    <Route path="/konto/ustawienia" component={ Settings } />
+                    <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
                 </div>
             </BrowserRouter>
         </div>
