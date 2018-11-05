@@ -9,7 +9,7 @@ const Auction = mongoose.model('auction');
 
 module.exports = app => {
     app.get('/auction/get_all', async (req, res) => {        
-        const auctions = await Auction.find({}).limit(10);
+        const auctions = await Auction.find({}, { title: 1, shortdescription: 1, price: 1}).slice('photos', 1).limit(10);
         res.send(auctions);
     });
     
@@ -21,6 +21,7 @@ module.exports = app => {
         const auction = await new Auction({
             _user: ObjectId(req.user._id),
             title: data.title,
+            short_description: data.shortdescription,
             description: data.description,
             price: {
                 start_price: data.start_price,
@@ -46,6 +47,6 @@ module.exports = app => {
             (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się';}
         );
         
-        res.redirect('/');
+        res.send({});
     });
 };

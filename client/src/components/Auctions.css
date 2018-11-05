@@ -4,6 +4,7 @@
 
 .rich-text-editor {
     min-height: 300px;
+    margin-top: 10px;
 }
 
 .drag-and-drop-images {
@@ -57,6 +58,7 @@
     
 }
 .user-settings fieldset .add {
+    margin-top: 6px;
     cursor: pointer;
     color: #ddd;
 }
@@ -92,10 +94,22 @@
 
 .AuctionList .auction {
     display: flex;
+    margin-bottom: 30px;
+}
+
+.AuctionList .auction .image-wrapper {
+    position: relative;
+
+    height: 220px;
+    width: 300px;
+
+    margin-right: calc(var(--page-margin) / 2);
+
+    overflow: hidden;
 }
 
 .AuctionList .auction img {
-    max-height: 220px;
+    max-height: 420px;
 }
 
 .AuctionList .auction .text {
@@ -140,8 +154,6 @@
 }
 
 .AuctionList .auction .actions button {
-    
-    
     margin: 0 5px;
     padding: 10px 40px;
     cursor: pointer;
@@ -151,6 +163,10 @@
 
 .AuctionList .auction .actions button:hover {
     background: var(--orange);
-    border: none;
+    border: 1px solid white;
     color: white;
+}
+
+.public-DraftStyleDefault-block {
+
 }

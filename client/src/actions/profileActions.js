@@ -8,3 +8,10 @@ export const postProfile = (formData) => async dispatch => {
     await dispatch({ type: FETCH_MESSAGE, payload: message_res.data });
     await dispatch({ type: FETCH_USER, payload: user_res.data });
 }
+
+export const newAuction = (formData) => async dispatch => {
+    const res = await axios.post('/auction/create_or_update', formData);
+    const message_res = await axios.get('/api/flash_message');
+    
+    dispatch({ type: FETCH_MESSAGE, payload: message_res.data });
+}

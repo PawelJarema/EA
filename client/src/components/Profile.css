@@ -67,6 +67,7 @@
 .validation-message {
     font-size: 10px;
     padding-left: 5px;
+    color: var(--hot-orange);
     opacity: .5;
 }
 .Profile .user-settings fieldset p .validation-message {

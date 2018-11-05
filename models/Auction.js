@@ -9,6 +9,7 @@ const bidSchema = require('./Bid');
 const auctionSchema = new Schema({
     _user: ObjectId,
     title: String,
+    shortdescription: String,
     description: String,
     price: {
         start_price: Number,

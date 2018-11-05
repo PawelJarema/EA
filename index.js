@@ -5,9 +5,7 @@ const keys = require('./config/keys');
 const path = require('path');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
-//const passport = require('passport');
 const mongoose = require('mongoose');
-
 const passport = require('passport');
 require('./services/Passport');
 
@@ -25,7 +23,6 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// require('./routes/dbRoutes')(app);
 require('./routes/flashRoutes')(app);
 require('./routes/authRoutes')(app);
 require('./routes/userRoutes')(app);
