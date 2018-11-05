@@ -18,8 +18,6 @@ module.exports = app => {
         const data = req.body;
         const attributes = await Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key]}));
         
-        console.log(req.files);
-        
         const auction = await new Auction({
             _user: ObjectId(req.user._id),
             title: data.title,

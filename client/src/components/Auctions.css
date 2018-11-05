@@ -74,14 +74,14 @@
     display: block;
 }
 
-.user-settings fieldset p select {
+.user-settings fieldset > p > select {
     height: var(--input-h);
     border: 1px solid #ddd;
     width: 50%;
     margin-bottom: 15px;
     cursor: pointer;
 }
-.user-settings fieldset select + .label {
+.user-settings fieldset > p > select + .label {
     line-height: var(--input-h);
     padding-left: 10px;
 }
@@ -151,5 +151,6 @@
 
 .AuctionList .auction .actions button:hover {
     background: var(--orange);
+    border: none;
     color: white;
 }

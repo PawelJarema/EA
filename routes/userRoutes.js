@@ -10,14 +10,25 @@ const saltRounds = 10;
 
 const requireLogin = require('../middleware/requireLogin');
 
+const multer = require('multer');
+const upload = multer();
+
 module.exports = app => {
     app.get('/api/current_user', async (req, res) => {
         res.send(req.user);
     });
     
-    app.post('/user/update', requireLogin, async (req, res) => {
-       console.log(req.body);
-       
+    app.post('/user/destroy', requireLogin, async (req, res) => {
+        const id = req.user._id;
+        const user = await User.findOne({ _id: ObjectId(id) });
+        user.remove();
+        
+        req.logout();
+        req.session.message = 'Pomyślnie usunięto konto';
+        res.redirect('/');
+    });
+    
+    app.post('/user/update', [requireLogin, upload.any()], async (req, res) => {     
        let r = req.body,
            firstname = r.firstname,
            lastname = r.lastname,
@@ -41,7 +52,7 @@ module.exports = app => {
         if (!user) {
             error = true;
             req.session.error = 'Awaria bazy danych. Proszę skontaktować się z administratorem';
-            res.redirect('/');
+            res.send(req.user);
         }
  
         user.firstname = firstname || user.firstname;
@@ -147,7 +158,7 @@ module.exports = app => {
             req.session.message = messages.join('. ');
         }
         
-        res.redirect('/konto/ustawienia');
+        res.send(user || req.user);
         
     });
 }

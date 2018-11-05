@@ -41,7 +41,7 @@ async (accessToken, refreshToken, profile, done) => {
     let link = profile._json.publicProfileUrl;
     
     if (!user && email) {
-        user = await User.findOne({ contact: { email: email }});
+        user = await User.findOne({ 'contact.email': email });
     }
 
     if (user) {
@@ -49,8 +49,8 @@ async (accessToken, refreshToken, profile, done) => {
     } else {
         let newUser = new User({
             auth: { linkedinId: profile.id },
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
+            firstname: profile.name.givenName,
+            lastname: profile.name.familyName,
             contact: { email: email },
             security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }
@@ -81,7 +81,7 @@ async (accessToken, refreshToken, profile, done) => {
     }
     
     if (!user && email) {
-        user = await User.findOne({ contact: { email: email } });
+        user = await User.findOne({ 'contact.email': email });
     }
     
     if (user) {
@@ -89,8 +89,8 @@ async (accessToken, refreshToken, profile, done) => {
     } else {
         let newUser = new User({
             auth: { googleId: profile.id },
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
+            firstname: profile.name.givenName,
+            lastname: profile.name.familyName,
             contact: { email: email },
             security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }
@@ -104,40 +104,43 @@ async (accessToken, refreshToken, profile, done) => {
     }
 }));
 
-//passport.use(new FacebookStrategy({
-//    clientID: keys.facebookAppId,
-//    clientSecret: keys.facebookAppSecret,
-//    callbackURL: '/auth/facebook/callback',
-//    proxy: true
-//},
-//async (accessToken, refreshToken, profile, done) => {
-//    let user = await User.findOne({ auth: { facebookId: profile.id } });
-//    let email = '';
-//    let link = '';
-//    
-//    if (!user && email) {
-//        user = await User.findOne({ contact: { email: email } });    
-//    }
-//    
-//    if (user) {
-//        done(null, user);
-//    } else {
-//        let newUser = new User({
-//            auth: { facebookId: profile.id },
-//            firstName: profile.name.givenName,
-//            lastName: profile.name.familyName,
-//            contact: { email: email },
-//            security: { password: null, verified: true },
-//            agreements: { rodo_1: true, rodo_2: true }
-//        });
-//        
-//        newUser.balance = { balance: new Balance({ _user: newUser._id }) };
-//        
-//        await newUser.save();
-//        
-//        done(null, newUser);
-//    }
-//}));
+passport.use(new FacebookStrategy({
+    clientID: keys.facebookAppId,
+    clientSecret: keys.facebookAppSecret,
+    callbackURL: '/auth/facebook/callback',
+    profileFields: ['id', 'emails', 'name'],
+    proxy: true
+},
+async (accessToken, refreshToken, profile, done) => {
+    let user = await User.findOne({ auth: { facebookId: profile.id } });
+    let email = typeof profile.emails[0] === 'object' ? profile.emails[0].value : null;
+    let link = 'https://www.facebook.com/profile.php?id=' + profile.id;
+    
+    console.log(profile);
+    
+    if (!user && email) {
+        user = await User.findOne({ 'contact.email': email });    
+    }
+    
+    if (user) {
+        done(null, user);
+    } else {
+        let newUser = new User({
+            auth: { facebookId: profile.id },
+            firstname: profile.name.givenName,
+            lastname: profile.name.familyName,
+            contact: { email: email },
+            security: { password: null, verified: true },
+            agreements: { rodo_1: true, rodo_2: true }
+        });
+        
+        newUser.balance = { balance: new Balance({ _user: newUser._id }) };
+        
+        await newUser.save();
+        
+        done(null, newUser);
+    }
+}));
 
 passport.use(new TwitterStrategy({
     consumerKey: keys.twitterAPIKey,
@@ -151,7 +154,7 @@ async (accessToken, refreshToken, profile, done) => {
     let link = 'https://twitter.com/' + profile.username;
     
     if (!user && email) {
-        user = await User.findOne({ contact: { email: email }});
+        user = await User.findOne({ 'contact.email': email });
     }
     
     if (user) {
@@ -159,7 +162,7 @@ async (accessToken, refreshToken, profile, done) => {
     } else {
         let newUser = new User({
             auth: { twitterId: profile.id },
-            firstName: profile.displayName,
+            firstname: profile.displayName,
             contact: { email: email },
             security: { password: null, verified: true },
             agreements: { rodo_1: true, rodo_2: true }

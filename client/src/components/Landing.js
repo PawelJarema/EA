@@ -128,7 +128,7 @@ class RegistrationLanding extends Component {
         return (
             <RegistrationPanel title="Zarejestruj się" className="register">
                 <div className="oauth">
-                    <div className="facebook"><img src="/assets/fb.png" /><span>Załóż konto z Facebookiem</span></div>
+                    <a href="/auth/facebook" className="facebook"><img src="/assets/fb.png" /><span>Załóż konto z Facebookiem</span></a>
                     <a href="/auth/linkedin" className="linkedin"><img src="/assets/in.png" /><span>Załóż konto z Linkedin</span></a>
                 </div>
                 <form action="/auth/email" method="post">

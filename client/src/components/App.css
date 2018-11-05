@@ -2,6 +2,12 @@ html, body, header, footer, nav, div, section, article, h1, h2, h3, h4, h5, h6, 
     margin: 0;
     padding: 0;
     outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+button {
+    background: white;
 }
 
 :root {
@@ -246,6 +252,7 @@ footer {
 .category-links .row {
     display: flex;
     padding: 20px var(--page-margin);
+    padding-right: none;
 }
 .category-links .row:first-child {
     border-top: 10px solid rgb(247,248,252);
@@ -254,13 +261,14 @@ footer {
     background: rgb(247,248,252);
 }
 
+
 .category-links .row .column {
-    flex: 0 0 18.66%;
+    flex: 0 0 17.9%;
     position: relative;
 }
 
 .category-links .row .categories {
-
+    max-width: 50%;
 }
 
 .category-links .row .column .logo {
@@ -290,6 +298,8 @@ footer {
 .category-links a {
     display: block;
     opacity: .6;
+    
+    font-size: 12px;
 }
 .category-links a:hover {
     opacity: 1;
@@ -298,6 +308,7 @@ footer {
 .category-links a strong {
     display: block;
     margin-bottom: 5px;
+    font-size: 16px;
 }
 
 strong {

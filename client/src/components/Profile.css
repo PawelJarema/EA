@@ -1,7 +1,9 @@
 .Profile {
     display: flex;
 }
-
+.Profile a.active {
+    font-weight: bold;
+}
 .Profile .links {
     font-size: 18px;
     padding: 20px;
@@ -18,15 +20,12 @@
 .Profile .dropdown {
     display: none;
 }
-.Profile .dropdown:hover {
-    display: block;
-}
 .Profile .dropdown a {
     display: block;
     margin-left: 20px;
     margin-bottom: 5px;
 }
-.Profile .links > a:hover + .dropdown {
+.Profile .links > .open + .dropdown {
     display: block;
 }
 .Profile .links > a.active {
@@ -47,6 +46,7 @@
     margin-bottom: 30px;
 }
 .Profile .user-settings fieldset p {
+    position: relative;
     display: flex;
 }
 .Profile .user-settings fieldset p > span {
@@ -58,13 +58,27 @@
 }
 .Profile .user-settings fieldset input:not([type='checkbox']) {
     height: var(--input-h);
-    margin-top: 5px;
+    margin-top: 10px;
     margin-bottom: 10px;
     padding-left: 20px;
     border: 1px solid #ddd;
     flex-grow: 1;
 }
-
+.validation-message {
+    font-size: 10px;
+    padding-left: 5px;
+    opacity: .5;
+}
+.Profile .user-settings fieldset p .validation-message {
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    
+    
+}
+.Profile .user-settings fieldset p .validation-message.city {
+    left: 50%;
+}
 
 .Profile .user-settings fieldset legend {
     font-weight: 800;
@@ -153,4 +167,10 @@
     font-family: 'Material Icons';
     content: 'done';
     color: #ccc;
+}
+
+.react-datepicker__year-select {
+    width: 100%;
+    margin-top: 5px;
+    height: 20px;
 }

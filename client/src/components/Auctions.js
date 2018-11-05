@@ -157,7 +157,7 @@ class CreateUpdateAction extends Component {
        
        return (
             <div className={ "Profile" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
-                <ProfileLinks />
+                <ProfileLinks active="addauction" />
                 <form ref={ e => this.formRef = e } className="user-settings" action="/auction/create_or_update" method="post" encType="multipart/form-data">
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         

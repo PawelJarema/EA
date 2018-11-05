@@ -28,7 +28,7 @@ const ProductCategories = {
 class Logo extends Component {
     render() {
         return (
-            <a href="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></a>
+            <Link to="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></Link>
         );
     }
 }
@@ -137,8 +137,8 @@ class UserLinks extends Component {
                         <i className="material-icons">account_circle</i>
                         <div className="dropdown">
                             <a href="/api/logout" className="logout">Wyloguj</a>
-                            <a href="/konto/ustawienia" className="settings">Ustawienia</a>
-                            <a href="/konto/aukcje/dodaj" className="add-auction">Dodaj Aukcję</a>
+                            <Link to="/konto/ustawienia" className="settings">Ustawienia</Link>
+                            <Link to="/konto/aukcje/dodaj" className="add-auction">Dodaj Aukcję</Link>
                         </div>
                     </span>
                 </div>
@@ -146,8 +146,8 @@ class UserLinks extends Component {
         } else if (user !== null) {
             return (
                 <div className="user-links">
-                    <a href="/konto/zaloguj">Zaloguj się</a>
-                    <a href="/konto/zarejestruj">Zarejestruj się</a>
+                    <Link to="/konto/zaloguj">Zaloguj się</Link>
+                    <Link to="/konto/zarejestruj">Zarejestruj się</Link>
                 </div>
             );
         } else {
@@ -222,7 +222,7 @@ class CategoryLinks extends Component {
                 </div>
                 <div className="row">
                     <div className="column">
-                        <Logo />
+                        <Link to="/"><Logo /></Link>
                     </div>
                     {
                         bottom.map(category => (
@@ -267,29 +267,25 @@ class App extends Component {
             message !== null && message !== false && <div className={ "flash-message " + message.type }>{ message.message }</div>
         }
         
+        <BrowserRouter>
+            <div>
+                <header className="App-header" style={{ marginBottom: 30 }}>
+                    <Navi />
+                    <Breadcrumbs />
+                </header>
         
-        <header className="App-header">
-          <Navi />
-          <Breadcrumbs />
-          { this.props.categories }
-        </header>
-        
-        <div className="content" style={{ marginTop: 30 }}>
-            <BrowserRouter>
-                <div>
-                    <Route exact path="/" component={ AuctionList } />
-                    <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
-                    <Route path="/konto/zaloguj" component={ LoginLanding } />
-                    <Route path="/konto/ustawienia" component={ Settings } />
-                    <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
-                </div>
-            </BrowserRouter>
-        </div>
-        
-        <footer>
-            <CategoryLinks />
-            <FooterBar />
-        </footer>
+                <Route exact path="/" component={ AuctionList } />
+                <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
+                <Route path="/konto/zaloguj" component={ LoginLanding } />
+                <Route path="/konto/ustawienia" component={ Settings } />
+                <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
+
+                <footer>
+                    <CategoryLinks />
+                    <FooterBar />
+                </footer>
+            </div>
+        </BrowserRouter>
       </div>
     );
   }
