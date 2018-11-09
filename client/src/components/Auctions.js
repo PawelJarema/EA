@@ -4,62 +4,280 @@ import * as auctionActions from '../actions/auctionActions';
 import * as profileActions from '../actions/profileActions';
 import './Auctions.css';
 
+import { Link } from 'react-router-dom';
 import { ProfileLinks } from './Profile';
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 
+import Progress from './Progress';
+
+class RawImage extends Component {
+
+    render() {
+        const data = this.props.data;
+        return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
+    }
+}
+
+class AuctionDetails extends Component {
+    constructor(props) {
+        super(props);        
+        this.state = { auction: '' };
+        this.submit = this.submit.bind(this);
+    }
+
+    componentDidMount() {
+        const auction_id = this.props.match.params.id;
+        this.props.fetchAuction(auction_id);
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.auctions) {
+            this.setState({ auction: props.auctions });
+        }
+    }
+
+    submit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this.formRef);
+        alert('send');
+    }
+
+    render() {
+        const auction = this.state.auction;
+
+        return (
+            <div className="AuctionDetails">
+                {
+                    !auction ? <Progress /> : (
+                        <div className="auction-view">
+                            <div className="basic-info">
+                                <div className="photos">
+                                    <div className="photo-big">
+                                        <div className="image-wrapper">
+                                            {
+                                                auction.photos.length 
+                                                ?
+                                                <RawImage data={auction.photos[0]} />
+                                                :
+                                                <div className='no-image'></div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="photos-small">
+                                    </div>
+                                </div>
+
+                                <div className="text">
+                                    <div className="content">
+                                        <h1>{ auction.title }</h1>
+                                        <p>{auction.shortdescription}</p>
+                                        <p className="attribute-tags">
+                                            {
+                                                auction.attributes.map(attr => (
+                                                    <span key={`${attr.name}_${attr.value}`} className="attribute">{attr.name}<span>{attr.value}</span></span>
+                                                ))
+                                            }
+                                        </p> 
+                                        <div>
+                                            <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
+                                            <form ref={ (e) => this.formRef = e } action="/auction/bid" method="post">
+                                                <input name="bid" placeholder="Kwota" min="5" step="1" />
+                                                <button type="submit" onClick={this.submit}><i className="material-icons">gavel</i>Podbij</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="tab-view">
+                                <span>Informacje o tej aukcji</span>
+                                <div className="tab-controls">
+                                    <a href="#bids">Stan licytacji</a>
+                                    <a href="#owner">Właściciel</a>
+                                    <a href="#description">Opis przedmiotu</a>
+                                    <a href="#shipping">Metody dostawy i zwroty</a>
+                                </div>
+                                <div className="tab-content-area">
+                                    <div id="bids">
+                                    </div>
+                                    <div id="description">
+                                        <div className="html-description" dangerouslySetInnerHTML={{ __html: auction.description }}></div>
+                                    </div>
+                                    <div id="owner">
+                                    </div>
+                                    <div id="shipping">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    )
+                }
+            </div>
+        );
+    }
+}
+
+class Pagination extends Component {
+    render() {
+        const page = this.props.page;
+        const pages = this.props.pages;
+        const clickHandler = this.props.clickHandler;
+
+        return (
+            <div className="pagination-wrapper">
+                <div className="pagination">
+                    {
+                        Array.from({length: pages}, (v, k) => (k + 1)).map(index => (
+                            <a key={'page_' + index} 
+                                onClick={() => clickHandler(index)}
+                                className={index === page ? 'active' : ''}
+                            >{index}</a>
+                        ))
+                    }
+                </div>
+            </div>
+        )
+    }
+}
 class AuctionList extends Component {
     constructor(props) {
         super(props);
         this.state = { auctions: [] };
+        this.page = 1;
+        this.pages = 1;
+        this.auctions_per_page = 10;
+        this.query = null;
+
+        this.paginateTo = this.paginateTo.bind(this);
+        this.no_result = false;
+
+        this.getQuery = (props) => {
+            const propz = props || this.props;
+            if (Object.keys(propz.match.params).length) {
+                const params = propz.match.params;
+                const category = params.category;
+                const query = params.query;
+
+                const min = params.min;
+                const max = params.max;
+                const state = params.state;
+                const sort = params.sort;
+
+
+                if (!this.query || category != this.query.category || query != this.query.query || this.query.min != min || this.query.max != max || this.query.state != state || this.query.sort != sort ) {
+                    this.query = { category, query, min, max, state, sort };
+                    return true;
+                }
+            } else {
+                this.query = null
+            }
+
+            return false;
+        }
+
+        this.getQuery = this.getQuery.bind(this);
+        this.getQuery();
     }
     
-    componentDidMount() {
-        this.props.fetchAuctions();
+    componentDidMount() {     
+        this.props.paginate(1, this.auctions_per_page, this.query);
     }
     
     componentWillReceiveProps(props) {
         if (props.auctions) {
-            this.setState({ auctions: props.auctions });
+            this.getQuery();
 
+            if (typeof props.auctions[props.auctions.length - 1] === 'number') {
+                const count = props.auctions.pop();
+                const pages = Math.ceil(count / this.auctions_per_page);
 
-            console.log(props.auctions);
+                this.pages = pages;
+                if (this.page > pages) {
+                    this.page = pages;
+                }
 
+                this.setState({ auctions: props.auctions });
 
+                if (count === 0) {
+                    this.no_result = true;
+                }
+            }
+        }
+
+        if (this.getQuery(props)) {
+            this.props.paginate(this.page || 1, this.auctions_per_page, this.query);
+            this.no_result = false;
         }
     }
 
+    paginateTo(index) {
+        this.page = index;
+        this.props.paginate(index, this.auctions_per_page, this.query);
+    }
+
     render() {
+        const auctions = this.state.auctions;
+
         return (
             <div className="AuctionList">
+                {
+                    this.pages > 1 && auctions.length > 2 && <Pagination page={this.page} pages={this.pages} clickHandler={this.paginateTo}/>
+                }
                 { 
-                    this.state.auctions.map(auction => {
+                    !auctions.length && !this.no_result ? <Progress /> :
+                    auctions.map((auction, i) => {
+                        const photo = auction.photos[0] || {};
+                        const photo_type = photo.type || '';
+                        const photo_raw = photo.data || '';
+
                         return (
-                            <div key={ auction.title } className="auction">
+                            <div key={ auction.title + '_' + i } className="auction">
                                 <div className="image-wrapper">
-                                    <img className="absolute-center" src={ 'data:' + (auction.photos[0].type || 'image/jpeg') + ';base64,' + auction.photos[0].data } />
+                                    {
+                                        photo_raw ? <img className="absolute-center" src={ 'data:' + (photo_type || 'image/jpeg') + ';base64,' + photo_raw } /> : <div className="no-image"></div>
+                                    }
                                 </div>
                                 <div className="text">
                                     <h3>{ auction.title }</h3>
-                                    <div dangerouslySetInnerHTML={{ __html: auction.shortdescription }}></div>
+                                    <div className="short-description">{auction.shortdescription }</div>
                                     <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
-                                </div>
-                                <div className="actions">
-                                    <div>
-                                        <i className="material-icons" onClick={ (e) => { let icon = e.target.innerHTML; e.target.innerHTML = (icon === 'favorite' ? 'favorite_outline' : 'favorite'); } }>favorite_outline</i>
-                                        <button>Zobacz szczegóły</button>
-                                        <button>Licytuj</button>
+
+                                    <div className="actions">
+                                        <div>
+                                            <Link to={'/aukcje/' + auction._id }><button>Zobacz szczegóły</button></Link>
+                                            <button>Licytuj</button>
+                                            <i className="material-icons" onClick={ (e) => { let icon = e.target.innerHTML; e.target.innerHTML = (icon === 'favorite' ? 'favorite_outline' : 'favorite'); } }>favorite_outline</i>
+                                        </div>
                                     </div>
                                 </div>
+                                
                             </div>
                         )
                     })
+                }
+                {
+                    this.no_result && (
+                        <div className="no-result">
+                            <div>
+                                <i className="material-icons">folder_open</i>
+                                <h1>Nic nie znalazłem.</h1>
+                                <p>Skorzystaj z wyszukiwania zaawansowanego<br /> albo spróbuj pnownie za jakiś czas.</p>
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    this.pages > 1 && <Pagination page={this.page} pages={this.pages} clickHandler={this.paginateTo}/>
                 }
             </div>
         );
     }
 };
-
+// dangerouslySetInnerHTML={{ __html: }}
 class CreateUpdateAction extends Component {
    constructor(props) {
        super(props);
@@ -76,6 +294,12 @@ class CreateUpdateAction extends Component {
        this.submit = this.submit.bind(this);
    }
     
+   componentWillMount() {
+        if (this.props.categories && this.state.subcategories.length === 0) {
+            this.setState({ subcategories: this.props.categories[0].subcategories });
+        }
+   }
+
    componentWillReceiveProps(props) {
        if (props.categories) {
            this.setState({ subcategories: props.categories[0].subcategories });
@@ -159,7 +383,7 @@ class CreateUpdateAction extends Component {
 
         switch(name) {
             case 'title':
-                if (!/.{5,}/i.test(value)) message[0] = 'Wpisz tytuł';
+                if (!/.{4,}/i.test(value)) message[0] = 'Wpisz tytuł';
                 break;
             case 'start_price':
                 if (!value) message[1] = 'Wpisz cenę wywoławczą';
@@ -171,7 +395,7 @@ class CreateUpdateAction extends Component {
                 if (!value) message[3] = 'Wprowadź ilość';
                 break;
             case 'shortdescription':
-                if (!/.{20,}/i.test(value)) message[4] = 'Podaj krótki opis przedmiotu dla wyników wyszukiwań';
+                if (!/.{10,}/i.test(value)) message[4] = 'Podaj krótki opis przedmiotu dla wyników wyszukiwań';
                 break;
         } 
 
@@ -222,7 +446,7 @@ class CreateUpdateAction extends Component {
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
                     <fieldset>
-                        <legend><i className="material-icons">line_style</i>Tytuł</legend>
+                        <legend><i className="material-icons">title</i>Tytuł</legend>
                         <p>
                             <input name="title" type="string" placeholder="Tytuł aukcji" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[0] }</span>
@@ -293,7 +517,7 @@ class CreateUpdateAction extends Component {
                         <legend><i className="material-icons">photo</i>Zdjęcia</legend>
                         <Dropzone className="drag-and-drop-images" 
                             onDrop={ this.onDrop }
-                            accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png" 
+                            accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
                             multiple={ true }
                             onDropRejected={ this.onDropRejected }
                         >
@@ -340,7 +564,9 @@ function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
 
+
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
+AuctionDetails = connect(mapAuctionsStateToProps, auctionActions)(AuctionDetails);
 
-export { CreateUpdateAction, AuctionList };
+export { CreateUpdateAction, AuctionList, AuctionDetails };

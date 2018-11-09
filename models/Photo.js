@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const photoSchema = new Schema({
    url: String,
-   data: { data: Buffer, type: String }
+   data: { type: String, data: Buffer }
 });
 
 module.exports = photoSchema;

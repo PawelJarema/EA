@@ -67,12 +67,19 @@ class ProfileLinks extends Component {
         return (
             <div className="links">
                 <Link className={ active === 'settings' ? 'active' : null } to="/konto/ustawienia">Ustawienia konta</Link>
-                <a href="#" className={(active.indexOf('auction') !== -1 ? ' open' : '')} onClick={toggleOpen}>Aukcje</a>
+                <a href="#" onClick={toggleOpen}>Aukcje, w których kupuję</a>
+                <div className="dropdown">
+                    <a href="#">Bieżące</a>
+                    <a href="#">Zakończone</a>
+                    <a href="#">Wystaw sprzedawcy opinię</a>
+                </div>
+                <a href="#" className={(active.indexOf('auction') !== -1 ? ' open' : '')} onClick={toggleOpen}>Moje aukcje</a>
                 <div className="dropdown">
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję</Link>
                     <a href="#">Bieżące</a>
                     <a href="#">Zakończone</a>
                 </div>
+                <a href="#">Opinie</a>
                 <a href="#">Wiadomości</a>
                 <a href="#">Saldo</a>
             </div>
@@ -89,11 +96,17 @@ class Settings extends Component {
         this.validate = this.validate.bind(this);
         this.submit = this.submit.bind(this);
     }
+
+    componentWillMount() {
+        if (this.props.user && Object.keys(this.state).length === 2) {
+            this.setState(userToState(this.props.user));
+        }
+    }
     
     componentWillReceiveProps(props) {
         const user = props.user;
         
-        if (user !== null && user !== false) {
+        if (user) {
             this.setState(userToState(user));
         }
     }
@@ -137,7 +150,7 @@ class Settings extends Component {
         if (!state.birthdate) {
             message[5] = 'Wprowadź datę urodzenia';
         }
-        if (!state.account_number) {
+        if (!state.account_number || !RegexHelper.account.test(state.account_number)) {
             message[6] = 'Wpisz numer konta, na które będziesz otrzymywał wpłaty';
         }
         if (!state.email || !RegexHelper.email.test(state.email)) {
@@ -147,8 +160,19 @@ class Settings extends Component {
         if (state.invoice_email && !RegexHelper.email.test(state.invoice_email)) {
             message[8] = 'Nieprawidłowy format E-maila do faktur';
         }
+
+        this.setState({ message }, () => {
+            let messages = document.querySelectorAll('.ProfileSettings .validation-message');
+            for (let i = message.length - 1; i >= 0; i--) {
+                if (messages[i].innerHTML.length) {
+                    messages[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return message.length === 0;
+                }
+            }
+        });
         
-        this.setState({ message });
+        window.scrollTo({ top: 0, behavior: 'smooth'});
+
         return message.length === 0;
     }
     

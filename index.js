@@ -23,6 +23,7 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
+require('./routes/dbRoutes')(app);
 require('./routes/flashRoutes')(app);
 require('./routes/authRoutes')(app);
 require('./routes/userRoutes')(app);

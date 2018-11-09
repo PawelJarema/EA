@@ -89,7 +89,7 @@
 }
 
 .AuctionList {
-    margin: var(--page-margin);
+    width: 100%;
 }
 
 .AuctionList .auction {
@@ -97,18 +97,39 @@
     margin-bottom: 30px;
 }
 
-.AuctionList .auction .image-wrapper {
+.image-wrapper {
     position: relative;
+    overflow: hidden;
+}
 
+.AuctionList .auction .image-wrapper {
     height: 220px;
     width: 300px;
 
     margin-right: calc(var(--page-margin) / 2);
-
-    overflow: hidden;
 }
+.no-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+}
+.no-image:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    transform: translateX(-50%) translateY(-50%);
 
+    font-family: 'Material Icons';
+    font-size: 40px;
+    content: 'image_search';
+    display: block;
+    color: white;
+
+}
 .AuctionList .auction img {
+    max-width: 300px;
     max-height: 420px;
 }
 
@@ -123,33 +144,36 @@
     margin-bottom: 10px;
     font-size: 30px;
 }
-.AuctionList .auction .text div {
-    margin-bottom: 30px;
+.AuctionList .auction .text .short-description {
+    margin-bottom: 20px;
 }
-.AuctionList .auction .text .price {
+.AuctionList .auction .text .price, .price {
     color: var(--orange);
     font-size: 20px;
+    font-weight: 400;
 }
-.AuctionList .auction .text .value:after {
+.price > .value {
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+.AuctionList .auction .text .value:after, .price > .value:after {
     content: ' zł';
 }
 
 .AuctionList .auction .actions {
-    position: relative;
-    flex-grow: 1;
-    
-    display: none;
+    position: relative;    
+    opacity: 0;
 }
 .AuctionList .auction:hover .actions {
-    display: block;
+    opacity: 1;
 }
 .AuctionList .auction .actions div {
-    position: absolute;
-    bottom: 50px;
+   margin-top: 10px;
 }
 .AuctionList .auction .actions i {
-    margin-right: 15px;
-    color: var(--hot-orange);
+    margin-left: 0px;
     cursor: pointer;
 }
 
@@ -161,6 +185,10 @@
     border: 1px solid #ccc;
 }
 
+.AuctionList .auction .actions button {
+    margin-left: 0;
+}
+
 .AuctionList .auction .actions button:hover {
     background: var(--orange);
     border: 1px solid white;
@@ -169,4 +197,127 @@
 
 .public-DraftStyleDefault-block {
 
+}
+
+.AuctionDetails {
+}
+
+.AuctionDetails .basic-info {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.AuctionDetails .basic-info .photos {
+    flex: 0 0 55%;
+}
+
+.AuctionDetails .basic-info .text {
+    flex: 0 0 45%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+.AuctionDetails .basic-info .text h1, .AuctionDetails .basic-info .text p {
+    margin-bottom: 30px;
+}
+.AuctionDetails .photos .photo-big, .AuctionDetails .photos .image-wrapper {
+    width: 100%;
+    height: 600px;
+}
+.AuctionDetails .photos .photo-big img {
+    max-width: 100%;
+}
+.AuctionDetails .text input {
+    height: var(--input-h);
+    border: 1px solid #eee;
+    border-right: none;
+    padding: 0 30px;
+}
+.AuctionDetails .text button[type='submit'] {
+    height: calc(var(--input-h) + 2px);
+    padding: 0 30px;
+    background: #f0f0f0;
+    border: 1px solid #eee;
+    border-left: none;
+    cursor: pointer;
+    vertical-align: top;
+}
+.AuctionDetails .text button[type='submit'] i {
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+.AuctionDetails .image-wrapper { 
+    margin-right: 50px;
+}
+.AuctionDetails .text {
+    margin-left: 50px;
+}
+.AuctionDetails .photo-big .no-image {
+    height: 600px;
+}
+
+.AuctionDetails .attribute-tags {
+    padding: 10px 0;
+}
+
+.AuctionDetails .attribute-tags .attribute {
+    font-size: 12px;
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    margin-right: 5px;
+}
+
+.AuctionDetails .attribute-tags .attribute > span {
+    text-transform: capitalize;
+    display: inline-block;
+    margin-left: 5px;
+}
+.AuctionDetails .text .price {
+    margin-bottom: 5px;
+}
+.AuctionDetails .attribute-tags .attribute > span:before {
+    content: '\: ';
+}
+
+.pagination-wrapper {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 30px;
+}
+.pagination {
+    position: absolute;
+
+    max-width: 100%;
+    top: 50%;
+    left: 50%;
+
+    transform: translateX(-50%) translateY(-50%);
+}
+.pagination > a {
+    margin: 0 5px;
+    cursor: pointer;
+}
+.pagination > a.active {
+    font-weight: bold;
+    color: var(--link-blue);
+}
+
+.no-result i {
+    font-size: 70px;
+}
+.no-result h1 {
+    margin-bottom: 20px;
+} 
+.no-result div {
+
+}
+.no-result {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-top: 30px;
 }
