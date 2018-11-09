@@ -67,7 +67,7 @@ class ProfileLinks extends Component {
         return (
             <div className="links">
                 <Link className={ active === 'settings' ? 'active' : null } to="/konto/ustawienia">Ustawienia konta</Link>
-                <a href="#" onClick={toggleOpen}>Aukcje, w których kupuję</a>
+                <a href="#" onClick={toggleOpen}>Moje licytacje</a>
                 <div className="dropdown">
                     <a href="#">Bieżące</a>
                     <a href="#">Zakończone</a>
@@ -78,6 +78,7 @@ class ProfileLinks extends Component {
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję</Link>
                     <a href="#">Bieżące</a>
                     <a href="#">Zakończone</a>
+                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Ustaw opcje dostaw</Link>
                 </div>
                 <a href="#">Opinie</a>
                 <a href="#">Wiadomości</a>
@@ -289,10 +290,86 @@ class Settings extends Component {
     }
 }
 
+class Delivery extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { deliveries: 1 };
+        this.addDelivery = this.addDelivery.bind(this);
+
+    }
+
+    addDelivery() {
+        const div = document.createElement('div');
+        const name = document.createElement('input');
+        const price = document.createElement('input');
+
+
+        name.type = 'text';
+        name.name = `delivery_${this.state.deliveries + 1}`;
+        name.placeholder = "Nazwa przewoźnika";
+        price.type = 'number';
+        price.name = name.name;
+        price.placeholder = "Cena dostawy";
+
+        div.appendChild(name);
+        div.appendChild(price);
+        this.deliveriesRef.appendChild(div);
+
+        this.setState(prev => ({ deliveries: prev.deliveries + 1 }));
+    }
+
+    submit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this.formRef);
+        this.props.postDeliveries(formData);
+    }
+
+    render() {
+        return (
+            <div className="Profile Delivery">
+                <ProfileLinks active="auctiondelivery"/>
+                {
+                    this.props.user === null ? <Progress /> 
+                    :
+                    (<form ref={ (e) => this.formRef = e } className="user-settings" action="/user/delivery" method="post">
+                        <h1>Metody dostawy towaru</h1>
+                        <ol>
+                            <li>Określ sposoby dostawy sprzedawanych towarów</li> 
+                            <li>Podaj ceny, które naliczysz za wysyłkę</li> 
+                            <li>Wzbogać listę przewoźników, aby uatrakcyjnić swoją ofetrę</li>
+                        </ol>
+                        <br /><br />
+                        <fieldset>
+                            <legend><i className="material-icons">local_shipping</i>Przewoźnicy</legend>
+                            <p ref={ (e) => this.deliveriesRef = e } className="deliveries">
+                                <div>
+                                    <input name="delivery_1" type="text" placeholder="Nazwa przewoźnika"/>
+                                    <input name="delivery_1" type="number" placeholder="Cena dostawy" min="1" step="0.01" />
+                                </div>
+                            </p>
+                            <p>
+                                <span className="label add" onClick={this.addDelivery}><i className="material-icons">add_circle_outline</i>Dodaj metodę dostawy</span>
+                            </p>
+
+                            <br />
+                            <button type="submit" onClick={this.submit}>Zapisz</button>
+                        </fieldset>
+
+
+                    </form>)
+                }
+            </div>
+        )
+    }
+}
+
 function mapUserStateToProps({ user }) {
     return { user };
 }
 
 Settings = connect(mapUserStateToProps, profileActions)(Settings);
+Delivery = connect(mapUserStateToProps, profileActions)(Delivery);
 
-export { ProfileLinks, Settings, CreateUpdateAction };
+export { ProfileLinks, Settings, CreateUpdateAction, Delivery };

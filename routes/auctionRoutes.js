@@ -196,6 +196,10 @@ module.exports = app => {
                 current_price: 0,
                 hide_min_price: data.hide_min_price === 'on'
             },
+            date: {
+                start_date: new Date().getTime(),
+                duration: data.duration
+            },
             likes: 0,
             quantity: data.quantity,
             photos: [],

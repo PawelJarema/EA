@@ -5,6 +5,7 @@ import flashReducer from './flashReducer';
 import authReducer from './authReducer';
 import auctionReducer from './auctionReducer';
 import statisticReducer from './statisticReducer';
+import otherUserReducer from './otherUserReducer';
 
 export default combineReducers({
    user: userReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
    flash: flashReducer,
    emails: authReducer,
    auctions: auctionReducer,
-   auction_count: statisticReducer
+   auction_count: statisticReducer,
+   other_user: otherUserReducer
 });

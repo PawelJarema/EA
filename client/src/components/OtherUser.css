@@ -1,0 +1,87 @@
+.OtherUser .user-data {
+	display: flex;
+}
+
+
+.OtherUser .user-data .column {
+	margin: 20px;
+}
+
+.OtherUser .user-data .stars {
+	margin-bottom: 5px;
+}
+.OtherUser .user-data .stars i {
+	position: relative;
+	top: -3px;
+	color: var(--orange);
+}
+.OtherUser .user-data .name {
+	font-weight: bold;
+}
+.OtherUser .user-data .city {
+	font-weight: 100;
+	letter-spacing: 1px;
+	font-size: 17px;
+	margin-bottom: 10px;
+}
+.OtherUser .user-data .stats p {
+	display: table;
+}
+.OtherUser .user-data .column:nth-child(n + 2) {
+	padding-top: 15px;
+}
+.OtherUser .user-data .stats p span {
+	min-width: 80px;
+	display: table-cell;
+	font-size: 14px;
+}
+
+.OtherUser .user-data .stats p span:nth-child(n + 2) {
+	min-width: 40px;
+}
+.OtherUser .user-data .stats p span:nth-child(2) {
+	min-width: 30px;
+	text-align: right;
+}
+.OtherUser .user-data .stats p span:nth-child(3) {
+	min-width: 10px;
+	text-align: center;
+}
+
+.OtherUser .user-data .stats .bad {
+	color: var(--bad);
+}
+
+.OtherUser .user-data .stats .good {
+	color: var(--good);
+}
+
+.OtherUser .user-data .actions {
+	display: flex;
+	align-items: center;
+}
+
+.OtherUser .with-us {
+	font-size: 14px;
+}
+
+.OtherUser .auctions {
+	padding: 20px;
+}
+
+.OtherUser .auction {
+	display: block;
+	margin: 10px 0;
+}
+.OtherUser .auction:hover {
+	color: var(--link-blue);
+}
+.OtherUser .auction .lp {
+	font-size: 17px;
+	margin-right: 10px;
+}
+
+.OtherUser .auction .description {
+	font-size: 14px;
+	margin-left: 20px;
+}

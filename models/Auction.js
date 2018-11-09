@@ -31,7 +31,10 @@ const auctionSchema = new Schema({
         sub: String
     },
     bids: [bidSchema],
-    verified: Boolean
+    verified: Boolean,
+    ended: Boolean,
+    paid: Boolean,
+    rated: Boolean
 });
 
 mongoose.model('auction', auctionSchema);

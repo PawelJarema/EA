@@ -15,3 +15,10 @@ export const newAuction = (formData) => async dispatch => {
     
     dispatch({ type: FETCH_MESSAGE, payload: message_res.data });
 }
+
+export const postDeliveries = (formData) => async dispatch => {
+    const res = await axios.post('/user/delivery', formData);
+    const message_res = await axios.get('/api/flash_message');
+    
+    dispatch({ type: FETCH_MESSAGE, payload: message_res.data });
+}

@@ -15,6 +15,8 @@ button {
     --hot-orange: rgb(249,65,18);
     --facebook: rgb(52,81,163);
     --linkedin: rgb(13,98,166);
+    --good: #4BB543;
+    --bad: #FF0523;
 
     --link-blue: #009bff;
     
@@ -37,6 +39,31 @@ a {
 
 i {
     vertical-align: middle;
+}
+
+button.standard-button {
+    margin: 0 5px;
+    min-height: 37px;
+    padding: 0 40px;
+    cursor: pointer;
+    
+    border: 1px solid #ccc;
+    vertical-align: middle;
+}
+
+button.standard-button:hover {
+    background: var(--orange);
+    border: 1px solid white;
+    color: white;
+}
+button.standard-button i {
+    position: relative;
+    top: -1.5px;
+    font-size: 16px;
+    margin-right: 5px;
+    opacity: .9;
+
+    padding: 0;
 }
 
 nav {

@@ -9,15 +9,58 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 const Mailer = require('../services/Mailer');
+const Business = require('../services/emailTemplates/business');
 
 module.exports = app => {
+    app.get('/api/password/:email', async (req, res) => {
+        const email = req.params.email;
+
+        const randomPass = (length) => {
+            const chars = 'abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ1234567890._-'.split('');
+            let password = '';
+
+            for (let i = 0; i < length; i++) {
+                password += chars[parseInt(Math.random() * (chars.length - 1))];
+            }
+
+            return password;
+        }
+
+        const user = await User.findOne({ 'contact.email': email });
+
+        if (!user) {
+            req.session.error = 'Nieprawidłowy adres email';
+            res.redirect('/konto/zaloguj');
+        }
+
+        const temp_password = randomPass(30);
+        await bcrypt.hash(temp_password, saltRounds, async (err, hash) => {
+            if (err) {
+                req.session.error = 'Nastąpił nieoczekiwany błąd. Spróbuj później';
+                res.redirect('/konto/zaloguj');
+            }
+
+            user.security.password = hash;
+
+            const recipients = [{ email }];
+            const subject = "Hasło tymczasowe do serwisu " + Business.name;
+            const mailer = new Mailer({ subject, recipients }, require('../services/emailTemplates/remindPasswordTemplate')(temp_password));
+            await mailer.send();
+            
+            req.session.message = "Na podany E-mail zostało wysłane hasło tymczasowe. Po zalogowaniu możesz je zmienić w Ustawieniach";
+            
+            await user.save();
+
+            res.redirect('/konto/zaloguj');
+        });
+
+    }); 
+
     app.post('/auth/login', async (req, res) => {
         let email = req.body.email;
         let password = req.body.password;
         
         const user = await User.findOne({ 'contact.email' : email });
-
-        console.log(email, password, user);
         
         if (!user) {
             req.session.error = "Nie znaleziono użytkownika";
@@ -39,7 +82,7 @@ module.exports = app => {
                         }
                     });  
                 } else {
-                    req.session.error = "Hasła nie zgadzają się";
+                    req.session.error = "Nieprawidłowe hasło";
                     res.redirect('/konto/zaloguj');
                 }
             }
@@ -71,7 +114,7 @@ module.exports = app => {
             
             let id = newUser._id;
             let recipients = [{ email }];
-            let subject = "Witamy w serwisie E-Aukcje.pl!";
+            let subject = `Witamy w serwisie ${Business.name}!`;
 
             const mailer = new Mailer({ subject, recipients }, require('../services/emailTemplates/verifyEmailTemplate')(id));
             await mailer.send();
@@ -88,7 +131,7 @@ module.exports = app => {
         let user = await User.findOne({ _id: ObjectId(id) });
         user.security.verified = true;
         await user.save().then(() => {
-            req.session.message = "E-mail został zatwierdzony. Witamy w serwisie E-Aukcje!";
+            req.session.message = 'E-mail został zatwierdzony. Witamy w serwisie ' + Business.name;
             res.redirect('/');
         }, (err) => {
             req.session.error = "Coś poszło nie tak. Spróbuj ponownie";

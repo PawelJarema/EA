@@ -10,7 +10,7 @@ import * as countActions from '../actions/statisticActions';
 
 import { AuctionList, AuctionDetails } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
-import { Settings, CreateUpdateAction } from './Profile';
+import { Settings, CreateUpdateAction, Delivery } from './Profile';
 
 
 
@@ -265,7 +265,9 @@ class AdvancedSearch extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { query: props.match.params.query, min: 0, max: 0, state: '*', sort: '*' };
+        const params = window.location.href.split(/[/||//]/).slice(7);
+
+        this.state = { query: props.match.params.query, min: params[0] || 0, max: params[1] || 0, state: params[2] || '*', sort: params[3] || '*' };
         
         this.handleInput = this.handleInput.bind(this);
     }
@@ -306,25 +308,25 @@ class AdvancedSearch extends Component {
                     <div>
                         <div className="label"><i className="material-icons">search</i>Stan</div>
                         <p>
-                            <input name="state" type="radio" value="nowe" onChange={this.handleInput}/><span className="label">Nowy</span>
+                            <input name="state" type="radio" value="nowe" checked={this.state.state === 'nowe'} onChange={this.handleInput}/><span className="label">Nowy</span>
                         </p>
                         <p>
-                            <input name="state" type="radio" value="uzywane" onChange={this.handleInput}/><span className="label">Używany</span>
+                            <input name="state" type="radio" value="uzywane" checked={this.state.state === 'uzywane'} onChange={this.handleInput}/><span className="label">Używany</span>
                         </p>
                         <p>
-                            <input name="state" type="radio" value="nd" onChange={this.handleInput}/><span className="label">Wszystkie</span>
+                            <input name="state" type="radio" value="nd" checked={this.state.state === 'nd'} onChange={this.handleInput}/><span className="label">Wszystkie</span>
                         </p>
                     </div>
                     <div>
                         <div className="label"><i className="material-icons">sort_by_alpha</i>Sortuj</div>
                         <p>
-                            <input name="sort" type="radio" value="tanie" onChange={this.handleInput}/><span className="label">od najtańszych</span>
+                            <input name="sort" type="radio" value="tanie" checked={this.state.sort === 'tanie'} onChange={this.handleInput}/><span className="label">od najtańszych</span>
                         </p>
                         <p>
-                            <input name="sort" type="radio" value="drogie" onChange={this.handleInput}/><span className="label">od najdroższych</span>
+                            <input name="sort" type="radio" value="drogie" checked={this.state.sort === 'drogie'} onChange={this.handleInput}/><span className="label">od najdroższych</span>
                         </p>
                         <p>
-                            <input name="sort" type="radio" value="alfabetycznie" onChange={this.handleInput}/><span className="label">alfabetycznie</span>
+                            <input name="sort" type="radio" value="alfabetycznie" checked={this.state.sort === 'alfabetycznie'} onChange={this.handleInput}/><span className="label">alfabetycznie</span>
                         </p>
                     </div>
                     <div>
@@ -377,6 +379,13 @@ class AuctionListSearch extends Component {
 }
 
 class App extends Component {
+  
+  componentWillReceiveProps(props) {
+    if (props.flash) {
+        setTimeout(this.props.fetchMessage, 5000);
+    }
+  }
+
   componentDidMount() {
       this.props.fetchCategories();
       this.props.fetchUser();
@@ -408,6 +417,7 @@ class App extends Component {
                     <Route path="/konto/ustawienia" component={ Settings } />
                     <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
                     <Route exact path="/aukcje/:id" component={ AuctionDetails } />
+                    <Route path="/konto/aukcje/dostawa" component={ Delivery } />
                 </div>
 
                 <footer>

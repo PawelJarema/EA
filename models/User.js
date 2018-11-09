@@ -9,6 +9,7 @@ const userSchema = new Schema({
     firstname: String,
     lastname: String,
     birthdate: Number,
+    joindate: Number,
     address: addressSchema,
     auth: {
         linkedinId: String,
@@ -48,7 +49,6 @@ const userSchema = new Schema({
         regon: String,
         address: addressSchema
     }
-    
 });
 
 mongoose.model('user', userSchema);

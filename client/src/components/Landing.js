@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Landing.css';
 import { connect } from 'react-redux';
 import * as authActions from '../actions/authActions';
+import Regex from '../services/regexHelper';
 
 class RegistrationPanel extends Component {
     render() {
@@ -25,12 +26,24 @@ class RegistrationPanel extends Component {
 // `
             
 class LoginLanding extends Component {
+    remind(event) {
+        event.preventDefault();
+
+        const email = this.emailRef.value;
+        if (!Regex.email.test(email)) {
+            alert('Wpisz email');
+            return;
+        }
+
+        window.location.href= '/api/password/' + email;
+    }
+
     render() {
         return (
             <RegistrationPanel title="Zaloguj się" className="login">
                 <form action="/auth/login" method="post">
                 <div className="email">
-                    <input name="email" type="email" placeholder="E-mail" />
+                    <input ref={(e) => this.emailRef = e} name="email" type="email" placeholder="E-mail" />
                     <input name="password" type="password" placeholder="Hasło" />
                     <span className="options">
                         <span>
@@ -40,7 +53,7 @@ class LoginLanding extends Component {
                             </label>
                         </span>
                         <span>
-                            <a href="#">Nie pamiętam hasła</a>
+                            <a href="#" onClick={this.remind.bind(this)}>Nie pamiętam hasła</a>
                         </span>
                     </span>
                 </div>

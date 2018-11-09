@@ -58,7 +58,8 @@ module.exports = app => {
         user.firstname = firstname || user.firstname;
         user.lastname = lastname || user.lastname;
         user.birthdate = birthdate ? parseInt(birthdate) : user.birthdate;
-        
+        user.joindate = user.joindate || new Date().getTime();
+
         if (!user.address) {
             user.address = {};
         }

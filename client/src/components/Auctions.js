@@ -6,6 +6,8 @@ import './Auctions.css';
 
 import { Link } from 'react-router-dom';
 import { ProfileLinks } from './Profile';
+import { Seller } from './OtherUser';
+
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 
@@ -35,6 +37,23 @@ class AuctionDetails extends Component {
         if (props.auctions) {
             this.setState({ auction: props.auctions });
         }
+    }
+
+    handleTab(event) {
+        event.preventDefault();
+        const link = event.target;
+        const tab = document.getElementById(link.href.split('#')[1]);
+
+        if (link.className.indexOf('active') === -1) {
+            let prev = document.querySelectorAll('.tab-view .active');
+            for (let i = 0, l = prev.length; i < l; i++) {
+                prev[i].className = prev[i].className.replace(/\s*active/g, '');
+            }
+
+            link.className += 'active';
+            tab.className += 'active';
+        }
+
     }
 
     submit(event) {
@@ -92,22 +111,31 @@ class AuctionDetails extends Component {
                             </div>
 
                             <div className="tab-view">
-                                <span>Informacje o tej aukcji</span>
                                 <div className="tab-controls">
-                                    <a href="#bids">Stan licytacji</a>
-                                    <a href="#owner">Właściciel</a>
-                                    <a href="#description">Opis przedmiotu</a>
-                                    <a href="#shipping">Metody dostawy i zwroty</a>
+                                    <a className="active"  href="#bids" onClick={this.handleTab}>Stan licytacji</a>
+                                    <a href="#description" onClick={this.handleTab}>Opis przedmiotu</a>
+                                    <a href="#seller" onClick={this.handleTab}>Sprzedawca</a>
+                                    <a href="#shipping" onClick={this.handleTab}>Metody dostawy i zwroty</a>
                                 </div>
                                 <div className="tab-content-area">
-                                    <div id="bids">
+                                    <div className="active" id="bids">
                                     </div>
                                     <div id="description">
-                                        <div className="html-description" dangerouslySetInnerHTML={{ __html: auction.description }}></div>
+                                        { 
+                                            auction.description && auction.description.length > 20 ? 
+                                            <div className="html-description" dangerouslySetInnerHTML={{ __html: auction.description }}></div> 
+                                            :
+                                            <div className="no-result">
+                                                <i className="material-icons">sentiment_dissatisfied</i>
+                                                <h1>Brak dodatkowych informacji</h1>
+                                                <p>Sprzedawca nie dodał opisu rozszerzonego.<br />Zadaj pytanie o przedmiot w zakładce 'Sprzedawca'</p>
+                                            </div>
+                                        }
                                     </div>
-                                    <div id="owner">
+                                    <div id="seller">
+                                        <Seller id={ auction._user } />
                                     </div>
-                                    <div id="shipping">
+                                    <div id="shipping">d
                                     </div>
                                 </div>
                             </div>
@@ -502,6 +530,13 @@ class CreateUpdateAction extends Component {
 
                     <fieldset>
                         <legend><i className="material-icons">edit_attributes</i>Atrybuty</legend>
+                        <p>
+                            <span className="label add-horizontal-margin">Stan przedmiotu:
+                                <input name="attribute_Stan" type="radio" value="nowy" checked /><span className="label">nowy</span>
+                        
+                                <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
+                            </span>
+                        </p>
                         <p>
                             <input name="quantity" type="number" placeholder="Ilość sztuk" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[3] }</span>

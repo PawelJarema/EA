@@ -175,3 +175,21 @@
     margin-top: 5px;
     height: 20px;
 }
+.Profile.Delivery ol li {
+    margin: 5px 0;
+    opacity: .8;
+}
+.Profile.Delivery form input[type='text'] {
+    width: 50%;
+}
+.Profile.Delivery form input[type='number'] {
+    border-left: none;
+    width: 17%;
+}
+.Profile.Delivery .deliveries {
+    display: flex;
+    flex-direction: column;
+}
+.Profile.Delivery .deliveries div {
+    width: 100%;
+}

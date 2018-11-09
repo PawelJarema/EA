@@ -280,6 +280,18 @@
     content: '\: ';
 }
 
+.add-horizontal-margin {
+    margin-left: 2px;
+}
+.add-horizontal-margin input {
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 12px;
+} 
+.add-horizontal-margin span {
+    margin-left: 4px;
+}
+
 .pagination-wrapper {
     position: relative;
     width: 100%;
@@ -321,3 +333,56 @@
     text-align: center;
     margin-top: 30px;
 }
+
+.tab-view {
+
+}
+
+.tab-view .tab-controls a {
+    display: inline-block;
+    padding: 10px 25px;
+    border: 1px solid #eee;
+
+    border-bottom: none;
+    background: #fcfcfc;
+}
+.tab-view .tab-controls a:not(:last-child) {
+    border-right: none;
+}
+.tab-view .tab-controls a.active {
+    position: relative;
+    background: white;
+    font-size: 19px;
+    bottom: -1px;
+    z-index: 3;
+}
+.tab-view .tab-content-area {
+    position: relative;
+    
+    padding: 10px;
+    border: 1px solid #eee;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+
+    min-height: 500px;
+    overflow-y: scroll; 
+}
+
+.tab-view .tab-content-area > div:first-child {
+    z-index: 1;
+}
+
+.tab-view .tab-content-area > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 20px);
+    height: calc(100% - 44px);
+    padding: 10px;
+    background: white;
+    color: black;
+}
+
+.tab-view .tab-content-area > div.active {
+    z-index: 2;
+};
