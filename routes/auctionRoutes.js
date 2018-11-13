@@ -25,10 +25,20 @@ module.exports = app => {
         res.send(auction);
     });
 
-    // app.get('/auction/count', async (req, res) => {
-    //     const count = await Auction.count({});
-    //     res.send(count);
-    // });
+    app.get('/auction/get_front_page_auctions', async (req, res) => {
+        const popular = await Auction.find(
+            {}, 
+            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }, 
+            { limit: 8, sort: { likes: 1, 'date.start_date': -1 } }
+        );
+        const newest = await Auction.find(
+            {},
+            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } },
+            { limit: 9, sort: { 'date.start_date': -1 } }
+        );
+
+        res.send({ popular, newest });
+    });
 
     app.get('/auction/get_all/:page/:per_page', async (req, res) => {
         const page = parseInt(req.params.page);

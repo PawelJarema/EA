@@ -6,6 +6,7 @@ import authReducer from './authReducer';
 import auctionReducer from './auctionReducer';
 import statisticReducer from './statisticReducer';
 import otherUserReducer from './otherUserReducer';
+import chatReducer from './chatReducer';
 
 export default combineReducers({
    user: userReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
    emails: authReducer,
    auctions: auctionReducer,
    auction_count: statisticReducer,
-   other_user: otherUserReducer
+   other_user: otherUserReducer,
+   chats: chatReducer
 });

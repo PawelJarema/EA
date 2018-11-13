@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { FETCH_AUCTIONS, FETCH_AUCTION } from './types';
 
+export const fetchFrontPageAuctions = () => async dispatch => {
+	const res = await axios.get('/auction/get_front_page_auctions');
+	dispatch({ type: FETCH_AUCTIONS, payload: res.data });
+}
+
 export const fetchAuctions = () => async dispatch => {
     const res = await axios.get('/auction/get_all');
     dispatch({ type: FETCH_AUCTIONS, payload: res.data });

@@ -85,3 +85,23 @@
 	font-size: 14px;
 	margin-left: 20px;
 }
+
+.Deliveries {
+	padding: 30px;
+}
+.Deliveries h1 {
+	margin-bottom: 10px;
+}
+.Deliveries h1 i {
+	position: relative;
+	top: -4px;
+
+	margin-right: 10px;
+	font-size: 40px;
+}
+.Deliveries .price {
+	color: black;
+}
+.Deliveries .price .value {
+	margin-left: 10px;
+}

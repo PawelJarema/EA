@@ -184,12 +184,33 @@
 }
 .Profile.Delivery form input[type='number'] {
     border-left: none;
-    width: 17%;
+    width: 18%;
+}
+.Profile.Delivery form .remove {
+    cursor: pointer;
+    margin-left: 8px;
+    padding-top: 2px;
+    font-size: 14px;
+    opacity: .2;
+}
+.Profile.Delivery form .remove:hover {
+    color: var(--hot-orange);
+    opacity: 1;
 }
 .Profile.Delivery .deliveries {
     display: flex;
     flex-direction: column;
 }
-.Profile.Delivery .deliveries div {
+.Profile.Delivery .deliveries > div {
+    position: relative;
     width: 100%;
+}
+.Profile.Delivery .deliveries > div:after {
+    position: absolute;
+    top: 24px;
+    left: 71%;
+    content: ' zł';
+    font-size: 12px;
+    color: var(--good);
+    opacity: 0.8;
 }

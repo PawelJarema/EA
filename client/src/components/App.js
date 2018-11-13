@@ -8,9 +8,10 @@ import * as categoryActions from '../actions/categoryActions';
 import * as flashActions from '../actions/flashActions';
 import * as countActions from '../actions/statisticActions';
 
-import { AuctionList, AuctionDetails } from './Auctions';
+import { AuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery } from './Profile';
+import Chat from './Chat';
 
 
 
@@ -143,6 +144,7 @@ class UserLinks extends Component {
             return (
                 <div className="user-links">
                     <a href="#">Moje aukcje</a>
+                    <Chat id={user._id} />
                     <span className="link">
                         <i className="material-icons">account_circle</i>
                         <div className="dropdown">
@@ -200,9 +202,9 @@ class CategoryLink extends Component {
         
         return (
             <div className="categories">
-                <a href="#"><strong>{category.name}</strong></a>
+                <Link to={`/aukcje/szukaj/${category.name}/*`}><strong>{category.name}</strong></Link>
                 {
-                    subcategories.map(subcategory => <a key={subcategory.name} href="#">{ subcategory.name }</a>)
+                    subcategories.map(subcategory => <Link key={subcategory.name} to={`/aukcje/szukaj/${subcategory.name}/*`}>{ subcategory.name }</Link>) //* */
                 }
             </div>
         );
@@ -382,7 +384,7 @@ class App extends Component {
   
   componentWillReceiveProps(props) {
     if (props.flash) {
-        setTimeout(this.props.fetchMessage, 5000);
+        setTimeout(this.props.clearMessage, 5000);
     }
   }
 
@@ -409,7 +411,7 @@ class App extends Component {
                 </header>
         
                 <div className="main-container">
-                    <Route exact path="/" component={ AuctionList } />
+                    <Route exact path="/" component={ FrontPage } />
                     <Route path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
                     <Route path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
                     <Route path="/konto/zarejestruj" component={ RegistrationLanding } />

@@ -2,16 +2,123 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
 import * as profileActions from '../actions/profileActions';
+import * as otherUserActions from '../actions/otherUserActions';
 import './Auctions.css';
 
 import { Link } from 'react-router-dom';
 import { ProfileLinks } from './Profile';
-import { Seller } from './OtherUser';
+import { Seller, Deliveries } from './OtherUser';
 
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 
 import Progress from './Progress';
+
+class Auction extends Component {
+    render() {
+        const auction = this.props.auction;
+
+        if (!auction)
+            return null;
+
+        return (
+            <Link to={'/aukcje/' + auction._id}>
+                <div className="auction">
+                    <div className="photo">
+                        {
+                            auction.photos[0] ? <RawImage data={auction.photos[0]} /> : <div className="no-image"></div>
+                        }
+                    </div>
+                    <div className="title">
+                        <h2>{auction.title}</h2>
+                    </div>
+                    <div className="description">
+                        <p>{auction.shortdescription}</p>
+                    </div>
+                    <div className="price-div">
+                        <span className="price">Cena: <span className="value">{auction.price.current_price || auction.price.start_price}</span></span>
+                    </div>
+                </div>
+            </Link>
+        );
+    }
+}
+
+class FrontPage extends Component {
+
+    componentDidMount() {
+        this.props.fetchFrontPageAuctions();
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.auctions) {
+        }
+    }
+
+    render() {
+        return (
+            <div className="FrontPage">
+                <div className="introduction">
+                    <h1>Witaj w serwisie E-Aukcje!</h1>
+                    <br/>
+                    <ol>
+                        <li>Obejrzyj ofertę. Aby licytować i sprzedawać przedmioty, zarejestruj się.</li>
+                        <li>Poznaj nasz system bezpiecznej obsługi płatności i zabezpieczeń przed nieuczciwymi sprzedwacami</li>
+                        <li>Wystawiaj opinie i rób mądre zakupy. Życzymy udanych transakcji!</li>
+                    </ol>
+                    <br/>
+                    <p>Zespół E-Aukcje.pl</p>
+                </div>
+
+                {
+                    this.props.auctions && this.props.auctions.popular && (
+                        <div className="most-popular">
+                            <h1><i className="material-icons">trending_up</i> Popularne</h1>
+                            <div className="two-third-column">
+                                <div className="column">
+                                    <Auction auction={this.props.auctions.popular[0]} />
+                                 </div>
+                                <div className="column">
+                                    <Auction auction={this.props.auctions.popular[1]} />
+                                </div>
+                            </div>
+                            <div className="six-column">
+                                {
+                                    this.props.auctions.popular.slice(2).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
+                                }
+                            </div>
+                        </div>
+                    )
+                }
+                
+                {
+                    this.props.auctions && this.props.auctions.newest && (
+                        <div className="new">
+                            <h1><i className="material-icons">new_releases</i> Najnowsze</h1>
+                            <div className="three-column">
+                                <div className="column">
+                                    <Auction auction={this.props.auctions.newest[0]} />
+                                </div>
+                                <div className="column">
+                                    <Auction auction={this.props.auctions.newest[1]} />
+                                </div>
+                                <div className="column">
+                                    <Auction auction={this.props.auctions.newest[2]} />
+                                </div>
+                            </div>
+                            <div className="six-column">
+                                {
+                                    this.props.auctions.newest.slice(3).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
+                                }
+                            </div>
+                        </div>
+                    )
+                }
+
+            </div>
+        )
+    }
+}
 
 class RawImage extends Component {
 
@@ -31,11 +138,13 @@ class AuctionDetails extends Component {
     componentDidMount() {
         const auction_id = this.props.match.params.id;
         this.props.fetchAuction(auction_id);
+        
     }
 
     componentWillReceiveProps(props) {
         if (props.auctions) {
             this.setState({ auction: props.auctions });
+            this.props.fetchOtherUser(props.auctions._user);
         }
     }
 
@@ -133,9 +242,10 @@ class AuctionDetails extends Component {
                                         }
                                     </div>
                                     <div id="seller">
-                                        <Seller id={ auction._user } />
+                                        <Seller auction={ auction } other_user={this.props.other_user} />
                                     </div>
-                                    <div id="shipping">d
+                                    <div id="shipping">
+                                        <Deliveries auction={ auction } other_user={this.props.other_user} />
                                     </div>
                                 </div>
                             </div>
@@ -599,9 +709,9 @@ function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
 
-
+FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-AuctionDetails = connect(mapAuctionsStateToProps, auctionActions)(AuctionDetails);
+AuctionDetails = connect(mapAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
-export { CreateUpdateAction, AuctionList, AuctionDetails };
+export { CreateUpdateAction, AuctionList, AuctionDetails, FrontPage };

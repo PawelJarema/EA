@@ -27,6 +27,7 @@ const userSchema = new Schema({
         current_credits: Number,
         account_number: String
     },
+    deliveries: [{ name: String, price: Number }],
     agreements: {
         rodo_1: Boolean,
         rodo_2: Boolean,

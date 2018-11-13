@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as otherUserActions from '../actions/otherUserActions';
 import './OtherUser.css';
+import Modal from './Modal';
 
 function withUsSince(millis) {
 	if (!millis) 
@@ -32,29 +33,91 @@ function withUsSince(millis) {
 	const isDays = parseInt((since - isYears * year - isMonths * month) / day);
 	const isHours = parseInt((since - isYears * year - isMonths * month - isDays * day) / hour);
 
-	return `${format(isYears, years)} ${format(isMonths, months)} ${format(isDays, days)} i ${format(isHours, hours)}`;
+	return `${format(isYears, years)} ${format(isMonths, months)} ${format(isDays, days)} ${format(isHours, hours)}`;
 }
 
-class Seller extends Component {
+class Deliveries extends Component {
 	constructor(props) {
 		super(props);
 		this.id = props.id;
 		this.state = {};
 	}
 
-	componentWillReceiveProps(props) {
-		if (props.user) {
-
-		}
-	}
-
 	componentDidMount() {
-		this.props.fetchOtherUser(this.id);
+		
 	}
 
 	render() {
 		const user = this.props.other_user;
 
+		return (
+			<div className="Deliveries">
+				{
+					user && user.deliveries && (
+						<div className="delivery-methods">
+							<h1><i className="material-icons">local_shipping</i>Dostawa</h1>
+							{
+								user.deliveries.map((delivery, index) => (
+									<div key={'delivery_' + index} className="delivery">
+										<span className="price">{delivery.name}<span className="value">{ delivery.price }</span></span>
+									</div>
+								))
+							}
+						</div>
+					)
+				}
+				{
+					!user || !user.deliveries && (
+						<div className="no-results">
+							<i className="material-icons">local_shipping</i>
+							<h1>Nie dodano metod dostawy</h1>
+							<p>Sprzedawca nie dodał metod dostawy. <br /> Zapytaj pytanie o wysyłkę w zakładce 'Sprzedawca'</p>
+						</div>
+					)
+				}
+			</div>
+		);
+	}
+}
+
+class Seller extends Component {
+	constructor(props) {
+		super(props);
+		this.state = { modal: false };
+		this.openModal = this.openModal.bind(this);
+		this.closeModal = this.closeModal.bind(this);
+		this.sendQuestion = this.sendQuestion.bind(this);
+	}
+
+	openModal() {
+		this.setState({ modal: true });
+	}
+
+	closeModal() {
+		this.setState({ modal: false });
+	}
+
+	sendQuestion(event) {
+		event.preventDefault();
+
+		const formData = new FormData(this.questionForm);
+		this.props.postQuestion(formData);
+		this.closeModal();
+		window.scrollTo(0, 0);
+	}
+
+	componentWillReceiveProps(props) {
+
+	}
+
+	componentDidMount() {
+		
+	}
+
+	render() {
+		const user = this.props.other_user;
+		const auction = this.props.auction;
+		
 		return (
 			<div className="OtherUser Seller">
 				{
@@ -85,10 +148,18 @@ class Seller extends Component {
 								</div>
 								<div className="column actions">
 									<div>
-										<button className="message standard-button"><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
+										<button className="message standard-button" onClick={this.openModal}><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
 										<button className="rate standard-button">Wystaw opinie</button>
 									</div>
 								</div>
+								<Modal title={ <span><span className="thin"><i className="material-icons">mail_outline</i>Zadaj pytanie: </span>{auction.title}</span> } open={this.state.modal} actions={ <button className="standard-button" type="submit" onClick={this.sendQuestion}>Wyślij</button> } close={this.closeModal}>
+                                    <form ref={(e) => this.questionForm = e}>
+                                        <textarea name="question" placeholder="Wpisz treść"></textarea>
+                                        <input name="title" type="hidden" value={auction.title} />
+                                        <input name="_id" type="hidden" value={user._id} />
+                                        <input name="_auction" type="hidden" value={auction._id} />
+                                    </form>
+                                </Modal>
 							</div>
 							<div className="auctions">
 								<h3>Aukcje sprzedawcy</h3>
@@ -113,6 +184,7 @@ function mapOtherUserStateToProps({ other_user }) {
 	return { other_user };
 }
 
+Deliveries = connect(mapOtherUserStateToProps, otherUserActions)(Deliveries);
 Seller = connect(mapOtherUserStateToProps, otherUserActions)(Seller);
 
-export { Seller };
+export { Seller, Deliveries };

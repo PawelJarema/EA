@@ -28,6 +28,43 @@ module.exports = app => {
         res.redirect('/');
     });
     
+    app.post('/user/delivery', [requireLogin, upload.any()], async (req, res) => {
+        const all = req.body;
+
+        let deliveries = [],
+            delivery = {};
+
+        for (let name in all) {
+            let value = all[name];
+
+            if (name.indexOf('delivery') !== -1) {
+                delivery.name = value;
+            } else {
+                delivery.price = parseInt(value);
+                deliveries.push(delivery);
+                delivery = {};
+            }
+        }
+
+        let user = await User.findOne({ _id: ObjectId(req.user._id)});
+
+        if (!user) {
+            req.session.error = 'Nastąpił błąd. Spróbuj ponownie później';
+        }
+
+        user.deliveries = deliveries.filter(d => d.name && d.price);
+
+        console.log(user.deliveries);
+
+        await user.save().then(() => {
+            req.session.message = 'Pomyślnie zapisano metody dostawy';
+        }, (err) => {
+            req.session.error = 'Zapis nie powiódł się. Spróbuj ponownie później';
+        });
+
+        res.send(user);
+    });
+
     app.post('/user/update', [requireLogin, upload.any()], async (req, res) => {     
        let r = req.body,
            firstname = r.firstname,

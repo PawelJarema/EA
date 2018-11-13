@@ -386,3 +386,96 @@
 .tab-view .tab-content-area > div.active {
     z-index: 2;
 };
+
+.FrontPage .most-popular  {
+
+}
+.FrontPage h1 > i {
+    position: relative;
+    top: -5px;
+    font-size: 40px;
+}
+.FrontPage .most-popular > h1, .FrontPage .new > h1 {
+    color: var(--orange);
+    font-size: 40px;
+    margin-top: 30px;
+}
+
+.two-third-column {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.two-third-column > .column:first-child {
+    --temp-width: calc(66% - var(--page-margin));
+    flex: 0 0 var(--temp-width);
+    margin-right: var(--page-margin);
+}
+.two-third-column > .column:last-child {
+    flex: 0 0 33%;
+}
+
+.three-column {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.three-column > .column {
+    --temp-width: calc(33% - 13.5px);
+    flex: 0 0 var(--temp-width);
+}
+.three-column > .column:not(:last-child) {
+    margin-right: 20px;
+}
+
+.six-column {
+    display: flex;
+    margin-top: 40px;
+    margin-bottom: 60px;
+}
+
+.six-column > .column {
+    --temp-width: calc(16.7% - 20px);
+    flex: 0 0 var(--temp-width);
+}
+.six-column > .column:not(:last-child) {
+    margin-right: 20px;
+} 
+.FrontPage .no-image {
+    min-height: 400px;
+}
+.FrontPage .auction {
+    cursor: pointer;
+}
+.FrontPage .auction .photo {
+    width: 100%;
+    min-height: 400px;
+}
+.FrontPage .title, .FrontPage .description {
+    margin: 10px 0;
+    max-width: 600px;
+}
+.FrontPage .six-column .title {
+    font-size: 9px;
+    margin-top: 10px;
+    padding: 0 2px;
+
+    opacity: 0.7;
+    
+}
+.FrontPage .six-column .column:hover .title {
+    opacity: 1;
+}
+.FrontPage .six-column .description {
+    font-size: 14px;
+    padding: 10px 0px;
+    display: none;
+}
+.FrontPage .six-column .price-div {
+    transform-origin: left;
+    transform: scale(.6);
+    display: none;
+}
+.FrontPage .six-column .photo, .FrontPage .six-column .no-image {
+    min-height: 190px;
+}

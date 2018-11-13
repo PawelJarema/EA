@@ -1,0 +1,88 @@
+.Chat {
+	display: inline-block;
+	cursor: pointer;
+}
+
+.Chat .chat-box {
+	position: fixed;
+	bottom: 1px;
+	right: 1px;
+
+	box-sizing: border-box;
+	width: 350px;
+	height: 300px;
+
+	background: white;
+	border: 1px solid #ccc;
+}
+.Chat .chat-box .chat-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: stretch;
+}
+.Chat .chat-box .chat {
+	font-weight: bold;
+	font-size: 18px;
+	padding: 10px 30px;
+}
+.Chat .chat-box .title {
+	flex: 0 0 28px;
+	align-self: flex-start;
+	width: 100%;
+	font-weight: bold;
+	font-size: 18px;
+	padding: 11px;
+	border-bottom: 1px solid #eee;
+}
+.Chat .chat-box i {
+	font-size: 28px;
+}
+.Chat .chat-box .title i {
+	margin-right: 10px;
+	color: var(--link-blue);
+}
+.Chat .chat-box .messages {
+	flex: 0 0 200px;
+
+	box-sizing: border-box;
+	padding: 30px;
+	overflow-y: scroll;
+}
+.Chat .chat-box .message {
+	width: 100%;
+}
+.Chat .chat-box .messages .mine {
+	text-align: right;
+}
+.Chat .chat-box .messages .his {
+	text-align: left;
+}
+.Chat .chat-box .actions {
+	display: flex;
+	justify-content: space-between;
+
+	width: 100%;
+	flex: 0 0 30px;
+	box-sizing: border-box;
+	align-self: flex-end;
+	width: 100%;
+	border-top: 1px solid #eee;
+}
+.Chat .chat-box .actions input {
+	box-sizing: border-box;
+	padding-left: 30px;
+	width: calc(100% - 80px);
+	height: 42px;
+}
+.Chat .chat-box .actions .icon-button {
+	display: inline-block;
+	padding: 10px 20px;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;
+	height: 100%;
+	cursor: pointer;
+}
+.Chat .chat-box .actions .icon-button:hover {
+	background: #fbfbfb;
+}

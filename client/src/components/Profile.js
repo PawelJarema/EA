@@ -78,7 +78,7 @@ class ProfileLinks extends Component {
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję</Link>
                     <a href="#">Bieżące</a>
                     <a href="#">Zakończone</a>
-                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Ustaw opcje dostaw</Link>
+                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Dostawa { this.props.user && (!this.props.user.deliveries || !this.props.user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
                 </div>
                 <a href="#">Opinie</a>
                 <a href="#">Wiadomości</a>
@@ -294,39 +294,67 @@ class Delivery extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { deliveries: 1 };
+        this.state = { deliveries: 1, data: [] };
         this.addDelivery = this.addDelivery.bind(this);
+        this.handleInput = this.handleInput.bind(this);
+        this.submit = this.submit.bind(this);
 
+        this.removeFunc = (event) => {
+            const button = event.target;
+            const input = button.previousSibling;
+            const index = parseInt(input.name.replace('price_', '')) - 1;
+
+            this.setState(prev => ({ deliveries: prev.deliveries - 1, data: prev.data.slice(0, index).concat(prev.data.slice(index + 1)) }));
+        };
+    }
+
+    componentWillMount() {
+        if (this.props.user && this.props.user.deliveries && !this.state.data.length) {
+            this.setState({ deliveries: this.props.user.deliveries.length, data: this.props.user.deliveries });
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.user && props.user.deliveries) {
+            this.setState({ deliveries: props.user.deliveries.length, data: props.user.deliveries });
+        }
     }
 
     addDelivery() {
-        const div = document.createElement('div');
-        const name = document.createElement('input');
-        const price = document.createElement('input');
-
-
-        name.type = 'text';
-        name.name = `delivery_${this.state.deliveries + 1}`;
-        name.placeholder = "Nazwa przewoźnika";
-        price.type = 'number';
-        price.name = name.name;
-        price.placeholder = "Cena dostawy";
-
-        div.appendChild(name);
-        div.appendChild(price);
-        this.deliveriesRef.appendChild(div);
-
         this.setState(prev => ({ deliveries: prev.deliveries + 1 }));
+    }
+
+    handleInput(event) {
+        const input = event.target;
+        const value = input.value;
+        const type = input.type === 'number' ? 'price' : 'name';
+        const index = parseInt(input.name.replace(/(price_)|(delivery_)/, '')) - 1;
+
+        const data = this.state.data;
+
+        if (!data[index]) {
+            data.push({ [type]: value });
+        } else {
+            data[index][type] = value;
+        }
+
+        this.setState({ data });
     }
 
     submit(event) {
         event.preventDefault();
+        if (this.state.deliveries < 1) {
+            alert('Dodaj chociaż jedną metodę dostawy');
+            return;
+        }
 
         const formData = new FormData(this.formRef);
         this.props.postDeliveries(formData);
     }
 
     render() {
+        const deliveries = this.state.data;
+
         return (
             <div className="Profile Delivery">
                 <ProfileLinks active="auctiondelivery"/>
@@ -344,10 +372,15 @@ class Delivery extends Component {
                         <fieldset>
                             <legend><i className="material-icons">local_shipping</i>Przewoźnicy</legend>
                             <p ref={ (e) => this.deliveriesRef = e } className="deliveries">
-                                <div>
-                                    <input name="delivery_1" type="text" placeholder="Nazwa przewoźnika"/>
-                                    <input name="delivery_1" type="number" placeholder="Cena dostawy" min="1" step="0.01" />
-                                </div>
+                                {
+                                    Array.from({ length: this.state.deliveries}, (v, k) => k + 1).map(index => (
+                                        <div key={'deliveries_' + index}>
+                                            <input name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput}/>
+                                            <input name={'price_' + (index)} type="number" placeholder="Cena dostawy" min="0" step="0.01" value={ this.state.data[index - 1] ? this.state.data[index - 1].price : null } onChange={this.handleInput}/>
+                                            <i className="material-icons remove" onClick={this.removeFunc}>remove_circle_outline</i>
+                                        </div>
+                                    ))
+                                }
                             </p>
                             <p>
                                 <span className="label add" onClick={this.addDelivery}><i className="material-icons">add_circle_outline</i>Dodaj metodę dostawy</span>
@@ -369,6 +402,7 @@ function mapUserStateToProps({ user }) {
     return { user };
 }
 
+ProfileLinks = connect(mapUserStateToProps)(ProfileLinks);
 Settings = connect(mapUserStateToProps, profileActions)(Settings);
 Delivery = connect(mapUserStateToProps, profileActions)(Delivery);
 

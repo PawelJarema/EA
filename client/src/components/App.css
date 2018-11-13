@@ -14,6 +14,7 @@ button {
     --orange: rgb(252,133,10);
     --hot-orange: rgb(249,65,18);
     --facebook: rgb(52,81,163);
+    --google: rgb(187,44,37);
     --linkedin: rgb(13,98,166);
     --good: #4BB543;
     --bad: #FF0523;
@@ -39,6 +40,11 @@ a {
 
 i {
     vertical-align: middle;
+}
+
+ul, ol {
+    position: relative;
+    left: 19px;
 }
 
 button.standard-button {
@@ -219,9 +225,11 @@ nav {
     font-size: 44px;
 }
 .user-links a:not(:first-child), .user-links span.link:not(:first-child) {
-    margin-left: 50px;
+    margin-left: 20px;
 }
-
+.user-links .Chat {
+    margin-left: 20px;
+}
 .user-links a, .user-links span.link {
     position: relative;
     cursor: pointer;
@@ -467,4 +475,16 @@ strong {
 }
 .AuctionListSearch .advanced-search .item:hover {
     color: var(--link-blu);
-};
+}
+
+.orange {
+    color: var(--orange);
+}
+
+.transparent {
+    opacity: .5;
+}
+
+.thin {
+    font-weight: 100;
+}

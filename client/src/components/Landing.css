@@ -113,6 +113,9 @@
 .facebook {
     background: var(--facebook);
 }
+.google {
+    background: var(--google);
+}
 .linkedin {
     background: var(--linkedin);
 }

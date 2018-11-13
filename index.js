@@ -23,6 +23,8 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
+require('./services/Chat')(app);
+
 require('./routes/dbRoutes')(app);
 require('./routes/flashRoutes')(app);
 require('./routes/authRoutes')(app);
@@ -30,6 +32,7 @@ require('./routes/userRoutes')(app);
 require('./routes/categoryRoutes')(app);
 require('./routes/auctionRoutes')(app);
 require('./routes/otherUserRoutes')(app);
+require('./routes/chatRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     console.log('in production');
