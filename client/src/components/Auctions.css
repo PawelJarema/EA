@@ -430,15 +430,6 @@
 .FrontPage .most-popular  {
 
 }
-.FrontPage .auction .photo {
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #ddd;
-}
-.FrontPage .auction .photo img {
-    max-height: 100%;
-}
 .FrontPage h1 > i {
     position: relative;
     top: -5px;
@@ -497,8 +488,16 @@
     cursor: pointer;
 }
 .FrontPage .auction .photo {
+    position: relative;
     width: 100%;
     min-height: 400px;
+    
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+.FrontPage .auction .photo img {
+    max-height: 100%;
 }
 .FrontPage .title, .FrontPage .description {
     margin: 10px 0;
