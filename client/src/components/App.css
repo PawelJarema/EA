@@ -30,6 +30,9 @@ button {
 body {
     padding-top: var(--nav-h);
     font-family: sans-serif;
+    min-width: 1450px;
+    max-width: 1700px;
+    margin: auto;
     font-weight: 100;
 }
 
@@ -238,6 +241,7 @@ nav {
 .user-links a .dropdown, .user-links span.link .dropdown {
     position: absolute;
     width: 190px;
+    right: -40px;
     
     border: 1px solid #eee;
     background: white;

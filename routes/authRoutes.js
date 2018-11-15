@@ -66,16 +66,19 @@ module.exports = app => {
             req.session.error = "Nie znaleziono użytkownika";
             res.redirect('/konto/zaloguj');
         }
-        
+
         await bcrypt.compare(password, user.security.password, (err, success) => {
             if (err) {
-                req.session.error = err;
+                req.session.error = "Brak hasła dla tego konta. Zaloguj się przez media społecznościowe w panelu 'Zarejestruj się'";
+                console.log(err);
                 res.redirect('/konto/zaloguj');
             } else {
                 if (success) {
                     req.login(user, function(err) {
                         if (err) {
-                            req.session.error = err;
+                            req.session.error = "Nastąpił błąd";
+                            console.log('err');
+                            res.redirect('/konto/zaloguj');
                         } else {
                             req.session.message = "Zalogowano pomyślnie";
                             res.redirect('/');
@@ -102,7 +105,8 @@ module.exports = app => {
         
         bcrypt.hash(password, saltRounds, async (err, hash) => {
             if (err) {
-                req.session.error = err;
+                req.session.error = 'Nastąpił bład';
+                console.log(err);
                 redirect('/konto/zarejestruj');
             }
             

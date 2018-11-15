@@ -17,22 +17,37 @@ const imageminGifsicle = require('imagemin-gifsicle');
 
 const Sharp = require('sharp');
 
+const currentUserId = (req) => {
+    if (req.user) {
+        return ObjectId(req.user._id);
+    } else {
+        return null;
+    }
+}
+
 module.exports = app => {
+    app.post('/auction/like/:id', requireLogin, async (req, res) => {
+        const id = req.params.id;
+        const auction = await Auction.findOne({ _id: ObjectId(id) });
+        auction.likes += 1;
+
+        auction.save();
+    });
+
     app.get('/auction/get/:id', async (req, res) => {
         const id = req.params.id;
-
         const auction = await Auction.findOne({ _id: ObjectId(id) });
         res.send(auction);
     });
 
     app.get('/auction/get_front_page_auctions', async (req, res) => {
         const popular = await Auction.find(
-            {}, 
+            { _user: { $ne: currentUserId(req) } }, 
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }, 
             { limit: 8, sort: { likes: 1, 'date.start_date': -1 } }
         );
         const newest = await Auction.find(
-            {},
+            { _user: { $ne: currentUserId(req) } },
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } },
             { limit: 9, sort: { 'date.start_date': -1 } }
         );
@@ -45,7 +60,11 @@ module.exports = app => {
         const per_page = parseInt(req.params.per_page) || 10;
 
         const count = await Auction.countDocuments({});
-        const auctions = await Auction.find({}, { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } }, { skip: (page-1) * per_page, limit: per_page}).lean();
+        const auctions = await Auction.find(
+            { _user: { $ne: currentUserId(req) } }, 
+            { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } }, 
+            { skip: (page-1) * per_page, limit: per_page}
+        ).lean();
         auctions.push(count);
 
         res.send(auctions);
@@ -57,7 +76,11 @@ module.exports = app => {
         const page = parseInt(req.params.page);
         const per_page = parseInt(req.params.per_page);
 
-        const mongo_query = { title: { $regex: query, $options: 'i' }, $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }] };
+        const mongo_query = { 
+            _user: { $ne: currentUserId(req) },
+            title: { $regex: query, $options: 'i' }, 
+            $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }] 
+        };
         const projection = { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
 
@@ -104,9 +127,8 @@ module.exports = app => {
                 sort = null;
         }
 
-        console.log(category, query, min, max, state, sort);
-
-        const mongo_query = { 
+        const mongo_query = {
+            _user: { $ne: currentUserId(req) },
             title: { 
                 $regex: query, $options: 'i' 
             }, 
@@ -184,7 +206,10 @@ module.exports = app => {
     });
 
     app.get('/auction/get_all', async (req, res) => {        
-        const auctions = await Auction.find({}, { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }).limit(10);
+        const auctions = await Auction.find(
+            { _user: { $ne: currentUserId(req) } },
+            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }
+        ).limit(10);
         res.send(auctions);
     });
     
@@ -203,7 +228,7 @@ module.exports = app => {
                 start_price: data.start_price,
                 min_price: data.min_price,
                 buy_now_price: data.buy_now_price,
-                current_price: 0,
+                current_price: data.start_price || 0,
                 hide_min_price: data.hide_min_price === 'on'
             },
             date: {

@@ -53,13 +53,15 @@ class Deliveries extends Component {
 		return (
 			<div className="Deliveries">
 				{
-					user && user.deliveries && (
+					(user && user.deliveries.length !== 0) && (
 						<div className="delivery-methods">
-							<h1><i className="material-icons">local_shipping</i>Dostawa</h1>
+							<h1><i className="material-icons">local_shipping</i>Metody dostawy</h1>
+							<p>Dostępne metody dostarczenia przedmiotu:</p>
+							<br />
 							{
 								user.deliveries.map((delivery, index) => (
 									<div key={'delivery_' + index} className="delivery">
-										<span className="price">{delivery.name}<span className="value">{ delivery.price }</span></span>
+										<span className="price">{index + 1}. {delivery.name}<span className="value">{ delivery.price }</span></span>
 									</div>
 								))
 							}
@@ -67,11 +69,11 @@ class Deliveries extends Component {
 					)
 				}
 				{
-					!user || !user.deliveries && (
-						<div className="no-results">
+					(!user || !user.deliveries.length) && (
+						<div className="no-result">
 							<i className="material-icons">local_shipping</i>
 							<h1>Nie dodano metod dostawy</h1>
-							<p>Sprzedawca nie dodał metod dostawy. <br /> Zapytaj pytanie o wysyłkę w zakładce 'Sprzedawca'</p>
+							<p>Sprzedawca nie dodał jeszcze metod dostawy. <br /> Zapytaj o wysyłkę w zakładce 'Sprzedawca'</p>
 						</div>
 					)
 				}
@@ -90,6 +92,11 @@ class Seller extends Component {
 	}
 
 	openModal() {
+		if (!this.props.user) {
+			alert('Aby zadać pytanie musisz się zalogować');
+			return;
+		}
+
 		this.setState({ modal: true });
 	}
 
@@ -101,17 +108,13 @@ class Seller extends Component {
 		event.preventDefault();
 
 		const formData = new FormData(this.questionForm);
+		const { user, other_user, socket } = this.props;
+		
 		this.props.postQuestion(formData);
 		this.closeModal();
-		window.scrollTo(0, 0);
-	}
-
-	componentWillReceiveProps(props) {
-
-	}
-
-	componentDidMount() {
 		
+		socket.emit('message_user', String(other_user._id));
+		window.scrollTo(0, 0);
 	}
 
 	render() {
@@ -147,10 +150,12 @@ class Seller extends Component {
 									</div>
 								</div>
 								<div className="column actions">
-									<div>
-										<button className="message standard-button" onClick={this.openModal}><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
-										<button className="rate standard-button">Wystaw opinie</button>
-									</div>
+									{
+										auction._user !== this.props.user._id && (<div>
+											<button className="message standard-button" onClick={this.openModal}><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
+											<button className="rate standard-button">Wystaw opinie</button>
+										</div>)
+									}
 								</div>
 								<Modal title={ <span><span className="thin"><i className="material-icons">mail_outline</i>Zadaj pytanie: </span>{auction.title}</span> } open={this.state.modal} actions={ <button className="standard-button" type="submit" onClick={this.sendQuestion}>Wyślij</button> } close={this.closeModal}>
                                     <form ref={(e) => this.questionForm = e}>

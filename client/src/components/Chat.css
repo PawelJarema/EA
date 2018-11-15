@@ -2,24 +2,99 @@
 	display: inline-block;
 	cursor: pointer;
 }
+.Chat .thread-container .title {
+	font-weight: 400 !important;
+}
+.Chat .thread-container .title:not(:last-child) {
 
+}
+
+.Chat .thread-container .title i {
+	position: relative;
+	top: -1px;
+}
+
+.Chat .thread-container p:hover {
+	color: var(--link-blue);
+}
+.Chat .thread-container .chat:not(.unseen) {
+	font-weight: 100;
+}
+.Chat .title i {
+	vertical-align: top
+}
+.Chat .title .title-text {
+	padding-left: 2px;
+	display: inline-block;
+	width: 90%;
+}
+
+.Chat .no-mail {
+	text-align: center;
+	opacity: 0.3;
+}
+.Chat .close-chat-box {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	user-select: none;
+}
+.Chat .close-chat-box i {
+	color: var(--link-blue);
+	opacity: 0.3;
+}
+.Chat .close-chat-box i:hover {
+	opacity: 1;
+}
+.Chat .wrapper {
+	position: relative;
+}
+
+.Chat .unseen-messages {
+	display: block;
+	position: absolute;
+	right: -5px;
+	top: 10px;
+
+	color: var(--hot-orange);
+	font-size: 12px;
+	font-weight: bold;
+
+	width: 20px;
+	height: 20px;
+
+	border-radius: 50%;
+	border: 1px solid #999;
+
+	text-align: center;
+	line-height: 20px;
+	background: white;
+	pointer-events: none;
+}
+.Chat .chat i.new {
+	position: relative;
+	top: -1px;
+	left: 5px;
+	font-size: 24px;
+}
 .Chat .chat-box {
 	position: fixed;
 	bottom: 1px;
 	right: 1px;
 
 	box-sizing: border-box;
-	width: 350px;
-	height: 300px;
+	width: 450px;
+	height: 400px;
 
 	background: white;
 	border: 1px solid #ccc;
+	z-index: 5;
 }
 .Chat .chat-box .chat-container {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	align-items: stretch;
+	height: 100%;
 }
 .Chat .chat-box .chat {
 	font-weight: bold;
@@ -35,6 +110,17 @@
 	padding: 11px;
 	border-bottom: 1px solid #eee;
 }
+.Chat .chat-box .see-auction:hover {
+	color: var(--link-blue);
+}
+.Chat .chat-box .see-auction i {
+	margin-right: 4px !important;
+	vertical-align: bottom;
+	font-size: 19px;
+}
+.Chat .chat-box .see-auction:hover i {
+	display: inline-block;
+}
 .Chat .chat-box i {
 	font-size: 28px;
 }
@@ -43,27 +129,77 @@
 	color: var(--link-blue);
 }
 .Chat .chat-box .messages {
-	flex: 0 0 200px;
+	flex: 1 1 auto;
 
 	box-sizing: border-box;
-	padding: 30px;
+	padding: 30px 10px;
 	overflow-y: scroll;
+
+	position: relative;
+	bottom: 0;
+}
+.Chat .chat-box .messages .message-row {
+	width: 100%;
+	clear: both;
+	overflow: auto;
 }
 .Chat .chat-box .message {
-	width: 100%;
+	position: relative;
+	padding: 10px 15px;
+	margin: 2px;
+	border-radius: 7px;
+	line-height: 1.5;
+}
+.Chat .chat-box .message.mine, .Chat .chat-box .message.his {
+	
+	
 }
 .Chat .chat-box .messages .mine {
-	text-align: right;
+	float: right;
+	margin-right: 10px;
+	
+	background: #f9f0e0;
 }
+
 .Chat .chat-box .messages .his {
-	text-align: left;
+	float: left;
+	margin-left: 10px;
+	background: #d9f0f0;
+}
+.Chat .chat-box .messages .mine:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-left-color: #f9f0e0;
+	border-right: 0;
+	border-bottom: 0;
+	margin-top: -4px;
+	margin-right: -10px;
+}
+.Chat .chat-box .messages .his:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-right-color: #d9f0f0;
+	border-left: 0;
+	border-bottom: 0;
+	margin-top: -4px;
+	margin-left: -10px;
 }
 .Chat .chat-box .actions {
 	display: flex;
 	justify-content: space-between;
 
 	width: 100%;
-	flex: 0 0 30px;
+	flex: 0 0 45px;
 	box-sizing: border-box;
 	align-self: flex-end;
 	width: 100%;

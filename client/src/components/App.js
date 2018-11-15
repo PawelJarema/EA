@@ -13,6 +13,7 @@ import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery } from './Profile';
 import Chat from './Chat';
 
+import socketIOClient from 'socket.io-client';
 
 
 const ProductCategories = {
@@ -144,7 +145,7 @@ class UserLinks extends Component {
             return (
                 <div className="user-links">
                     <a href="#">Moje aukcje</a>
-                    <Chat id={user._id} />
+                    <Chat socket={ this.props.socket } id={user._id} />
                     <span className="link">
                         <i className="material-icons">account_circle</i>
                         <div className="dropdown">
@@ -175,7 +176,7 @@ class Navi extends Component {
             <nav>
                 <Logo />
                 <SearchField />
-                <UserLinks />
+                <UserLinks socket={ this.props.socket } />
             </nav>
         );
     }
@@ -381,10 +382,25 @@ class AuctionListSearch extends Component {
 }
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+        endpoint: process.env.REACT_APP_CHAT_URL, 
+        socket: null 
+    };
+  }
   
   componentWillReceiveProps(props) {
     if (props.flash) {
         setTimeout(this.props.clearMessage, 5000);
+    }
+    if (props.user && !this.state.socket) {
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+        socket.on("handshake", data => {
+            socket.emit("handshake", String(props.user._id));
+        });
+        this.setState({ socket });
     }
   }
 
@@ -393,8 +409,9 @@ class App extends Component {
       this.props.fetchUser();
       this.props.fetchMessage();
   }
-    
+
   render() {
+    const { socket } = this.state;
     const message = this.props.flash;
 
     return (
@@ -406,7 +423,7 @@ class App extends Component {
         <BrowserRouter>
             <div>
                 <header className="App-header" style={{ marginBottom: 30 }}>
-                    <Navi />
+                    <Navi socket={ socket } />
                     <Breadcrumbs />
                 </header>
         
@@ -418,7 +435,7 @@ class App extends Component {
                     <Route path="/konto/zaloguj" component={ LoginLanding } />
                     <Route path="/konto/ustawienia" component={ Settings } />
                     <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
-                    <Route exact path="/aukcje/:id" component={ AuctionDetails } />
+                    <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                     <Route path="/konto/aukcje/dostawa" component={ Delivery } />
                 </div>
 
@@ -436,7 +453,9 @@ class App extends Component {
 function mapUserStateToProps({ user }) {
     return { user };
 }
-
+function mapUserAndFlashStatesToProps({ user, flash }) {
+    return { user, flash };
+}
 function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
@@ -449,4 +468,4 @@ function aggregateProps({ user, categories, flash }) {
     return { user, categories, flash };
 }
 
-export default connect(mapFlashToProps, { ...userActions, ...categoryActions, ...flashActions })(App);
+export default connect(mapUserAndFlashStatesToProps, { ...userActions, ...categoryActions, ...flashActions })(App);

@@ -5,12 +5,21 @@
     font-weight: bold;
 }
 .Profile .links {
+    display: flex;
+    flex-direction: column;
+    height: 0%;
+
     font-size: 18px;
     padding: 20px;
     margin-right: var(--page-margin);
     
-    max-height: 300px;
+
     background: #f0f0f0;
+}
+.Profile .links i {
+    position: relative;
+    top: -1px;
+    font-size: 18px;
 }
 .Profile .links > a {
     display: block;
@@ -174,6 +183,9 @@
     width: 100%;
     margin-top: 5px;
     height: 20px;
+}
+.Profile.Delivery ol {
+    left: 39px;
 }
 .Profile.Delivery ol li {
     margin: 5px 0;

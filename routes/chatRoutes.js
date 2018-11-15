@@ -7,12 +7,40 @@ const { ObjectId } = mongoose.Types;
 const multer = require('multer');
 const upload = multer();
 
+const getUnseenChats = async id => {
+	let chats = await Chat.find({ $or: [{ _user_1: id }, { _user_2: id }] }, {}, { sort: { date: -1 }, limit: 30 }).lean();
+
+	let unseen = 
+		chats.filter(chat => 
+			chat.messages.filter(message => String(message._to) === String(id) && message.seen !== true).length);
+
+	for (let i = 0; i < unseen.length; i++) {
+		const index = chats.indexOf(unseen[i]);
+		
+		chats[index].unseen = true;
+	}
+
+	chats.push(unseen.length || 0);
+
+	return chats;
+}
+
 module.exports = app => {
 	app.get('/chats/get_all', requireLogin, async (req, res) => {
 		const id = ObjectId(req.user._id);
-		const chats = await Chat.find({ $or: [{ _user_1: id }, { _user_2: id }] }, {}, { sort: { date: -1 }, limit: 30 });
+		res.send(await getUnseenChats(id));
+	});
 
-		res.send(chats);
+	app.post('/chats/chat_message', [requireLogin, upload.any()], async (req, res) => {
+		const message = req.body;
+
+		const chat = await Chat.findOne({ _id: message._chat });
+
+		delete message._chat;
+		chat.messages.push(message);
+		await chat.save();
+
+		res.send(await getUnseenChats(req.user._id))
 	});
 
 	app.post('/chats/message', [requireLogin, upload.any()], async (req, res) => {

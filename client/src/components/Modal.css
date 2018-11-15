@@ -10,7 +10,6 @@
 .Modal.open {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	align-items: stretch;
 }
 
@@ -35,7 +34,7 @@
 	font-size: 30px;
 }
 .Modal .content {
-	flex: 0 0 calc(100% - 130px);
+	flex: 1 1 auto;
 }
 .Modal .content form {
 	height: 100%;
@@ -60,6 +59,6 @@
 
 .Modal .actions {
 	display: flex;
-	padding: 10px 30px;
+	padding: 10px 5px;
 	justify-content: flex-end;
 }

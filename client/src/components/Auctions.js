@@ -131,7 +131,8 @@ class RawImage extends Component {
 class AuctionDetails extends Component {
     constructor(props) {
         super(props);        
-        this.state = { auction: '' };
+        this.state = { auction: '', photo: 0 };
+        this.seePhoto = this.seePhoto.bind(this);
         this.submit = this.submit.bind(this);
     }
 
@@ -146,12 +147,20 @@ class AuctionDetails extends Component {
             this.setState({ auction: props.auctions });
             this.props.fetchOtherUser(props.auctions._user);
         }
+        if (props.match.params.id !== this.props.match.params.id) {
+            this.setState({ auction: null }, () => this.props.fetchAuction(props.match.params.id));
+        }
+    }
+
+    seePhoto(index) {
+        this.setState(prev => ({ photo: prev.photo <= index ? index + 1 : index }));
     }
 
     handleTab(event) {
         event.preventDefault();
         const link = event.target;
         const tab = document.getElementById(link.href.split('#')[1]);
+        const view_area = tab.parentNode;
 
         if (link.className.indexOf('active') === -1) {
             let prev = document.querySelectorAll('.tab-view .active');
@@ -163,6 +172,7 @@ class AuctionDetails extends Component {
             tab.className += 'active';
         }
 
+        tab.scrollIntoView({behavior: 'smooth', block: 'center'});
     }
 
     submit(event) {
@@ -173,7 +183,11 @@ class AuctionDetails extends Component {
     }
 
     render() {
-        const auction = this.state.auction;
+        const { auction } = this.state;
+        const { user, other_user } = this.props;
+
+        const active_photo = this.state.photo;
+        const thumbnails = auction ? auction.photos.slice(0, active_photo).concat(auction.photos.slice(active_photo + 1)) : null;
 
         return (
             <div className="AuctionDetails">
@@ -187,13 +201,24 @@ class AuctionDetails extends Component {
                                             {
                                                 auction.photos.length 
                                                 ?
-                                                <RawImage data={auction.photos[0]} />
+                                                <RawImage data={auction.photos[this.state.photo]} />
                                                 :
                                                 <div className='no-image'></div>
                                             }
                                         </div>
                                     </div>
                                     <div className="photos-small">
+                                        {
+                                            thumbnails.length 
+                                            ?
+                                            thumbnails.map((thumb, index) => (
+                                                <div key={"thumbnail_" + index} className="thumbnail-wrapper" onClick={() => this.seePhoto(index)}>
+                                                    <RawImage data={thumb} />
+                                                </div>
+                                            ))
+                                            :
+                                            null
+                                        }
                                     </div>
                                 </div>
 
@@ -210,10 +235,12 @@ class AuctionDetails extends Component {
                                         </p> 
                                         <div>
                                             <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
-                                            <form ref={ (e) => this.formRef = e } action="/auction/bid" method="post">
-                                                <input name="bid" placeholder="Kwota" min="5" step="1" />
-                                                <button type="submit" onClick={this.submit}><i className="material-icons">gavel</i>Podbij</button>
-                                            </form>
+                                            {
+                                                auction._user !== user._id && (<form ref={ (e) => this.formRef = e } action="/auction/bid" method="post">
+                                                    <input name="bid" placeholder="Kwota" min="5" step="1" />
+                                                    <button type="submit" onClick={this.submit}><i className="material-icons">gavel</i>Podbij</button>
+                                                </form>)
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -224,7 +251,7 @@ class AuctionDetails extends Component {
                                     <a className="active"  href="#bids" onClick={this.handleTab}>Stan licytacji</a>
                                     <a href="#description" onClick={this.handleTab}>Opis przedmiotu</a>
                                     <a href="#seller" onClick={this.handleTab}>Sprzedawca</a>
-                                    <a href="#shipping" onClick={this.handleTab}>Metody dostawy i zwroty</a>
+                                    <a href="#shipping" onClick={this.handleTab}>Metody dostawy</a>
                                 </div>
                                 <div className="tab-content-area">
                                     <div className="active" id="bids">
@@ -242,10 +269,10 @@ class AuctionDetails extends Component {
                                         }
                                     </div>
                                     <div id="seller">
-                                        <Seller auction={ auction } other_user={this.props.other_user} />
+                                        <Seller auction={ auction } other_user={other_user} user={user} socket={this.props.socket} />
                                     </div>
                                     <div id="shipping">
-                                        <Deliveries auction={ auction } other_user={this.props.other_user} />
+                                        <Deliveries auction={ auction } other_user={other_user} />
                                     </div>
                                 </div>
                             </div>
@@ -381,14 +408,14 @@ class AuctionList extends Component {
                                 </div>
                                 <div className="text">
                                     <h3>{ auction.title }</h3>
-                                    <div className="short-description">{auction.shortdescription }</div>
+                                    <div className="short-description">{auction.shortdescription}</div>
                                     <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
 
                                     <div className="actions">
                                         <div>
                                             <Link to={'/aukcje/' + auction._id }><button>Zobacz szczegóły</button></Link>
                                             <button>Licytuj</button>
-                                            <i className="material-icons" onClick={ (e) => { let icon = e.target.innerHTML; e.target.innerHTML = (icon === 'favorite' ? 'favorite_outline' : 'favorite'); } }>favorite_outline</i>
+                                            <i className="material-icons" onClick={ (e) => { if (e.target.innerHTML.indexOf('outline') !== -1) this.props.likeAuction(auction._id); e.target.innerHTML = 'favorite'; } }>favorite_outline</i>
                                         </div>
                                     </div>
                                 </div>
@@ -415,7 +442,7 @@ class AuctionList extends Component {
         );
     }
 };
-// dangerouslySetInnerHTML={{ __html: }}
+
 class CreateUpdateAction extends Component {
    constructor(props) {
        super(props);
@@ -475,6 +502,9 @@ class CreateUpdateAction extends Component {
     
     addAttribute() {
         let name = window.prompt('Podaj nazwę atrybutu', 'Rozmiar');
+
+        if (!name)
+            return;
         
         let input = document.createElement('input');
         input.name = 'attribute_' + name;
@@ -569,7 +599,6 @@ class CreateUpdateAction extends Component {
         if (allValid) {
             this.props.newAuction(formData);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            //this.formRef.reset();
         }
     }
     
@@ -709,9 +738,13 @@ function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
 
+function combineUserAndAuctionsStateToProps({ auctions, user}) {
+    return { auctions, user };
+}
+
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-AuctionDetails = connect(mapAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
+AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, AuctionDetails, FrontPage };

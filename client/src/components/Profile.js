@@ -73,15 +73,14 @@ class ProfileLinks extends Component {
                     <a href="#">Zakończone</a>
                     <a href="#">Wystaw sprzedawcy opinię</a>
                 </div>
-                <a href="#" className={(active.indexOf('auction') !== -1 ? ' open' : '')} onClick={toggleOpen}>Moje aukcje</a>
+                <a href="#" className={(active.indexOf('auction') !== -1 || !(this.props.user && this.props.user.deliveries && this.props.user.deliveries.length) ? ' open' : '')} onClick={toggleOpen}>Moje aukcje</a>
                 <div className="dropdown">
+                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Dostawa { this.props.user && (!this.props.user.deliveries || !this.props.user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję</Link>
                     <a href="#">Bieżące</a>
                     <a href="#">Zakończone</a>
-                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Dostawa { this.props.user && (!this.props.user.deliveries || !this.props.user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
-                </div>
+                                    </div>
                 <a href="#">Opinie</a>
-                <a href="#">Wiadomości</a>
                 <a href="#">Saldo</a>
             </div>
         );
