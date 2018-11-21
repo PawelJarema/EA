@@ -8,7 +8,7 @@ import * as categoryActions from '../actions/categoryActions';
 import * as flashActions from '../actions/flashActions';
 import * as countActions from '../actions/statisticActions';
 
-import { AuctionList, AuctionDetails, FrontPage } from './Auctions';
+import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery } from './Profile';
 import Chat from './Chat';
@@ -144,7 +144,7 @@ class UserLinks extends Component {
         if (user !== false && user !== null) {
             return (
                 <div className="user-links">
-                    <a href="#">Moje aukcje</a>
+                    <Link to="/moje-aukcje">Moje aukcje</Link>
                     <Chat socket={ this.props.socket } id={user._id} />
                     <span className="link">
                         <i className="material-icons">account_circle</i>
@@ -429,8 +429,12 @@ class App extends Component {
         
                 <div className="main-container">
                     <Route exact path="/" component={ FrontPage } />
-                    <Route path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
-                    <Route path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                    <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
+                    <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                    <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
+                    <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
+                    <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
+                    <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
                     <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
                     <Route path="/konto/zaloguj" component={ LoginLanding } />
                     <Route path="/konto/ustawienia" component={ Settings } />

@@ -23,7 +23,7 @@ class Modal extends Component {
 				<div className="content">
 					{ content }
 				</div>
-				<div className="actions">
+				<div className="actions dont-hide">
 					{ actions }<button className="standard-button" onClick={close}>Anuluj</button>
 				</div>
 			</div>

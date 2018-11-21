@@ -26,7 +26,7 @@
 .Chat .title .title-text {
 	padding-left: 2px;
 	display: inline-block;
-	width: 90%;
+	width: 80%;
 }
 
 .Chat .no-mail {
@@ -111,15 +111,18 @@
 	border-bottom: 1px solid #eee;
 }
 .Chat .chat-box .see-auction:hover {
-	color: var(--link-blue);
+	/*color: var(--link-blue);
+	font-weight: 100;*/
+	text-decoration: underline;
 }
 .Chat .chat-box .see-auction i {
+	display: none;
 	margin-right: 4px !important;
 	vertical-align: bottom;
-	font-size: 19px;
+	font-size: 25px;
 }
 .Chat .chat-box .see-auction:hover i {
-	display: inline-block;
+	color: var(--orange);
 }
 .Chat .chat-box i {
 	font-size: 28px;

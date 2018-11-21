@@ -73,8 +73,8 @@ module.exports = app => {
 			chat.messages.push(new_message);
 
 			await chat.save().then(
-				doc => req.session.message = 'Zadano pytanie',
-				err => req.session.error = 'Wystąpił błąd. Spróbuj później'
+				doc => { req.session.message = 'Zadano pytanie'; res.send(new_message); },
+				err => { req.session.error = 'Wystąpił błąd. Spróbuj później'; res.send(new_message); }
 			);
 		} else {
 			const chat = new Chat({ 
@@ -86,11 +86,9 @@ module.exports = app => {
 				messages: [new_message]
 			}).save()
 			.then(
-				doc => req.session.message = 'Zadano pytanie', 
-				err => req.session.error = 'Wystąpił błąd. Spróbuj później' 
+				doc => { req.session.message = 'Zadano pytanie'; res.send(new_message); }, 
+				err => { req.session.error = 'Wystąpił błąd. Spróbuj później'; res.send(new_message); }
 			);
 		};
-
-		res.send(new_message);
 	});
 };

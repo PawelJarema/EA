@@ -15,6 +15,10 @@
 	top: -3px;
 	color: var(--orange);
 }
+.OtherUser .user-data .stars i.bad {
+	opacity: .5;
+	
+}
 .OtherUser .user-data .name {
 	font-weight: bold;
 }

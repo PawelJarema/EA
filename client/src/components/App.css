@@ -30,8 +30,8 @@ button {
 body {
     padding-top: var(--nav-h);
     font-family: sans-serif;
-    min-width: 1450px;
-    max-width: 1700px;
+    min-width: 1600px;
+    max-width: 1800px;
     margin: auto;
     font-weight: 100;
 }
@@ -50,7 +50,8 @@ ul, ol {
     left: 19px;
 }
 
-button.standard-button {
+
+button.standard-button, .link-button{
     margin: 0 5px;
     min-height: 37px;
     padding: 0 40px;
@@ -60,12 +61,15 @@ button.standard-button {
     vertical-align: middle;
 }
 
-button.standard-button:hover {
+button.standard-button:hover, .link-button:hover {
     background: var(--orange);
     border: 1px solid white;
     color: white;
 }
-button.standard-button i {
+button.standard-button:hover i, .link-button:hover i {
+    color: white;
+}
+button.standard-button i, .link-button i {
     position: relative;
     top: -1.5px;
     font-size: 16px;
@@ -73,6 +77,16 @@ button.standard-button i {
     opacity: .9;
 
     padding: 0;
+}
+.link-button {
+    display: inline-block;
+    min-height: 34px;
+    font-size: 11px;
+    line-height: 34px;
+}
+.danger:hover {
+    color: white;
+    background: var(--hot-orange);
 }
 
 nav {

@@ -34,6 +34,8 @@ require('./routes/auctionRoutes')(app);
 require('./routes/otherUserRoutes')(app);
 require('./routes/chatRoutes')(app);
 
+require('./services/cronScheduleTaskService')(app);
+
 if (process.env.NODE_ENV === 'production') {
     console.log('in production');
     app.use(express.static('client/build'));

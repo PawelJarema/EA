@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
+import * as myAuctionActions from '../actions/myAuctionActions';
 import * as profileActions from '../actions/profileActions';
 import * as otherUserActions from '../actions/otherUserActions';
 import './Auctions.css';
@@ -11,6 +12,9 @@ import { Seller, Deliveries } from './OtherUser';
 
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
+import Modal from './Modal';
+
+import SinceHelper from '../helpers/sinceHelper';
 
 import Progress from './Progress';
 
@@ -55,21 +59,24 @@ class FrontPage extends Component {
         }
     }
 
+                    // <h1>Witaj w serwisie E-Aukcje!</h1>
+                    // <br/>
+                    // <ol>
+                    //     <li>Obejrzyj ofertę. Aby licytować i sprzedawać przedmioty, zarejestruj się.</li>
+                    //     <li>Poznaj nasz system bezpiecznej obsługi płatności i zabezpieczeń przed nieuczciwymi sprzedwacami</li>
+                    //     <li>Wystawiaj opinie i rób mądre zakupy. Życzymy udanych transakcji!</li>
+                    // </ol>
+                    // <br/>
+                    // <p>Zespół E-Aukcje.pl</p>
     render() {
         return (
             <div className="FrontPage">
                 <div className="introduction">
-                    <h1>Witaj w serwisie E-Aukcje!</h1>
-                    <br/>
-                    <ol>
-                        <li>Obejrzyj ofertę. Aby licytować i sprzedawać przedmioty, zarejestruj się.</li>
-                        <li>Poznaj nasz system bezpiecznej obsługi płatności i zabezpieczeń przed nieuczciwymi sprzedwacami</li>
-                        <li>Wystawiaj opinie i rób mądre zakupy. Życzymy udanych transakcji!</li>
-                    </ol>
-                    <br/>
-                    <p>Zespół E-Aukcje.pl</p>
+                    
                 </div>
-
+                {
+                    (!this.props.auctions || !this.props.auctions.popular) && <Progress />
+                }
                 {
                     this.props.auctions && this.props.auctions.popular && (
                         <div className="most-popular">
@@ -139,7 +146,6 @@ class AuctionDetails extends Component {
     componentDidMount() {
         const auction_id = this.props.match.params.id;
         this.props.fetchAuction(auction_id);
-        
     }
 
     componentWillReceiveProps(props) {
@@ -178,12 +184,29 @@ class AuctionDetails extends Component {
     submit(event) {
         event.preventDefault();
 
-        const formData = new FormData(this.formRef);
-        alert('send');
+        const auction = this.state.auction;
+        const formData = new FormData(this.formBidRef);
+        const bid_value = Number(this.bidInputRef.value);
+
+        if (!bid_value) {
+            alert('Podaj stawkę licytacji');
+            return;
+        } 
+        if (bid_value <= auction.price.current_price) {
+            alert('Musisz przebić obecną stawkę');
+            return;
+        }
+        if (bid_value > auction.price.current_price + 10 && auction.bids[0]._user === String(this.props.user._id)) {
+            const reply = window.confirm('Już prowadzisz w licytacji. Napewno chcesz podbić cenę ?');
+            if (!reply) return;
+        }
+
+        this.props.postBid(auction._id, formData);
     }
 
     render() {
         const { auction } = this.state;
+        const { bidders } = auction || { bidders: {} };
         const { user, other_user } = this.props;
 
         const active_photo = this.state.photo;
@@ -236,8 +259,8 @@ class AuctionDetails extends Component {
                                         <div>
                                             <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
                                             {
-                                                auction._user !== user._id && (<form ref={ (e) => this.formRef = e } action="/auction/bid" method="post">
-                                                    <input name="bid" placeholder="Kwota" min="5" step="1" />
+                                                auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
+                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota" min={auction.price.current_price + 1} step="1" />
                                                     <button type="submit" onClick={this.submit}><i className="material-icons">gavel</i>Podbij</button>
                                                 </form>)
                                             }
@@ -255,6 +278,24 @@ class AuctionDetails extends Component {
                                 </div>
                                 <div className="tab-content-area">
                                     <div className="active" id="bids">
+                                        {  
+                                            auction.bids.map((bid, index) => (
+                                                <p 
+                                                    key={'bid_' + index} 
+                                                    className={`bid${bidders[bid._user]._id === user._id ? ' me' : ''}`}
+                                                >
+                                                    {
+                                                        `${bidders[bid._user].firstname} ${bidders[bid._user].lastname} ${ 
+                                                            index === 0 
+                                                            ? 
+                                                            auction.price.current_price 
+                                                            :
+                                                            bid.price
+                                                        }` 
+                                                    }
+                                                </p>
+                                            ))
+                                        }
                                     </div>
                                     <div id="description">
                                         { 
@@ -308,6 +349,224 @@ class Pagination extends Component {
         )
     }
 }
+
+class RateAuction extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { modal: false, text: '', rate: 0 };
+
+        this.toggleModal = this.toggleModal.bind(this);
+        this.rate = this.rate.bind(this);
+    }
+
+    toggleModal() {
+        this.setState(prev => ({ modal: !prev.modal }));
+    }
+
+    rate() {
+        const { auction, clickHandler } = this.props;
+        const { text, rate } = this.state;
+
+        if (!text) {
+            alert('Wystaw opinię i wybierz ilość gwiazdek');
+            return;
+        }
+
+        if (!rate) {
+            alert('Wybierz ilość gwiazdek');
+            return;
+        }
+        
+        const data = {
+            date: new Date().getTime(),
+            _auction: auction._id,
+            _user: auction._user,
+            isseller: true,
+            isbuyer: false,
+            auction: auction.title,
+            rate,
+            text
+        };
+
+        clickHandler(data);
+        this.toggleModal();
+    }
+
+    render() {
+        const { modal, rate, text } = this.state;
+        const { auction } = this.props;
+
+        return (
+            <span className="rate-auction">
+                <a className="link-button" onClick={this.toggleModal}><i className="material-icons orange">star_outline</i>Wystaw opinię</a>
+                {
+                    modal && (
+                        <Modal 
+                            title={ <span><span className="thin"><i className="material-icons">star_outline</i></span><div className="title-text"><span className="thin">Wystaw opinię sprzedawcy: </span> {auction.title} </div></span> }
+                            open={ modal }
+                            close={ this.toggleModal }
+                            actions={ <button className="standard-button" type="submit" onClick={this.rate}><i className="material-icons">star_outline</i>Dodaj opinię</button> }
+                        >
+                            <textarea value={text} placeholder="Wystaw opinię" onChange={ (e) => this.setState({ text: e.target.value }) }/>
+                            <span className="rate-user">
+                                Wystaw notę: 
+                                {
+                                    [1,2,3,4,5].map(i => <i key={'rate_' + i} className="material-icons orange" onClick={ () => this.setState({ rate: i }) }>{ i <= rate ? 'star' : 'star_outline' }</i>)
+                                }
+                            </span>
+
+                        </Modal>
+                    )
+                }
+            </span>
+        );
+    }
+}
+
+class MyAuctionList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { page: 1, per_page: 10, pages: 1};
+        this.paginate = this.paginate.bind(this);
+        this.paginateTo = this.paginateTo.bind(this);
+        this.rateAuction = this.rateAuction.bind(this);
+        this.confirmDelete = this.confirmDelete.bind(this);
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.my_auctions) {
+            if (typeof props.my_auctions[props.my_auctions.length - 1] === 'number') {
+                this.setState(prev => ({ pages: Math.ceil(props.my_auctions.pop() / prev.per_page) }));
+            }
+        }
+    }
+
+    paginate(page, per_page) {
+        const { mode } = this.props;
+
+        switch (mode) {
+            case 'current_auctions':
+                this.props.paginate(page, per_page);
+                break;
+            case 'ended_auctions':
+                this.props.paginateEnded(page, per_page);
+                break;
+            case 'current_bids':
+                this.props.paginateBids(page, per_page);
+                break;
+            case 'ended_bids':
+                this.props.paginateEndedBids(page, per_page);
+                break;
+            default:
+                alert('unknown mode');
+        }
+    }
+
+    componentDidMount() {
+        const { mode, page, per_page } = this.state;
+        this.paginate(page, per_page);
+    }
+
+    paginateTo(page) {
+        const { per_page } = this.state;
+        this.setState(prev => ({ page }), 
+            () => this.paginate(page, per_page)
+        );
+    }
+
+    rateAuction(data) {
+        this.props.rateAuction(data);
+    }
+
+    confirmDelete(auction) {
+        if (auction.bids && auction.bids.length > 0) {
+            alert('Nie możesz usunąć aukcji, w której ktoś wziął udział');
+            return;
+        }
+
+        const confirm = window.confirm('Napewno usunąć tę aukcję ? Operacji nie da się odwrócić');
+        if (confirm) {
+            const { page, per_page } = this.state;
+            this.props.deleteAuctionThenFetchMyAuctions(auction._id, page, per_page);
+        }        
+    }
+
+    render() {
+        const { user, my_auctions } = this.props;
+        const { page, per_page, pages } = this.state;
+        const { mode } = this.props;
+        const day = 1000 * 60 * 60 * 24;
+     
+        return (
+            <div className="Profile MyAuctions">
+                <ProfileLinks active={mode} />
+                <div className="AuctionList">
+                    {
+                        pages > 1 && my_auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
+                    }
+                    {
+                        !my_auctions ? <Progress /> : my_auctions.map((auction, index) => (
+                            <div key={'my_auction_' + index} className="auction">
+                                <div className="image-wrapper">
+                                    { auction.photos.length ? <RawImage data={auction.photos[0]} /> : <div className="no-image"/> }
+                                </div>
+                                 <div className="text">
+                                    <h3>{ auction.title }</h3>
+                                    <div className="short-description">{auction.shortdescription}</div>
+                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
+                                    {
+                                       !auction.ended ? (<p className="time-details">
+                                            <i className="material-icons">access_alarm</i>
+                                            <span className="time-state"> 
+                                                do końca { SinceHelper((auction.date.start_date + day * auction.date.duration) - new Date().getTime()) }
+                                                <br />
+                                                <span className="bidders-state">{ (auction.bids && auction.bids.length ? `licytujący: ${auction.bids.length}` : 'nie licytowano') }</span>
+                                            </span>
+                                        </p>) : <span className="bidders-state">zakończona</span>
+                                    }
+                                    <div className="actions dont-hide">
+                                        <div>
+                                            <Link to={'/aukcje/' + auction._id }><button>Zobacz</button></Link>
+                                            {
+                                                mode === 'ended_bids' && auction.bids[0]._user === user._id && !auction.rated && <RateAuction auction={auction} clickHandler={this.rateAuction} />
+                                            }
+                                            {
+                                                mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                    {
+                        my_auctions && my_auctions.length < 1 && (
+                            <div className="no-result">
+                                <div>
+                                    <i className="material-icons">folder_open</i>
+                                    <h1>Nic tu nie ma</h1>
+                                    <p>
+                                        { 
+                                            mode.indexOf('auction') !== -1 
+                                            ?  
+                                            mode === 'ended_auctions' ? 'Żadna z twoich aukcji jeszcze się nie zakończyła' : 'Nie masz bieżących aukcji. Dodaj nową!' 
+                                            :
+                                            mode === 'ended_bids' ? 'Żadna z aukcji w których bierzesz udział nie zakończyła się' : 'Nie bierzesz udziału w żadnych aukcjach. Zalicytuj!'
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    }
+                    {
+                        pages > 1 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
+                    }
+                </div>
+            </div>
+        );
+    }
+}
+
 class AuctionList extends Component {
     constructor(props) {
         super(props);
@@ -671,7 +930,7 @@ class CreateUpdateAction extends Component {
                         <legend><i className="material-icons">edit_attributes</i>Atrybuty</legend>
                         <p>
                             <span className="label add-horizontal-margin">Stan przedmiotu:
-                                <input name="attribute_Stan" type="radio" value="nowy" checked /><span className="label">nowy</span>
+                                <input name="attribute_Stan" type="radio" value="nowy" /><span className="label">nowy</span>
                         
                                 <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
                             </span>
@@ -730,6 +989,14 @@ class CreateUpdateAction extends Component {
    }
 }
 
+function mapMyAuctionsAndUserStateToProps({ user, my_auctions }) {
+    return { user, my_auctions, user };
+}
+
+function mapMyAuctionsStateToProps({ my_auctions }) {
+    return { my_auctions };
+}
+
 function mapAuctionsStateToProps({ auctions }) {
     return { auctions };
 }
@@ -745,6 +1012,7 @@ function combineUserAndAuctionsStateToProps({ auctions, user}) {
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
+MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
 AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
-export { CreateUpdateAction, AuctionList, AuctionDetails, FrontPage };
+export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

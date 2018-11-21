@@ -130,7 +130,7 @@
 }
 .AuctionList .auction img {
     max-width: 300px;
-    max-height: 420px;
+    max-height: 220px;
 }
 
 .AuctionList .auction .text {
@@ -194,6 +194,28 @@
     border: 1px solid white;
     color: white;
 }
+.AuctionList .auction .actions.dont-hide {
+    opacity: 1;
+}
+.AuctionList .auction .time-details {
+    margin: 15px 0;
+    font-size: 14px;
+}
+.AuctionList .auction .time-details i {
+    position: relative;
+    top: -17px;
+    margin-right: 5px;
+    font-size: 20px;
+    vertical-align: middle;
+}
+.AuctionList .auction .time-details span {
+    display: inline-block;
+}
+.AuctionList .auction span.bidders-state {
+    opacity: .5;
+    font-size: 13px;
+    display: block;
+}
 
 .public-DraftStyleDefault-block {
 
@@ -220,9 +242,7 @@
     margin-bottom: 30px;
 }
 .AuctionDetails .photos .photo-big {
-
     border: 1px solid #eee;
-    background: #f9f9f9;
 }
 .AuctionDetails .photos .image-wrapper { 
     box-sizing: border-box;
@@ -234,6 +254,7 @@
 }
 .AuctionDetails .photos .photo-big img {
     max-width: 100%;
+    height: 100%;
 }
 .AuctionDetails .photos-small {
     display: flex;
@@ -243,14 +264,14 @@
     box-sizing: border-box;
     flex: 0 0 13.8%;
     min-height: 90px;
-    margin-top: 5px;
+    margin-top: 15px;
     cursor: pointer;
 }
 .AuctionDetails .thumbnail-wrapper:not(:last-child) {
     margin-right: 5px;
 }
 .AuctionDetails .thumbnail-wrapper img {
-    max-height: 100%;
+    height: 100%;
 }
 .AuctionDetails .text {
     margin-top: -90px;
@@ -279,10 +300,18 @@
 
     transform: translateY(-50%);
 }*/
-.AuctionDetails .html-description {
-    margin-top: 30px; 
+.AuctionDetails .html-description h1, .AuctionDetails .html-description h2, .AuctionDetails .html-description h3 {
     text-align: center;
+}
+.AuctionDetails .html-description {
+    padding-top: 60px; 
+    max-width: 650px;
+    margin: auto;
+    text-align: left;
     line-height: 1.4;
+}
+.AuctionDetails .html-description p {
+    margin: 10px 0;
 }
 .AuctionDetails .html-description h1, .AuctionDetails .html-description h2, .AuctionDetails .html-description h3 {
     margin-bottom: 20px;
@@ -418,27 +447,16 @@
     left: 0;
     width: calc(100% - 20px);
     height: calc(100% - 44px);
+    height: 100%;
     padding: 10px;
     background: white;
     color: black;
+    display: none;
 }
 
 .tab-view .tab-content-area > div.active {
     z-index: 2;
-};
-
-.FrontPage .most-popular  {
-
-}
-.FrontPage h1 > i {
-    position: relative;
-    top: -5px;
-    font-size: 40px;
-}
-.FrontPage .most-popular > h1, .FrontPage .new > h1 {
-    color: var(--orange);
-    font-size: 40px;
-    margin-top: 30px;
+    display: block;
 }
 
 .two-third-column {
@@ -447,12 +465,13 @@
     margin-bottom: 10px;
 }
 .two-third-column > .column:first-child {
-    --temp-width: calc(66% - var(--page-margin));
+    --temp-width: calc(66% - var(--page-margin) - 20px);
     flex: 0 0 var(--temp-width);
-    margin-right: var(--page-margin);
+    margin-right: 20px;
 }
 .two-third-column > .column:last-child {
-    flex: 0 0 33%;
+    --temp-width: calc(33% + var(--page-margin) + 20px);
+    flex: 0 0 var(--temp-width);
 }
 
 .three-column {
@@ -481,6 +500,19 @@
 .six-column > .column:not(:last-child) {
     margin-right: 20px;
 } 
+.FrontPage .most-popular  {
+
+}
+.FrontPage .most-popular > h1, .FrontPage .new > h1 {
+    color: var(--orange);
+    font-size: 40px;
+    margin-top: 30px;
+}
+.FrontPage h1 > i {
+    position: relative;
+    top: -5px;
+    font-size: 40px;
+}
 .FrontPage .no-image {
     min-height: 400px;
 }
@@ -527,3 +559,27 @@
 .FrontPage .six-column .photo, .FrontPage .six-column .no-image {
     min-height: 190px;
 }
+
+.rate-auction .Modal {
+    position: fixed;
+    z-index: 50;
+}
+.AuctionList .rate-auction .Modal .content {
+    display: flex;
+    flex-direction: column;
+}
+.AuctionList .rate-auction .Modal .content textarea {
+    flex: 0 0 75% !important;
+}
+.AuctionList .rate-auction .Modal .title-text, .AuctionList .rate-auction .Modal .content, .AuctionList .rate-auction .Modal .actions {
+    margin: 0;
+}
+
+.AuctionList .rate-auction .Modal .content .rate-user {
+    display: block;
+    padding: 0 30px;
+    font-size: 11px;
+}
+.AuctionList .rate-auction .Modal .content .rate-user i:first-of-type {
+    margin-left: 5px;
+};

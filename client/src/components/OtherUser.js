@@ -5,36 +5,7 @@ import * as otherUserActions from '../actions/otherUserActions';
 import './OtherUser.css';
 import Modal from './Modal';
 
-function withUsSince(millis) {
-	if (!millis) 
-		millis = new Date((Math.random() * (new Date().getTime() - 60000) + 60000)).getTime();
-
-	const years = ['rok', 'lata', 'lat'];
-	const months = ['miesiąc', 'miesiące', 'miesięcy'];
-	const days = ['dzień', 'dni'];
-	const hours = ['godzinę', 'godziny', 'godzin'];
-
-	const format = (num, arr) => {
-		if (num <= 0) return '';
-		if (num === 1) return `${num} ${arr[0]}`;
-		if (num > 1 && num < 5 || num > 21 && num % 10 > 1 && num % 10 < 5) return `${num} ${arr[1] }`;
-		return `${num} ${arr[2] || arr[1]}`;
-	}
-
-	const since = new Date().getTime() - millis;
-
-	const hour = 1000 * 60 * 60;
-	const day = hour * 24;
-	const month = day * 30;
-	const year = day * 365;
-
-	const isYears = parseInt(since / year);
-	const isMonths = parseInt((since - isYears * year) / month);
-	const isDays = parseInt((since - isYears * year - isMonths * month) / day);
-	const isHours = parseInt((since - isYears * year - isMonths * month - isDays * day) / hour);
-
-	return `${format(isYears, years)} ${format(isMonths, months)} ${format(isDays, days)} ${format(isHours, hours)}`;
-}
+import SinceHelper from '../helpers/sinceHelper';
 
 class Deliveries extends Component {
 	constructor(props) {
@@ -56,12 +27,12 @@ class Deliveries extends Component {
 					(user && user.deliveries.length !== 0) && (
 						<div className="delivery-methods">
 							<h1><i className="material-icons">local_shipping</i>Metody dostawy</h1>
-							<p>Dostępne metody dostarczenia przedmiotu:</p>
+							<p>Dostępne metody dostawy przedmiotu:</p>
 							<br />
 							{
 								user.deliveries.map((delivery, index) => (
 									<div key={'delivery_' + index} className="delivery">
-										<span className="price">{index + 1}. {delivery.name}<span className="value">{ delivery.price }</span></span>
+										<span className="price"><span style={{ display: 'inline-block', width: 330}}>{index + 1}. {delivery.name}</span><span className="value">{ delivery.price }</span></span>
 									</div>
 								))
 							}
@@ -93,7 +64,7 @@ class Seller extends Component {
 
 	openModal() {
 		if (!this.props.user) {
-			alert('Aby zadać pytanie musisz się zalogować');
+			alert('Aby zadać pytanie, musisz się zalogować');
 			return;
 		}
 
@@ -106,6 +77,11 @@ class Seller extends Component {
 
 	sendQuestion(event) {
 		event.preventDefault();
+
+		if (!this.messageTextRef.value) {
+			alert('Wpisz wiadomość');
+			return;
+		}
 
 		const formData = new FormData(this.questionForm);
 		const { user, other_user, socket } = this.props;
@@ -120,6 +96,7 @@ class Seller extends Component {
 	render() {
 		const user = this.props.other_user;
 		const auction = this.props.auction;
+		const withUs = user ? SinceHelper(new Date().getTime() - user.joindate) : null;
 		
 		return (
 			<div className="OtherUser Seller">
@@ -129,23 +106,37 @@ class Seller extends Component {
 							<div className="user-data">
 								<div className="column">
 									<h3 className="name">{ `${user.firstname} ${user.lastname}` }</h3>
-									<div className="city">{ user.address.city }</div>
-									<div className="with-us">{`${ user.firstname } jest z nami ${withUsSince( user.joindate )}`}</div>
+									<div className="city">{ user.address ? user.address.city : null }</div>
+									<div className="with-us">{ (withUs ? `${ user.firstname } jest z nami ${withUs}` : null) }</div>
 								</div>
 								<div className="column">
 									<div className="stars">
-										<i className="material-icons">star</i>
-										<i className="material-icons">star</i>
-										<i className="material-icons">star</i>
-										<i className="material-icons">star</i>
-										<i className="material-icons">star_border</i>
+										{
+											user.rating !== null ? (
+												<div>
+													{
+														Array.from({ length: 5 - (5 - user.rating) }, (v, k) => k).map(i => (
+															<i key={'star_' + i} className="material-icons">star</i>
+														))
+													}
+													{
+														Array.from({ length: 5 - user.rating }, (v, k) => k).map(i => (
+															<i key={'empty_star_' + i} className="material-icons bad">sentiment_dissatisfied</i>
+														))
+													}
+												</div>
+											) : (
+												<p>{user.firstname} nie ma jeszcze opinii.</p>
+											)
+										}
+										
 									</div>
 									<div className="stats">
 										<p>
-											<span> 100 aukcji</span><span className="good">78</span><span>/</span><span className="bad">22</span>
+											<span> aukcje: {user.auction_count}</span><span className="good">{user.auction_count - user.bad_auctions}</span><span>/</span><span className="bad">{user.bad_auctions}</span>
 										</p>
 										<p>
-											<span> 300 licytacji</span><span className="good">300</span><span>/</span><span className="bad">0</span>
+											<span> licytacje: {user.bid_count}</span><span className="good">{user.bid_count - user.bad_bids}</span><span>/</span><span className="bad">{user.bad_bids}</span>
 										</p>
 									</div>
 								</div>
@@ -157,9 +148,9 @@ class Seller extends Component {
 										</div>)
 									}
 								</div>
-								<Modal title={ <span><span className="thin"><i className="material-icons">mail_outline</i>Zadaj pytanie: </span>{auction.title}</span> } open={this.state.modal} actions={ <button className="standard-button" type="submit" onClick={this.sendQuestion}>Wyślij</button> } close={this.closeModal}>
+								<Modal title={ <span><span className="thin"><i className="material-icons">mail_outline</i></span><div className="title-text"><span className="thin">Zadaj pytanie: </span>{auction.title}</div></span> } open={this.state.modal} actions={ <button className="standard-button" type="submit" onClick={this.sendQuestion}>Wyślij</button> } close={this.closeModal}>
                                     <form ref={(e) => this.questionForm = e}>
-                                        <textarea name="question" placeholder="Wpisz treść"></textarea>
+                                        <textarea ref={(e) => this.messageTextRef = e} name="question" placeholder="Wpisz treść"></textarea>
                                         <input name="title" type="hidden" value={auction.title} />
                                         <input name="_id" type="hidden" value={user._id} />
                                         <input name="_auction" type="hidden" value={auction._id} />

@@ -3,8 +3,10 @@ const { ObjectId } = mongoose.Types;
 
 require('../models/Category');
 require('../models/Auction');
+require('../models/User');
 const Category = mongoose.model('category');
 const Auction = mongoose.model('auction');
+const User = mongoose.model('user');
 
 mongoose.model('subcategory', require('../models/Subcategory'));
 const Subcategory = mongoose.model('subcategory');
@@ -42,6 +44,9 @@ module.exports = app => {
     app.get('/api/seedauctions', async (req, res) => {
         const howMany = 200;
 
+        const users = await User.find({}, { _id: 1}).lean();
+        const user_ids = users.map(user => user._id);
+
         for (let i = 0; i < howMany; i++) {
 
             const category_keys = Object.keys(seedData);
@@ -51,7 +56,7 @@ module.exports = app => {
             const sub = sub_categories[random(0, sub_categories.length - 1)];
 
             
-
+            const _user = ObjectId(user_ids[random(0, user_ids.length)]);
             const title = titles[random(0, titles.length - 1)];
             const start_price = random(50, 2500);
             const attr_name = attributes[random(0, attributes.length - 1)];
@@ -62,7 +67,7 @@ module.exports = app => {
             const start_date = new Date().getTime();
 
             await new Auction({
-                _user: ObjectId(),
+                _user,
                 title,
                 shortdescription,
                 price: { start_price },

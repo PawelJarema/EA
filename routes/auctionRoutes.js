@@ -4,10 +4,14 @@ const upload = multer();
 
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
+require('../models/User');
 require('../models/Auction');
-const Auction = mongoose.model('auction');
 require('../models/Category');
+require('../models/Rate');
+const User = mongoose.model('user');
+const Auction = mongoose.model('auction');
 const Category = mongoose.model('category');
+const Rate = mongoose.model('rate');
 
 const Imagemin = require('imagemin');
 const imageminPngquant = require('imagemin-pngquant');
@@ -26,6 +30,165 @@ const currentUserId = (req) => {
 }
 
 module.exports = app => {
+    app.post('/auction/rate', requireLogin, async (req, res) => {
+        const rate = req.body;
+
+        const auction = await Auction.findOne({ _id: ObjectId(rate._auction)});
+        auction.rated = true;
+
+        rate._user = ObjectId(rate._user);
+
+        delete rate._auction;
+        const newRate = new Rate(rate).save().then(
+            doc => { 
+                auction.save().then(
+                    doc => {
+                        req.session.message = 'Pomyślnie dodano opinię';
+                        res.send({});
+                    },
+                    err => { 
+                        console.log(err);
+                        req.session.error = 'Błąd przy zapisie stanu aukcji. Spróbuj później';
+                        res.send({});
+                    }
+                );
+            },
+            err => {
+                console.log(err);
+                req.session.error = 'Nastąpił nieoczekiwany błąd. Spróbuj później';
+                res.send({});
+            }
+        );
+    });
+
+
+    app.post('/auction/delete/:id', requireLogin, async (req, res) => {
+        const id = req.params.id;
+
+        const auction = await Auction.findOne({ _id: ObjectId(id) });
+        await auction.remove().then(
+            () => { req.session.message = 'Skasowano aukcję'; res.send({}); },
+            err => { console.log(err); req.session.error = 'Nastąpił błąd'; res.send({}); }
+        ); 
+    });
+
+    app.post('/auction/my_bids/:page/:per_page', requireLogin, async (req, res) => {
+        const { page, per_page } = req.params;
+        const mode = req.body.mode;
+
+        const query = { bids: { $elemMatch: { _user: ObjectId(req.user._id) }}, ended: (mode === 'ended' ? true : ({ $ne: true })) };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1};
+        const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
+
+        const auctions = await Auction.find(
+            query, 
+            projection, 
+            options
+        ).lean();
+
+        const count = await Auction.countDocuments(query);
+        auctions.push(count);
+
+        res.send(auctions);
+    });
+
+    app.post('/auction/my_auctions/:page/:per_page', requireLogin, async (req, res) => {
+        const { page, per_page } = req.params;
+        const mode = req.body.mode;
+
+        const query = { _user: req.user._id, ended: (mode === 'ended' ? true : ({ $ne: true })) };
+        const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1};
+        const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
+        
+        const auctions = await Auction.find(
+            query, 
+            projection, 
+            options
+        ).lean();
+
+        const count = await Auction.countDocuments(query);
+        auctions.push(count);
+
+        res.send(auctions);
+    });
+
+    app.post('/auction/bid/:id', [requireLogin, upload.any()], async (req, res) => {
+        const price = req.body.bid;
+        const auction_id = req.params.id;
+        const date = new Date().getTime();
+
+        const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
+        const bids = auction.bids;
+        if (bids.length) {
+            let existingBid = bids.filter(bid => String(bid._user) === String(req.user._id));
+            let highestBid = bids.reduce((bid_1, bid_2) => bid_1.price > bid_2.price ? bid_1 : bid_2);
+            let highestPrice = highestBid.price;
+
+            let newBid = {
+                date,
+                _user: req.user._id,
+                price
+            };
+
+            if (existingBid.length) {
+                const index = auction.bids.indexOf(existingBid[0]);
+                auction.bids[index].date = newBid.date;
+                auction.bids[index]._user = newBid._user;
+                auction.bids[index].price = newBid.price;
+            } else {
+                auction.bids.push(newBid);
+            }
+            
+            auction.price.current_price = price > highestPrice ? 
+                (price > highestPrice + 10 ? highestPrice + 10 : price) 
+                : 
+                (price + 10 < highestPrice ? price + 10 : highestPrice);
+
+        } else {
+            auction.bids.push(
+                { 
+                    date,
+                    _user: req.user._id,
+                    price
+                }
+            );
+            auction.price.current_price = price;
+        }
+
+        const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
+        const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
+
+        auction.bids = auction.bids.sort((bid_1, bid_2) => {
+            if (bid_1.price > bid_2.price) return -1;
+            if (bid_1.price < bid_2.price) return 1;
+            return 0;
+        });
+
+        await auction
+            .save()
+            .then(async doc => {
+                req.session.message = 'Wziąłeś udział w licytacji';
+                doc = doc.toObject();
+                
+                let bidders_object = {};
+                bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+                doc.bidders = bidders_object;
+
+                res.send(doc);
+            },
+            err => {
+                req.session.error = 'Nastąpił błąd podczas licytacji. Spróbuj jeszcze raz';
+                console.log(err);
+                auction = auction.toObject();
+                
+                let bidders_object = {};
+                bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+                auction.bidders = bidders_object;
+
+                res.send(auction);
+            });
+    });
+
     app.post('/auction/like/:id', requireLogin, async (req, res) => {
         const id = req.params.id;
         const auction = await Auction.findOne({ _id: ObjectId(id) });
@@ -36,18 +199,31 @@ module.exports = app => {
 
     app.get('/auction/get/:id', async (req, res) => {
         const id = req.params.id;
-        const auction = await Auction.findOne({ _id: ObjectId(id) });
+        const auction = await Auction.findOne({ _id: ObjectId(id) }).lean();
+        const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
+        const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
+
+        // auction.bids = auction.bids.sort((bid_1, bid_2) => {
+        //     if (bid_1.price > bid_2.price) return -1;
+        //     if (bid_1.price < bid_2.price) return 1;
+        //     return 0;
+        // });
+
+        let bidders_object = {};
+        bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+        auction.bidders = bidders_object;
+
         res.send(auction);
     });
 
     app.get('/auction/get_front_page_auctions', async (req, res) => {
         const popular = await Auction.find(
-            { _user: { $ne: currentUserId(req) } }, 
-            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }, 
-            { limit: 8, sort: { likes: 1, 'date.start_date': -1 } }
+            { _user: { $ne: currentUserId(req) }, ended: { $ne: true } }, 
+            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, likes: 1 }, 
+            { limit: 8, sort: { likes: -1 } }
         );
         const newest = await Auction.find(
-            { _user: { $ne: currentUserId(req) } },
+            { _user: { $ne: currentUserId(req) }, ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } },
             { limit: 9, sort: { 'date.start_date': -1 } }
         );
@@ -79,7 +255,8 @@ module.exports = app => {
         const mongo_query = { 
             _user: { $ne: currentUserId(req) },
             title: { $regex: query, $options: 'i' }, 
-            $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }] 
+            $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }],
+            ended: { $ne: true }
         };
         const projection = { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
@@ -136,7 +313,8 @@ module.exports = app => {
             $or: [
                 { 'categories.main': { $regex: category, $options: 'i' } }, 
                 { 'categories.sub': { $regex: category, $options: 'i'} }  
-            ]
+            ],
+            ended: { $ne: true }
         };
 
         if (state) {
@@ -207,7 +385,7 @@ module.exports = app => {
 
     app.get('/auction/get_all', async (req, res) => {        
         const auctions = await Auction.find(
-            { _user: { $ne: currentUserId(req) } },
+            { _user: { $ne: currentUserId(req) }, ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }
         ).limit(10);
         res.send(auctions);
@@ -217,6 +395,9 @@ module.exports = app => {
         const data = req.body;
         const attributes = await Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key]}));
         
+        console.log(data);
+        console.log(attributes);
+
         let auction = null;
 
         await new Auction({
@@ -238,12 +419,13 @@ module.exports = app => {
             likes: 0,
             quantity: data.quantity,
             photos: [],
-            attributes: attributes,
+            attributes,
             categories: {
                 main: data.main,
                 sub: data.sub
             },
             bids: [],
+            ended: false,
             verified: false
         })
         .save()

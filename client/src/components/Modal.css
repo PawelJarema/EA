@@ -6,6 +6,7 @@
 	background: white;
 	border-bottom: 1px solid #aaa;
 	border-right: 1px solid #bbb;
+
 }
 .Modal.open {
 	display: flex;
@@ -17,6 +18,10 @@
 	opacity: .5;
 }
 
+.Modal .title-text {
+	display: inline-block;
+	max-width: 92%;
+}
 .Modal .title {
 	flex: 0 0 70px;
 	align-self: flex-start;
@@ -25,13 +30,16 @@
 	padding: 20px 30px;
 	border-bottom: 1px solid #eee;
 }
+.Modal .title div {
 
+}
 .Modal .title i {
 	position: relative;
 	margin-right: 20px;
 	top: -3px;
 	left: -3px;
 	font-size: 30px;
+	vertical-align: top;
 }
 .Modal .content {
 	flex: 1 1 auto;

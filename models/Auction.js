@@ -33,6 +33,7 @@ const auctionSchema = new Schema({
     bids: [bidSchema],
     verified: Boolean,
     ended: Boolean,
+    prepaid: Boolean,
     paid: Boolean,
     rated: Boolean
 });
