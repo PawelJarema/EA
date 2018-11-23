@@ -68,27 +68,59 @@
 .OtherUser .with-us {
 	font-size: 14px;
 }
-
+.OtherUser .auctions-title {
+	margin: 20px;
+	margin-top: 40px;
+	margin-bottom: 0px;
+}
 .OtherUser .auctions {
-	padding: 20px;
+	padding: 8px;
+	column-count: 7;
 }
 
 .OtherUser .auction {
-	display: block;
-	margin: 10px 0;
+	position: relative;
+	top: 0;
+	left: 0;
+
+	display: table;
+	
+	width: 150px;
+	height: auto;
+
+	margin: 10px;
+	padding: 10px;
+
+	background: white;
+	border: 1px solid #ddd;
+	border-bottom: 2px solid #aaa;
+	border-right: 1px solid #bbb;
+	border-radius: 5px;
+	
+	-webkit-column-break-inside: avoid;
+          page-break-inside: avoid;
+               break-inside: avoid;
 }
 .OtherUser .auction:hover {
-	color: var(--link-blue);
+
 }
 .OtherUser .auction .lp {
 	font-size: 17px;
 	margin-right: 10px;
+	font-weight: 100;
 }
 
+.OtherUser .auction .title {
+	font-weight: 500;
+	word-break: break-all;
+}
 .OtherUser .auction .description {
 	font-size: 14px;
-	margin-left: 20px;
+	margin-top: 10px;
+	max-width: 300px;
+
 }
+
 
 .Deliveries {
 	padding: 30px;

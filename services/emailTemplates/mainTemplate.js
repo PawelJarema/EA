@@ -15,6 +15,7 @@ module.exports = (title, content) => {
                     img { text-align: center; margin: 5px; }
                     a { color: rgb(255,255,255); text-decoration: none; }
                     a:hover { text-decoration: underline; }
+                    .quote { font-size: 14px; padding-left: 10px; border-left: 3px solid #eee; }
                 </style>
             </head>
             <body>

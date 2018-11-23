@@ -1,0 +1,147 @@
+.Admin {
+	min-height: 70vh;
+}
+.Admin td {
+	font-size: 13px;
+}
+.AdminPanel .Provision {
+	padding: 14px;
+}
+.AdminPanel .Provision input {
+	width: 85%;
+	margin: 20px 0;
+	margin-right: 10px;
+}
+.AdminPanel .Provision .standard-button {
+	margin: 0;
+}
+.AdminPanel {
+	display: flex;
+}
+.AdminPanel h1 {
+	margin-left: -14px;
+	margin-bottom: 30px;
+}
+.AdminPanel h3 {
+	margin-bottom: 20px;
+}
+.AdminPanel h3 i {
+	margin-right: 10px;
+}
+.AdminPanel .mail-base input, .AdminPanel .mail-base textarea {
+	display: block;
+	width: 100%;
+	min-height: var(--input-h);
+	margin: 10px 0;
+	padding: 0 10px;
+	border: 1px solid #ccc;
+}
+.AdminPanel .mail-base textarea {
+	padding: 10px;
+	min-height: 150px;
+	resize: none;
+
+}
+.AdminPanel .mail-base .standard-button {
+	margin: 0;
+}
+.AdminPanel table .price {
+	font-size: 12px;
+	font-weight: 100;
+	color: black;
+}
+.AdminPanel table .price:after {
+	content: ' zł';
+}
+.AdminPanel table th {
+	text-align: left;
+	background: #eee;
+	padding: 10px;
+}
+.AdminPanel table td {
+	padding: 10px;
+}
+.AdminPanel table td:not(:last-child), .AdminPanel table th:not(:last-child) {
+	
+}
+.AdminPanel table tr:nth-child(2n + 1) {
+	background: #f9f9f9;
+}
+.AdminPanel .user-list table td:nth-child(n + 5) {
+	text-align: center;
+}
+.AdminPanel .auction-list table td:nth-child(n + 4) {
+	text-align: center;
+}
+.AdminPanel table th.icon {
+	text-align: center;
+}
+.AdminPanel table td i {
+	cursor: pointer;
+	padding: 5px 0;
+	opacity: .9;
+}
+.AdminPanel table td i:hover {
+	color: var(--orange);
+	opacity: 1;
+}
+.AdminPanel .links a {
+	cursor: pointer;
+}
+.AdminPanel .links h2 {
+	margin-bottom: 20px;
+}
+.AdminPanel .links h2 i {
+	position: relative;
+	top: -4px;
+	font-size: 26px;
+	margin-right: 10px;
+}
+.AdminPanel .links button {
+	margin: 10px 0;
+	margin-bottom: 0px;
+}
+.Admin .admin-login {
+	display: block;
+	padding: 30px;
+	height: 50%;
+}
+
+.Admin .admin-login input {
+	display: block;
+	width: 30%;
+	height: var(--input-h);
+	
+	margin-bottom: 10px;
+	padding: 0 10px;
+	border: 1px solid #ddd;
+}
+
+.Admin .Modal .content {
+	position: relative;
+}
+
+.AdminPanel .Modal input {
+	box-sizing: border-box;
+	width: calc(100% - 60px);
+	flex: 0 0 var(--input-h);
+	margin: 0 30px;
+	margin-top: 30px;
+	padding-left: 10px;
+
+	border-bottom: 1px solid #ddd;
+}
+.AdminPanel .Modal .content > form {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+.AdminPanel .Modal textarea {
+	box-sizing: border-box;
+	flex: 1 1 auto;
+	width: calc(100% - 60px);
+	margin: 0 30px;
+	padding: 15px 10px;
+
+	border-bottom: 1px solid #ddd;
+}

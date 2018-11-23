@@ -105,9 +105,9 @@ class Seller extends Component {
 						<div>
 							<div className="user-data">
 								<div className="column">
-									<h3 className="name">{ `${user.firstname} ${user.lastname}` }</h3>
+									<h3 className="name">{ `${user.firstname || ''} ${user.lastname || (!user.firstname && 'Anonim' : '')}` }</h3>
 									<div className="city">{ user.address ? user.address.city : null }</div>
-									<div className="with-us">{ (withUs ? `${ user.firstname } jest z nami ${withUs}` : null) }</div>
+									<div className="with-us">{ (withUs ? `${ user.firstname || '' } jest z nami ${withUs}` : null) }</div>
 								</div>
 								<div className="column">
 									<div className="stars">
@@ -157,11 +157,13 @@ class Seller extends Component {
                                     </form>
                                 </Modal>
 							</div>
-							<div className="auctions">
+							<div className="auctions-title">
 								<h3>Aukcje sprzedawcy</h3>
+							</div>
+							<div className="auctions">
 								{
 									user.auctions ? user.auctions.map((auction, index) => (
-										<Link key={"auction" + index} className="auction" to={`/aukcje/${auction._id}`}><span className="lp">{index + 1}.</span>{auction.title}<span className="description">{auction.shortdescription}</span></Link>
+										<Link key={"auction" + index} className="auction" to={`/aukcje/${auction._id}`}><div className="title">{auction.title}</div><div className="description">{auction.shortdescription}</div></Link>
 									))
 									:
 									<div>Brak bieżących auckji</div>

@@ -70,7 +70,7 @@ module.exports = app => {
                 _user,
                 title,
                 shortdescription,
-                price: { start_price },
+                price: { start_price, current_price: start_price },
                 date: { start_date, duration: 10 },
                 quantity: quantity,
                 photos: [],

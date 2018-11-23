@@ -4,9 +4,11 @@ import * as auctionActions from '../actions/auctionActions';
 import * as myAuctionActions from '../actions/myAuctionActions';
 import * as profileActions from '../actions/profileActions';
 import * as otherUserActions from '../actions/otherUserActions';
+import * as przelewy24Actions from '../actions/przelewy24Actions';
 import './Auctions.css';
 
 import { Link } from 'react-router-dom';
+import { Pagination } from './Pagination';
 import { ProfileLinks } from './Profile';
 import { Seller, Deliveries } from './OtherUser';
 
@@ -14,7 +16,7 @@ import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 import Modal from './Modal';
 
-import SinceHelper from '../helpers/sinceHelper';
+import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
 
@@ -59,15 +61,6 @@ class FrontPage extends Component {
         }
     }
 
-                    // <h1>Witaj w serwisie E-Aukcje!</h1>
-                    // <br/>
-                    // <ol>
-                    //     <li>Obejrzyj ofertę. Aby licytować i sprzedawać przedmioty, zarejestruj się.</li>
-                    //     <li>Poznaj nasz system bezpiecznej obsługi płatności i zabezpieczeń przed nieuczciwymi sprzedwacami</li>
-                    //     <li>Wystawiaj opinie i rób mądre zakupy. Życzymy udanych transakcji!</li>
-                    // </ol>
-                    // <br/>
-                    // <p>Zespół E-Aukcje.pl</p>
     render() {
         return (
             <div className="FrontPage">
@@ -274,6 +267,7 @@ class AuctionDetails extends Component {
                                     <a className="active"  href="#bids" onClick={this.handleTab}>Stan licytacji</a>
                                     <a href="#description" onClick={this.handleTab}>Opis przedmiotu</a>
                                     <a href="#seller" onClick={this.handleTab}>Sprzedawca</a>
+                                    <a href="#opinions" onClick={this.handleTab}>Opinie</a>
                                     <a href="#shipping" onClick={this.handleTab}>Metody dostawy</a>
                                 </div>
                                 <div className="tab-content-area">
@@ -296,6 +290,9 @@ class AuctionDetails extends Component {
                                                 </p>
                                             ))
                                         }
+                                        <div className="background">
+                                            <i className="material-icons">gavel</i>
+                                        </div>
                                     </div>
                                     <div id="description">
                                         { 
@@ -308,12 +305,26 @@ class AuctionDetails extends Component {
                                                 <p>Sprzedawca nie dodał opisu rozszerzonego.<br />Zadaj pytanie o przedmiot w zakładce 'Sprzedawca'</p>
                                             </div>
                                         }
+                                        <div className="background">
+                                            <i className="material-icons">description</i>
+                                        </div>
+                                    </div>
+                                    <div id="opinions">
+                                        <div className="background">
+                                            <i className="material-icons">star_outline</i>
+                                        </div>
                                     </div>
                                     <div id="seller">
                                         <Seller auction={ auction } other_user={other_user} user={user} socket={this.props.socket} />
+                                        <div className="background">
+                                            <i className="material-icons">account_circle</i>
+                                        </div>
                                     </div>
                                     <div id="shipping">
                                         <Deliveries auction={ auction } other_user={other_user} />
+                                        <div className="background">
+                                            <i className="material-icons">local_shipping</i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -324,29 +335,6 @@ class AuctionDetails extends Component {
                 }
             </div>
         );
-    }
-}
-
-class Pagination extends Component {
-    render() {
-        const page = this.props.page;
-        const pages = this.props.pages;
-        const clickHandler = this.props.clickHandler;
-
-        return (
-            <div className="pagination-wrapper">
-                <div className="pagination">
-                    {
-                        Array.from({length: pages}, (v, k) => (k + 1)).map(index => (
-                            <a key={'page_' + index} 
-                                onClick={() => clickHandler(index)}
-                                className={index === page ? 'active' : ''}
-                            >{index}</a>
-                        ))
-                    }
-                </div>
-            </div>
-        )
     }
 }
 
@@ -431,6 +419,8 @@ class MyAuctionList extends Component {
         this.paginateTo = this.paginateTo.bind(this);
         this.rateAuction = this.rateAuction.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
+        this.pingPrzelewy24 = this.pingPrzelewy24.bind(this);
+        this.p24TransactionTest = this.p24TransactionTest.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -478,6 +468,15 @@ class MyAuctionList extends Component {
         this.props.rateAuction(data);
     }
 
+    pingPrzelewy24() {
+        this.props.pingPrzelewy24();
+    }
+
+    p24TransactionTest() {
+        alert('a');
+        this.props.registerP24Transaction();
+    }
+
     confirmDelete(auction) {
         if (auction.bids && auction.bids.length > 0) {
             alert('Nie możesz usunąć aukcji, w której ktoś wziął udział');
@@ -495,12 +494,13 @@ class MyAuctionList extends Component {
         const { user, my_auctions } = this.props;
         const { page, per_page, pages } = this.state;
         const { mode } = this.props;
-        const day = 1000 * 60 * 60 * 24;
      
         return (
             <div className="Profile MyAuctions">
                 <ProfileLinks active={mode} />
                 <div className="AuctionList">
+                    <button className="standard-button" onClick={this.pingPrzelewy24}>Ping Przelewy24</button>
+                    <button className="standard-button" onClick={this.p24TransactionTest}>Register Przelewy24 Transaction</button>
                     {
                         pages > 1 && my_auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
                     }
@@ -518,7 +518,7 @@ class MyAuctionList extends Component {
                                        !auction.ended ? (<p className="time-details">
                                             <i className="material-icons">access_alarm</i>
                                             <span className="time-state"> 
-                                                do końca { SinceHelper((auction.date.start_date + day * auction.date.duration) - new Date().getTime()) }
+                                                do końca { AuctionEndHelper(auction.date) }
                                                 <br />
                                                 <span className="bidders-state">{ (auction.bids && auction.bids.length ? `licytujący: ${auction.bids.length}` : 'nie licytowano') }</span>
                                             </span>
@@ -1012,7 +1012,7 @@ function combineUserAndAuctionsStateToProps({ auctions, user}) {
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
+MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, {...myAuctionActions, ...przelewy24Actions})(MyAuctionList);
 AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

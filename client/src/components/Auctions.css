@@ -223,6 +223,22 @@
 
 .AuctionDetails {
 }
+
+.AuctionDetails .background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: -1;
+
+    opacity: 0.07;
+}
+
+.AuctionDetails .background i {
+    font-size: 150px;
+    padding: 30px;
+    color: var(--link-blue);
+}
+
 .AuctionDetails .basic-info {
     display: flex;
     margin-bottom: 50px;
@@ -385,22 +401,21 @@
     color: var(--link-blue);
 }
 
-.no-result i {
+.no-result i, .TechBreak i {
     font-size: 70px;
 }
-.no-result h1 {
+.no-result h1, .TechBreak h1 {
     margin-bottom: 20px;
 } 
 .no-result div {
 
 }
-.no-result {
+.no-result, .TechBreak {
     min-height: 50vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    margin-top: 30px;
 }
 
 .tab-view {
@@ -423,7 +438,7 @@
     background: white;
     font-size: 19px;
     bottom: -1px;
-    z-index: 3;
+    z-index: 2;
 }
 .tab-view .tab-content-area {
     position: relative;

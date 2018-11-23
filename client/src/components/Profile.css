@@ -4,7 +4,7 @@
 .Profile a.active {
     font-weight: bold;
 }
-.Profile .links {
+.Profile .links, .AdminPanel .links {
     display: flex;
     flex-direction: column;
     height: 0%;
@@ -16,12 +16,12 @@
 
     background: #f0f0f0;
 }
-.Profile .links i {
+.Profile .links i, .AdminPanel .links i {
     position: relative;
     top: -1px;
     font-size: 18px;
 }
-.Profile .links > a {
+.Profile .links > a, .AdminPanel .links > a {
     display: block;
     width: 280px;
     margin-bottom: 5px;
@@ -37,7 +37,7 @@
 .Profile .links > .open + .dropdown {
     display: block;
 }
-.Profile .links > a.active {
+.Profile .links > a.active, .AdminPanel .links > a.active {
     font-weight: bold;
 }
 .Profile .links > a:nth-of-type(2):after, .Profile .links > a:nth-of-type(3):after {

@@ -192,7 +192,7 @@ module.exports = app => {
     app.post('/auction/like/:id', requireLogin, async (req, res) => {
         const id = req.params.id;
         const auction = await Auction.findOne({ _id: ObjectId(id) });
-        auction.likes += 1;
+        auction.likes = auction.likes ? auction.likes + 1 : 1;
 
         auction.save();
     });

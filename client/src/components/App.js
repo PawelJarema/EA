@@ -7,14 +7,16 @@ import * as userActions from '../actions/userActions';
 import * as categoryActions from '../actions/categoryActions';
 import * as flashActions from '../actions/flashActions';
 import * as countActions from '../actions/statisticActions';
+import * as techBreakActions from '../actions/techBreakActions';
 
 import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery } from './Profile';
+import { AdminPanel, TechBreak } from './Admin';
+import Progress from './Progress';
 import Chat from './Chat';
 
 import socketIOClient from 'socket.io-client';
-
 
 const ProductCategories = {
     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
@@ -135,7 +137,6 @@ class SearchField extends Component {
         )
     }
 }
-SearchField = connect(mapCategoryStateToProps)(SearchField);
 
 class UserLinks extends Component {
     render() {
@@ -168,7 +169,6 @@ class UserLinks extends Component {
         }
     }
 }
-UserLinks = connect(mapUserStateToProps)(UserLinks);
 
 class Navi extends Component {
     render() {
@@ -249,8 +249,6 @@ class CategoryLinks extends Component {
         )
     }
 }
-
-CategoryLinks = connect(mapCategoryStateToProps)(CategoryLinks);
 
 class FooterBar extends Component {
     render() {
@@ -364,12 +362,6 @@ class AdvancedSearch extends Component {
     }
 }
 
-function mapAuctionCountStateToProps({ auction_count }) {
-    return { auction_count };
-}
-
-AdvancedSearch = connect(mapAuctionCountStateToProps, countActions)(AdvancedSearch)
-
 class AuctionListSearch extends Component {
     render() {
         return (
@@ -405,6 +397,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+      this.props.fetchTechBreak();
       this.props.fetchCategories();
       this.props.fetchUser();
       this.props.fetchMessage();
@@ -412,45 +405,67 @@ class App extends Component {
 
   render() {
     const { socket } = this.state;
-    const message = this.props.flash;
+    const { flash, tech_break } = this.props;
+    const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
-    return (
-      <div className="App">
-        { 
-            message !== null && message !== false && <div className={ "flash-message " + message.type }>{ message.message }</div>
-        }
-        
-        <BrowserRouter>
-            <div>
-                <header className="App-header" style={{ marginBottom: 30 }}>
-                    <Navi socket={ socket } />
-                    <Breadcrumbs />
-                </header>
-        
-                <div className="main-container">
-                    <Route exact path="/" component={ FrontPage } />
-                    <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
-                    <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
-                    <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
-                    <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
-                    <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
-                    <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
-                    <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
-                    <Route path="/konto/zaloguj" component={ LoginLanding } />
-                    <Route path="/konto/ustawienia" component={ Settings } />
-                    <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
-                    <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
-                    <Route path="/konto/aukcje/dostawa" component={ Delivery } />
+    if (tech_break === false) {
+        return (
+          <div className="App">
+            { 
+                message
+            }
+            
+            <BrowserRouter>
+                <div>
+                    <header className="App-header" style={{ marginBottom: 30 }}>
+                        <Navi socket={ socket } />
+                        <Breadcrumbs />
+                    </header>
+            
+                    <div className="main-container">
+                        <Route exact path="/" component={ FrontPage } />
+                        <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
+                        <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                        <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
+                        <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
+                        <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
+                        <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
+                        <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
+                        <Route path="/konto/zaloguj" component={ LoginLanding } />
+                        <Route path="/konto/ustawienia" component={ Settings } />
+                        <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
+                        <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
+                        <Route path="/konto/aukcje/dostawa" component={ Delivery } />
+                        <Route path="/admin" component={ AdminPanel } />
+                    </div>
+
+                    <footer>
+                        <CategoryLinks />
+                        <FooterBar />
+                    </footer>
+
                 </div>
+            </BrowserRouter>
+          </div>
+        );
+    } else if (tech_break === true) {
+        return (
+            <div className="App">
+                {
+                    message
+                }
+                <BrowserRouter>
+                    <div className="main-container">
+                        <Route exact path="/" component={ TechBreak } />
+                        <Route path="/admin" component={ AdminPanel } />
+                    </div>
+                </BrowserRouter>
 
-                <footer>
-                    <CategoryLinks />
-                    <FooterBar />
-                </footer>
             </div>
-        </BrowserRouter>
-      </div>
-    );
+        );
+    } else {
+        return <Progress />;
+    }
   }
 }
 
@@ -459,6 +474,9 @@ function mapUserStateToProps({ user }) {
 }
 function mapUserAndFlashStatesToProps({ user, flash }) {
     return { user, flash };
+}
+function mapUserFlashAndTechBreakStatesToProps({ user, flash, tech_break }) {
+    return { user, flash, tech_break };
 }
 function mapCategoryStateToProps({ categories }) {
     return { categories };
@@ -472,4 +490,13 @@ function aggregateProps({ user, categories, flash }) {
     return { user, categories, flash };
 }
 
-export default connect(mapUserAndFlashStatesToProps, { ...userActions, ...categoryActions, ...flashActions })(App);
+function mapAuctionCountStateToProps({ auction_count }) {
+    return { auction_count };
+}
+
+SearchField = connect(mapCategoryStateToProps)(SearchField);
+UserLinks = connect(mapUserStateToProps)(UserLinks);
+CategoryLinks = connect(mapCategoryStateToProps)(CategoryLinks);
+AdvancedSearch = connect(mapAuctionCountStateToProps, countActions)(AdvancedSearch);
+
+export default connect(mapUserFlashAndTechBreakStatesToProps, { ...userActions, ...categoryActions, ...flashActions, ...techBreakActions })(App);

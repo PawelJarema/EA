@@ -1,6 +1,7 @@
 export default function SinceHelper(millis) {
 	if (!millis) 
-		millis = new Date((Math.random() * (new Date().getTime() - 60000) + 60000)).getTime();
+		return '';
+		//millis = new Date((Math.random() * (new Date().getTime() - 60000) + 60000)).getTime();
 
 	const years = ['rok', 'lata', 'lat'];
 	const months = ['miesiąc', 'miesiące', 'miesięcy'];

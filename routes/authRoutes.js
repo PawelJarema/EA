@@ -2,8 +2,11 @@ const passport = require('passport');
 
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
+
 require('../models/User');
+require('../models/Admin');
 const User = mongoose.model('user');
+const Admin = mongoose.model('admin');
 
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
@@ -12,6 +15,71 @@ const Mailer = require('../services/Mailer');
 const Business = require('../services/emailTemplates/business');
 
 module.exports = app => {
+    app.get('/auth/admin/create', (req, res) => {
+        const login = 'admin';
+        const password = 'admin1234';
+
+        bcrypt.hash(password, saltRounds, (err, hash) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('pass created, making admin');
+                const admin = new Admin({
+                    login,
+                    password: hash,
+                    provision: 3
+                })
+                .save()
+                .then(
+                    doc => { console.log('new admin made sucessfully'); },
+                    err => { console.log('error making admin', err); }
+                );
+            }
+        });
+    });
+
+    app.post('/auth/admin/logout', (req, res) => {
+        req.session.admin = null;
+        res.send(false);
+    });
+
+    app.post('/auth/admin', async (req, res) => {
+        const { login, password } = req.body;
+
+        if (req.session.admin) {
+            res.send(req.session.admin);
+            return;
+        }
+
+        const admin = await Admin.findOne({ login });
+        if (!admin) {
+            if (!login && !password) {
+                res.send(false);
+                return;
+            }
+
+            req.session.error = 'Nieprawidłowy login';
+            res.send(false);
+            return;
+        }
+
+        await bcrypt.compare(password, admin.password, (err, success) => {
+            if (err) {
+                console.log(err);
+                req.session.error = 'Nastąpił błąd. Spróbuj później';
+            } else {
+                if (success) {
+                    req.session.admin = admin;
+                    req.session.message = 'Zalogowano pomyślnie';
+                    res.send(admin);
+                } else {
+                    req.session.error = 'Niewłaściwe hasło';
+                    res.send(false)
+                }
+            }
+        });
+    });
+
     app.get('/api/password/:email', async (req, res) => {
         const email = req.params.email;
 
@@ -111,6 +179,7 @@ module.exports = app => {
             }
             
             const newUser = await new User({
+                joindate: new Date().getTime(),
                 contact: { email: email },
                 security: { password: hash, verified: false },
                 agreements: { rodo_1: true, rodo_2: true }

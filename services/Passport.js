@@ -6,7 +6,6 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 
 const keys = require('../config/keys');
 
-
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types;
 const balanceSchema = require('../models/Balance');
@@ -48,6 +47,7 @@ async (accessToken, refreshToken, profile, done) => {
         done(null, user);
     } else {
         let newUser = new User({
+            joindate: new Date().getTime(),
             auth: { linkedinId: profile.id },
             firstname: profile.name.givenName,
             lastname: profile.name.familyName,
@@ -88,6 +88,7 @@ async (accessToken, refreshToken, profile, done) => {
         done(null, user);
     } else {
         let newUser = new User({
+            joindate: new Date().getTime(),
             auth: { googleId: profile.id },
             firstname: profile.name.givenName,
             lastname: profile.name.familyName,
@@ -126,6 +127,7 @@ async (accessToken, refreshToken, profile, done) => {
         done(null, user);
     } else {
         let newUser = new User({
+            joindate: new Date().getTime(),
             auth: { facebookId: profile.id },
             firstname: profile.name.givenName,
             lastname: profile.name.familyName,
@@ -161,6 +163,7 @@ async (accessToken, refreshToken, profile, done) => {
         done(null, user)
     } else {
         let newUser = new User({
+            joindate: new Date().getTime(),
             auth: { twitterId: profile.id },
             firstname: profile.displayName,
             contact: { email: email },

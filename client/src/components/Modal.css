@@ -1,4 +1,5 @@
 .Modal {
+	position: fixed;
 	width: 50%;
 	height: 350px;
 	display: none;
@@ -6,7 +7,7 @@
 	background: white;
 	border-bottom: 1px solid #aaa;
 	border-right: 1px solid #bbb;
-
+	z-index: 4;
 }
 .Modal.open {
 	display: flex;
