@@ -15,9 +15,6 @@
 .AdminPanel .Provision .standard-button {
 	margin: 0;
 }
-.AdminPanel {
-	display: flex;
-}
 .AdminPanel h1 {
 	margin-left: -14px;
 	margin-bottom: 30px;
