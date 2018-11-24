@@ -1,3 +1,6 @@
+.AdminPanel {
+    display: flex;
+}
 .Admin {
 	min-height: 70vh;
 }
