@@ -28,7 +28,7 @@
 .AdminPanel h3 i {
 	margin-right: 10px;
 }
-.AdminPanel .mail-base input, .AdminPanel .mail-base textarea {
+.AdminPanel .mail-base input { 
 	display: block;
 	width: 100%;
 	min-height: var(--input-h);
@@ -37,10 +37,13 @@
 	border: 1px solid #ccc;
 }
 .AdminPanel .mail-base textarea {
-	padding: 10px;
+	display: block;
+	width: 100%;
 	min-height: 150px;
+	margin: 10px 0;
+	padding: 10px;
+	border: 1px solid #ccc;
 	resize: none;
-
 }
 .AdminPanel .mail-base .standard-button {
 	margin: 0;

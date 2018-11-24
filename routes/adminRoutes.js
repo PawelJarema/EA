@@ -147,7 +147,7 @@ module.exports = app => {
 				async doc => { 
 					await Auction.remove({ _user: ObjectId(user_id) });
 					
-					req.session.message = 'Usunięto użytkownika i przesłano wiadomość'; 
+					req.session.message = 'Usunięto konto użytkownika i przesłano wiadomość'; 
 					res.send(await paginateUsers(page, per_page)); 
 				},
 				async err => { 
