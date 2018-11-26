@@ -125,7 +125,7 @@ class RawImage extends Component {
     render() {
         const data = this.props.data;
         //return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
-        return <img className="absolute-center" style={{ background:  'url(data:' + (data.type || 'image/jpeg') + ';base64,' + data.data + ') no-repeat center', backgroundSize: 'cover' }} />;
+        return <img className="absolute-center" style={{ backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }} />;
     }
 }
 
@@ -658,6 +658,7 @@ class AuctionList extends Component {
                 { 
                     !auctions.length && !this.no_result ? <Progress /> :
                     auctions.map((auction, i) => {
+
                         return (
                             <div key={ auction.title + '_' + i } className="auction">
                                 <div className="image-wrapper">

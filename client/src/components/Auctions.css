@@ -281,6 +281,7 @@
 .AuctionDetails .photos .photo-big img {
     min-width: 100%;
     min-height: 100%;
+    object-fit: cover;
 }
 .AuctionDetails .photos-small {
     display: flex;
@@ -297,7 +298,9 @@
     margin-right: 5px;
 }
 .AuctionDetails .thumbnail-wrapper img {
+    width: 100%;
     height: 100%;
+    object-fit: fill;
 }
 .AuctionDetails .text {
     margin-top: -90px;
