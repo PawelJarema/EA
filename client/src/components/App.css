@@ -101,6 +101,7 @@ button.standard-button i, .link-button i {
 }
 
 nav {
+    box-sizing: border-box;
     position: fixed;
     top: 0;
     left: 0;
@@ -167,6 +168,8 @@ nav {
 }
 .search-auctions .select-value {
     display: inline-block;
+    position: relative;
+    top: 1px;
     
     width: 180px;
     height: var(--input-h);
@@ -324,7 +327,9 @@ nav {
 }
 
 footer {
+    box-sizing: border-box;
     margin-top: 30px;
+
 }
 .category-links {
     
@@ -344,7 +349,7 @@ footer {
 
 
 .category-links .row .column {
-    flex: 0 0 17.9%;
+    flex: 0 0 17.8%;
     position: relative;
 }
 
@@ -357,6 +362,7 @@ footer {
     top: 50%;
     
     transform: translateY(-50%);
+    font-size: 20px;
     
     width: 98px;
     margin: 0px;

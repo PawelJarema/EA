@@ -84,6 +84,7 @@
 	left: 0;
 
 	display: table;
+	box-sizing: border-box;
 	
 	width: auto;
 	height: auto;
@@ -112,7 +113,7 @@
 
 .OtherUser .auction .title {
 	font-weight: 500;
-	word-break: break-all;
+
 }
 .OtherUser .auction .description {
 	font-size: 14px;
