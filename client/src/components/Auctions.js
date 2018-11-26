@@ -658,15 +658,11 @@ class AuctionList extends Component {
                 { 
                     !auctions.length && !this.no_result ? <Progress /> :
                     auctions.map((auction, i) => {
-                        const photo = auction.photos[0] || {};
-                        const photo_type = photo.type || '';
-                        const photo_raw = photo.data || '';
-
                         return (
                             <div key={ auction.title + '_' + i } className="auction">
                                 <div className="image-wrapper">
                                     {
-                                        photo_raw ? <img className="absolute-center" src={ 'data:' + (photo_type || 'image/jpeg') + ';base64,' + photo_raw } /> : <div className="no-image"></div>
+                                        auction.photos[0] ? <RawImage data={auction.photos[0]} /> : <div className="no-image"></div>
                                     }
                                 </div>
                                 <div className="text">
