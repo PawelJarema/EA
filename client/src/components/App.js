@@ -217,7 +217,19 @@ class Breadcrumbs extends Component {
             <div className="breadcrumbs">
                 {
                     current_path.map(
-                        (frag, index) => <span key={frag}><Link to={ '/' + current_path.slice(1, index + 1).map(p => p.url).join('/') }>{ frag.link.replace('#', '') }</Link></span>
+                        (frag, index) => (
+                            <span key={frag}>
+                                {
+                                    index < current_path.length - 1 ? (
+                                        <Link to={ '/' + current_path.slice(1, index + 1).map(p => p.url).join('/') }>
+                                            { frag.link }
+                                        </Link>
+                                    ) : (
+                                        <span>{ frag.link.replace('#', '') }</span>
+                                    )
+                                }
+                            </span>
+                        )
                     )
                 }
             </div>
@@ -285,8 +297,8 @@ class FooterBar extends Component {
         return (
             <div className="footer-bar">
                 <div>Copyright © 2018. Wszelkie prawa zastrzeżone.</div>
-                <div>Właścicielem portalu jest</div>
-                <div>Powered by MongoDB</div>
+                <div>Właścicielem portalu jest Polmarket</div>
+                <div>Powered by ADAWARDS</div>
             </div>
         );
     }
@@ -367,7 +379,7 @@ class AdvancedSearch extends Component {
                         </p>
                     </div>
                     <input name="category" type="hidden" value={this.props.match.params.category}/>
-                    <Link to={`/aukcje/wyszukiwanie-zaawansowane/${this.props.match.params.category}/${this.state.query || '*'}/${this.state.min}/${this.state.max}/${this.state.state || '*'}/${this.state.sort}`}><button>Szukaj</button></Link>
+                    <Link to={`/aukcje/wyszukiwanie-zaawansowane/${this.props.match.params.category || 'Kategorie'}/${this.state.query || '*'}/${this.state.min}/${this.state.max}/${this.state.state || '*'}/${this.state.sort}`}><button>Szukaj</button></Link>
                    
                 </form>
                 <div>
@@ -399,6 +411,16 @@ class AuctionListSearch extends Component {
             <div className="AuctionListSearch">
                 <AdvancedSearch match={ this.props.match } />
                 <AuctionList match={ this.props.match } />
+            </div>
+        );
+    }
+}
+
+class AuctionListSearchClosed extends Component {
+    render() {
+        return (
+            <div className="AuctionListSearch">
+                <AdvancedSearch match={ this.props.match } />
             </div>
         );
     }
@@ -466,6 +488,7 @@ class App extends Component {
                     
                     <div className="main-container">
                         <Route exact path="/" component={ FrontPage } />
+                        <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
                         <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
                         <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
                         <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
