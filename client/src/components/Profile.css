@@ -12,9 +12,9 @@
     font-size: 18px;
     padding: 20px;
     margin-right: var(--page-margin);
-    
 
     background: #f0f0f0;
+    border: 1px solid #ddd;
 }
 .Profile .links i, .AdminPanel .links i {
     position: relative;
@@ -24,15 +24,17 @@
 .Profile .links > a, .AdminPanel .links > a {
     display: block;
     width: 280px;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
 }
 .Profile .dropdown {
     display: none;
+    margin-top: -5px;
 }
 .Profile .dropdown a {
     display: block;
     margin-left: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 .Profile .links > .open + .dropdown {
     display: block;
@@ -157,6 +159,7 @@
     width: 15px;
     height: 15px;
     
+    background: white;
     border: 1px solid #ccc;
     pointer-events: none;
     cursor: pointer;
@@ -176,7 +179,7 @@
     left: -0.5px;
     font-family: 'Material Icons';
     content: 'done';
-    color: #ccc;
+    color: #777;
 }
 
 .react-datepicker__year-select {

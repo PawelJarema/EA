@@ -490,17 +490,20 @@ class MyAuctionList extends Component {
         }        
     }
 
+
     render() {
         const { user, my_auctions } = this.props;
         const { page, per_page, pages } = this.state;
         const { mode } = this.props;
-     
+        
+        // <button className="standard-button" onClick={this.pingPrzelewy24}>Ping Przelewy24</button>
+        // <button className="standard-button" onClick={this.p24TransactionTest}>Register Przelewy24 Transaction</button>
+
         return (
             <div className="Profile MyAuctions">
                 <ProfileLinks active={mode} />
                 <div className="AuctionList">
-                    <button className="standard-button" onClick={this.pingPrzelewy24}>Ping Przelewy24</button>
-                    <button className="standard-button" onClick={this.p24TransactionTest}>Register Przelewy24 Transaction</button>
+                    
                     {
                         pages > 1 && my_auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
                     }
@@ -674,7 +677,7 @@ class AuctionList extends Component {
                                         <div>
                                             <Link to={'/aukcje/' + auction._id }><button>Zobacz szczegóły</button></Link>
                                             <button>Licytuj</button>
-                                            <i className="material-icons" onClick={ (e) => { if (e.target.innerHTML.indexOf('outline') !== -1) this.props.likeAuction(auction._id); e.target.innerHTML = 'favorite'; } }>favorite_outline</i>
+                                            <i className="material-icons like-icon" onClick={ (e) => { if (e.target.innerHTML.indexOf('outline') !== -1) this.props.likeAuction(auction._id); e.target.innerHTML = 'favorite'; } }>favorite_outline</i>
                                         </div>
                                     </div>
                                 </div>

@@ -93,8 +93,17 @@
 }
 
 .AuctionList .auction {
+    position: relative;
     display: flex;
-    margin-bottom: 30px;
+    margin-bottom: 60px;
+}
+.AuctionList .auction:not(:last-child):after {
+    position: absolute;
+    bottom: -29px;
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: #ddd;
 }
 
 .image-wrapper, .thumbnail-wrapper {
@@ -113,6 +122,7 @@
     width: 100%;
     height: 100%;
     background: #eee;
+    border: 1px solid #ddd;
 }
 .no-image:after {
     position: absolute;
@@ -258,7 +268,7 @@
     margin-bottom: 30px;
 }
 .AuctionDetails .photos .photo-big {
-    border: 1px solid #eee;
+    /*border: 1px solid #ddd;*/
 }
 .AuctionDetails .photos .image-wrapper { 
     box-sizing: border-box;
@@ -269,8 +279,8 @@
     min-height: 470px;
 }
 .AuctionDetails .photos .photo-big img {
-    max-width: 100%;
-    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
 }
 .AuctionDetails .photos-small {
     display: flex;
@@ -294,16 +304,19 @@
 }
 .AuctionDetails .text input {
     height: var(--input-h);
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
+    border-bottom: 1px solid #bbb;
     border-right: none;
     padding: 0 30px;
+
 }
 .AuctionDetails .text button[type='submit'] {
     height: calc(var(--input-h) + 2px);
     padding: 0 30px;
     background: #f0f0f0;
-    border: 1px solid #eee;
-    border-left: none;
+    border: 1px solid #ddd;
+    border-bottom: 1px solid #aaa;
+    border-left: 1px solid #ddd;
     cursor: pointer;
     vertical-align: top;
 }
@@ -316,8 +329,12 @@
 
     transform: translateY(-50%);
 }*/
+.AuctionDetails .html-description img {
+    width: 100%;
+    height: auto;
+}
 .AuctionDetails .html-description h1, .AuctionDetails .html-description h2, .AuctionDetails .html-description h3 {
-    text-align: center;
+    text-align: left;
 }
 .AuctionDetails .html-description {
     padding-top: 60px; 
@@ -349,7 +366,7 @@
 .AuctionDetails .attribute-tags .attribute {
     font-size: 12px;
     padding: 5px 10px;
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
     margin-right: 5px;
 }
 
@@ -425,7 +442,7 @@
 .tab-view .tab-controls a {
     display: inline-block;
     padding: 10px 25px;
-    border: 1px solid #eee;
+    border: 1px solid #ccc;
 
     border-bottom: none;
     background: #fcfcfc;
@@ -444,9 +461,10 @@
     position: relative;
     
     padding: 10px;
-    border: 1px solid #eee;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    border: 1px solid #ccc;
+    border-right: 1px solid #aaa;
+    border-bottom: 1px solid #999;
+    box-shadow: 1px 1px 1px #bbb;
 
     min-height: 500px;
     overflow-y: scroll; 
@@ -533,6 +551,8 @@
 }
 .FrontPage .auction {
     cursor: pointer;
+    background: white !important;
+    box-shadow: 1px 1px 1px #ccc;
 }
 .FrontPage .auction .photo {
     position: relative;
@@ -541,10 +561,13 @@
     
     box-sizing: border-box;
     overflow: hidden;
-    border: 1px solid #ddd;
+    
 }
 .FrontPage .auction .photo img {
-    max-height: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    min-height: 100%;
+   
 }
 .FrontPage .title, .FrontPage .description {
     margin: 10px 0;
@@ -552,8 +575,8 @@
 }
 .FrontPage .six-column .title {
     font-size: 9px;
-    margin-top: 10px;
-    padding: 0 2px;
+    padding: 10px;
+    padding-top: 0;
 
     opacity: 0.7;
     
@@ -563,7 +586,7 @@
 }
 .FrontPage .six-column .description {
     font-size: 14px;
-    padding: 10px 0px;
+    padding: 10px;
     display: none;
 }
 .FrontPage .six-column .price-div {
@@ -574,6 +597,16 @@
 .FrontPage .six-column .photo, .FrontPage .six-column .no-image {
     min-height: 190px;
 }
+
+
+.FrontPage .title, .FrontPage .description, .FrontPage .price-div {
+    padding: 0 20px;
+}
+.FrontPage .price-div {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
 
 .rate-auction .Modal {
     position: fixed;
@@ -597,4 +630,13 @@
 }
 .AuctionList .rate-auction .Modal .content .rate-user i:first-of-type {
     margin-left: 5px;
+}
+.AuctionList .like-icon {
+    color: var(--hot-orange);
+    opacity: .8;
+}
+.divider {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
 }

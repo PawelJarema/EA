@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as userActions from '../actions/userActions';
 import * as categoryActions from '../actions/categoryActions';
@@ -11,12 +11,13 @@ import * as techBreakActions from '../actions/techBreakActions';
 
 import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
-import { Settings, CreateUpdateAction, Delivery } from './Profile';
+import { Settings, CreateUpdateAction, Delivery, ProfileLinks } from './Profile';
 import { AdminPanel, TechBreak } from './Admin';
 import Progress from './Progress';
 import Chat from './Chat';
 
 import socketIOClient from 'socket.io-client';
+
 
 const ProductCategories = {
     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
@@ -183,18 +184,47 @@ class Navi extends Component {
 }
 
 class Breadcrumbs extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { current_url: '/', current_path: [{ link: 'Home', url: '/' }] };
+    }
+
+    getPath() {
+        const root = [{ link: 'Home', url: '/' }];
+        const path = window.location.href;
+        const parts = path.split(/http:\/\/|\/|https:\/\//i);
+
+        const new_parts = parts.slice(2).map(part => ({ link: part.slice(0,1).toUpperCase() + part.slice(1), url: part }));
+        
+        this.setState({ current_url: path, current_path: root.concat(new_parts)});
+    }
+
+    componentDidMount() {
+        this.getPath();
+    }
+
+    componentDidUpdate() {
+        const { current_url } = this.state;
+        if (current_url !== window.location.href) {
+            this.getPath();
+        }
+    }
+
     render() {
-        const current_path = ['Home', 'Library', 'Data'];
+        const current_path = this.state.current_path.slice(0, 3);
         
         return (
             <div className="breadcrumbs">
                 {
-                    current_path.map(frag => <span key={frag}>{ frag }</span>)
+                    current_path.map(
+                        (frag, index) => <span key={frag}><Link to={ '/' + current_path.slice(1, index + 1).map(p => p.url).join('/') }>{ frag.link.replace('#', '') }</Link></span>
+                    )
                 }
             </div>
         );
     }
 }
+Breadcrumbs = withRouter(Breadcrumbs);
 
 class CategoryLink extends Component {
     render() {
@@ -362,6 +392,7 @@ class AdvancedSearch extends Component {
     }
 }
 
+const Test = () => <div>Test</div>;
 class AuctionListSearch extends Component {
     render() {
         return (
@@ -369,6 +400,16 @@ class AuctionListSearch extends Component {
                 <AdvancedSearch match={ this.props.match } />
                 <AuctionList match={ this.props.match } />
             </div>
+        );
+    }
+}
+
+class ProfileLinksClosed extends Component {
+    render() {
+        return (
+             <div className="Profile ProfileSettings">
+                <ProfileLinks />
+             </div>
         );
     }
 }
@@ -422,6 +463,7 @@ class App extends Component {
                         <Breadcrumbs />
                     </header>
             
+                    
                     <div className="main-container">
                         <Route exact path="/" component={ FrontPage } />
                         <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
@@ -437,6 +479,7 @@ class App extends Component {
                         <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                         <Route path="/konto/aukcje/dostawa" component={ Delivery } />
                         <Route path="/admin" component={ AdminPanel } />
+                        <Route exact path="/konto" component={ ProfileLinksClosed } />
                     </div>
 
                     <footer>

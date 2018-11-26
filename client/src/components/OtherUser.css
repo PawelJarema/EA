@@ -75,7 +75,7 @@
 }
 .OtherUser .auctions {
 	padding: 8px;
-	column-count: 7;
+	column-count: 6;
 }
 
 .OtherUser .auction {
@@ -85,7 +85,7 @@
 
 	display: table;
 	
-	width: 150px;
+	width: auto;
 	height: auto;
 
 	margin: 10px;

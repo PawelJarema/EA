@@ -78,7 +78,7 @@ class ProfileLinks extends Component {
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję</Link>
                     <Link className={ (active === 'current_auctions' ? 'active' : null) } to="/moje-aukcje">Bieżące</Link>
                     <Link className={ (active === 'ended_auctions' ? 'active' : null) } to='/moje-aukcje/zakonczone'>Zakończone</Link>
-                                    </div>
+                </div>
                 <a href="#">Opinie</a>
                 <a href="#">Saldo</a>
             </div>
@@ -361,14 +361,14 @@ class Delivery extends Component {
                     :
                     (<form ref={ (e) => this.formRef = e } className="user-settings" action="/user/delivery" method="post">
                         <h1>Metody dostawy towaru</h1>
-                        <ol>
-                            <li>Określ sposoby dostawy sprzedawanych towarów</li> 
-                            <li>Podaj ceny, które naliczysz za wysyłkę</li> 
-                            <li>Wzbogać listę przewoźników, aby uatrakcyjnić swoją ofetrę</li>
-                        </ol>
-                        <br /><br />
                         <fieldset>
                             <legend><i className="material-icons">local_shipping</i>Przewoźnicy</legend>
+                            <ol>
+                                <li>Określ sposoby dostawy sprzedawanych towarów</li> 
+                                <li>Podaj ceny, które naliczysz za wysyłkę</li> 
+                                <li>Wzbogać listę przewoźników, aby uatrakcyjnić swoją ofetrę</li>
+                            </ol>
+                            <br />
                             <p ref={ (e) => this.deliveriesRef = e } className="deliveries">
                                 {
                                     Array.from({ length: this.state.deliveries}, (v, k) => k + 1).map(index => (
