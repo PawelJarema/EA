@@ -5,8 +5,10 @@ const { ObjectId } = mongoose.Types;
 
 require('../models/User');
 require('../models/Auction');
+require('../models/Chat');
 const User = mongoose.model('user');
 const Auction = mongoose.model('auction');
+const Chat = mongoose.model('chat');
 
 const dayInMillis = 1000 * 60 * 60 * 24;
 
@@ -14,39 +16,57 @@ let lastAuctionListed = 0;	// last auction listed as pending for verdict
 let auctionsPendingVerdict = [];
 
 const Mailer = require('./Mailer');
+const business = require('./emailTemplates/business');
 const wonTemplate = require('./emailTemplates/wonTemplate');
 const lostTemplate = require('./emailTemplates/lostTemplate');
 const itemSoldTemplate = require('./emailTemplates/itemSoldTemplate');
 const itemNotSoldTemplate = require('./emailTemplates/itemNotSoldTemplate');
 const prepayTemplate = require('./emailTemplates/prepayTemplate');
 const rateTemplate = require('./emailTemplates/rateTemplate');
+const pendingMessagesTemplate = require('./emailTemplates/pendingMessagesTemplate');
 
-const notifyWinnerAboutAuctionEnd = (auction, winner) => {
-	let subject = `Wygrałeś licytację przedmiotu: ${ auction.title }`;
-	let recipients = [{ email: winner.contact.email }];
+const notifyAboutPendingChatMessages = async () => {
+	const recentlyUpdatedChats = await Chat.find({ messages: { $elemMatch: { seen: { $ne: true }}}});
+	let user_ids = new Set();
 
-	const winnerMailer = new Mailer(
-		{ subject, recipients }, 
-		wonTemplate(
-			auction._id, 
-			auction.title, 
-			auction.price.current_price
-		)
-	);
+	for (let i = 0; i < recentlyUpdatedChats.length; i++) {
+		const messages = recentlyUpdatedChats[i].messages;
+		for (let m = 0; i < messages.length; m++) {
+			const message = messages[m];
+			if (message) {
+				if (message.seen !== true) {
+					user_ids.add(message._to);
+				}
+			} else {
+				break;
+			}
+		} 
+	}
 
-	winnerMailer.send();
+	const object_ids = [...user_ids].map(id => ObjectId(id));
+	const users = await User.find({ _id: { $in: object_ids }}, { contact: 1 }).lean();
+
+	const emails = users.map(user => ({ email: user.contact.email }));
+
+	if (emails.length) {
+		const subject = "Nowe wiadomości na portalu " + business.name;
+		const recipients = emails;
+		const mailer = new Mailer({ subject, recipients }, pendingMessagesTemplate());
+		const response = await mailer.send();
+	}
 }
 
-const notifyOwnerAboutAuctionEnd = (auction, owner, winner) => {
+
+const notifyOwnerAboutAuctionEnd = (auction, owner, names) => {
 	const subject = `Sprzedałeś przedmiot ${auction.title}`;
 	const recipients = [{ email: owner.contact.email }];
 	const ownerMailer = new Mailer(
 		{ subject, recipients }, 
 		itemSoldTemplate(
-			auction._id, 
+			auction._id,
 			auction.title, 
-			`${winner.firstname} ${winner.lastname}`, 
-			auction.price.current_price
+			names, 
+			auction.price.min_price
 		)
 	);
 
@@ -67,45 +87,65 @@ const endAuction = async (auction_id) => {
 	let winning_bid,
 		winningUser;
 
-	if (bids.length >= 2) {
-		winning_bid = bids[0];
-		winningUser = await User.findOne({ _id: ObjectId(winning_bid._user) });
 
-		subject = `Zakończyła się licytacja przedmiotu: "${ auction.title }"`;
-		recipients = [];
+		const min_price = auction.price.min_price || 0;
+		let { quantity } = auction,
+			winner_ids = [],
+			loser_ids = [];
 
-		let lostBids = bids.slice(1);
-		for (let i = 0, l = lostBids.length; i < l; i++) {
-			const bid = lostBids[i];
-			const user = await User.findOne({ _id: ObjectId(bid._user) });
+		auction.bids.map(bid => {
+			const id = ObjectId(bid._user);
+			if (quantity > 0 && bid.price >= min_price) {
+				winner_ids.push(id);
+				quantity -= 1;
+			} else {
+				loser_ids.push(id);
+			}
+		});
 
-			recipients.push({ email: user.contact.email });
-			console.log('part-taker email assigned');
+		const getUsersByIdArray = async id_array => await User.find({ _id: { $in: id_array }}, { firstname: 1, lastname: 1, contact: 1 });
+		const winners = await getUsersByIdArray(winner_ids);
+		const losers = await getUsersByIdArray(loser_ids);
+
+		const subject = `Zakończyła się licytacja przedmiotu: "${ auction.title }"`;
+
+		if (winners.length) {
+			const subject = `Wygrałeś licytację przedmiotu: ${ auction.title }`;
+			const names = winners.map(winner => `${winner.firstname || ''} ${winner.lastname || (!winner.firstname && 'Anonim') }`);
+			const emails = winners.map(winner => winner.contact.email);
+
+			for (let i = 0; i < emails.length; i++) {
+				const recipients = [{ email: emails[i] }];
+				const winMailer = new Mailer({ subject, recipients }, wonTemplate(
+					auction._id, 
+					auction.title, 
+					i === 0 ? auction.price.current_price : auction.bids[i].price
+				));
+				await winMailer.send();
+				console.log('winner notification sent to ' + emails[i]);
+			}
+
+			await notifyOwnerAboutAuctionEnd(auction, owner, names);
+		} else {
+			const subject = `Nie udało się sprzedać przedmiotu ${auction.title}`;
+			const recipients = [{ email: owner.contact.email }];
+
+			const ownerMailer = new Mailer(
+				{ subject, recipients }, 
+				itemNotSoldTemplate(auction._id, auction.title)
+			);
+			await ownerMailer.send();
 		}
 
-		const loserMailer = new Mailer(
-			{ subject, recipients }, 
-			lostTemplate(auction.title)
-		);
-		await loserMailer.send();
+		if (losers.length) {
+			const recipients = losers.map(loser => ({ email: loser.contact.email }))
+			const bulkLoseMailer = new Mailer({ subject, recipients }, lostTemplate(auction.title));
+			await bulkLoseMailer.send();
+			console.log('loser notification sent to ' + recipients);
+		}
 
-		notifyWinnerAboutAuctionEnd(auction, winningUser);
-		notifyOwnerAboutAuctionEnd(auction, owner, winningUser);
-
-	} else if (bids.length === 1 ){
-		winning_bid = bids[0];
-		winningUser = await User.findOne({ _id: ObjectId(winning_bid._user) });
-
-		notifyWinnerAboutAuctionEnd(auction, winningUser);
-		notifyOwnerAboutAuctionEnd(auction, owner, winningUser);
-
-	} else {
-		let subject = `Nie udało się sprzedać przedmiotu ${auction.title}`;
-		let recipients = [{ email: owner.contact.email }];
-
-		const ownerMailer = new Mailer({ subject, recipients }, itemNotSoldTemplate(auction._id, auction.title));
-		await ownerMailer.send();
-	}
+	auction.quantity = quantity;
+	auction.payees = winner_ids;
 
 	await auction
 		.save()
@@ -157,28 +197,26 @@ const schedulePendingAuctions = async () => {
 const remindToPrepayEndedAuctions = async () => {
 	const auctions = await Auction.find (
 		{ ended: true, prepaid: { $ne: true } },
-		{ _id: 1, bids: 1, title: 1 }
+		{ _id: 1, payees: 1, title: 1 }
 	).lean();
 
 	const count = auctions.length;
 
 	for (let i = 0; i < count; i++) {
 		const auction = auctions[i];
-		const bids = auction.bids.sort((bid_1, bid_2) => {
-			if (bid_1.price < bid_2.price) return 1;
-			if (bid_1.price > bid_2.price) return -1;
-			return 0; 
-		});
-
-		if (bids.length === 0)
+		if (!auction.payees || auction.payees.length === 0)
 			continue;
-
-		const winner = await User.findOne({ _id: ObjectId(bids[0]._user) });
+		
+		const payee_ids = await auction.payees.map(id => ObjectId(id));
+		const payees = await User.find({ _id: { $in: payee_ids } }, { firstname: 1, lastname: 1, contact: 1 });
+		
 		const subject = 'Przypomnienie o obowiązku przedpłaty za kupiony przedmiot: ' + auction.title;
-		const recipients = [{ email: winner.contact.email }];
+		const recipients = payees.map(user => ({ email: user.contact.email }));
+		
 		const mailer = new Mailer({ subject, recipients }, prepayTemplate(auction.title));
 		await mailer.send();
-		console.log('prepay email sent to ' + winner.firstname + ' ' + winner.lastname)
+
+		console.log(`prepay email sent to ${payees.length} people.`);
 	}
 }
 
@@ -222,30 +260,42 @@ schedule.scheduleJob('59 23 * * *', async () => {
 
 	// not rated
 	await remindToRateEndedAuctions();
+
+	// unread messages
+	await notifyAboutPendingChatMessages();
 });
 console.log('CRON JOB SCHEDULED');
 
 module.exports = app => {
-	app.get('/api/rate', (req, res) => {
+	app.get('/api/pendingmessages', async (req, res) => {
 		req.setTimeout(0);
-		remindToRateEndedAuctions();
+		await notifyAboutPendingChatMessages();
+		res.send(true);
 	});
 
-	app.get('/api/prepay', (req, res) => {
+	app.get('/api/rate', async (req, res) => {
 		req.setTimeout(0);
-		remindToPrepayEndedAuctions();
+		await remindToRateEndedAuctions();
+		res.send(true);
 	});
 
-	app.get('/api/endauction/:id', (req, res) => {
+	app.get('/api/prepay', async (req, res) => {
+		req.setTimeout(0);
+		await remindToPrepayEndedAuctions();
+		res.send(true);
+	});
+
+	app.get('/api/endauction/:id', async (req, res) => {
 		req.setTimeout(0);
 		const id = req.params.id;
-		endAuction(id);
+		await endAuction(id);
+		res.send(true);
 	});
 
-	app.get('/api/scheduleauctions', (req, res) => {
+	app.get('/api/scheduleauctions', async (req, res) => {
 		req.setTimeout(0);
-		schedulePendingAuctions();
-
+		await schedulePendingAuctions();
+		res.send(true);
 	});
 }
 

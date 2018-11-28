@@ -8,6 +8,19 @@ const Rate = mongoose.model('rate');
 const { ObjectId } = mongoose.Types;
 
 module.exports = app => {
+	app.post('/other_user/opinions', async (req, res) => {
+		const { user_id, from, count } = req.body;
+		console.log(req.body);
+
+		const rates = await Rate.find(
+			{ _user: user_id }, 
+			{ date: 1, _user: 1, auction: 1, rate: 1, text: 1},
+			{ sort: { date: -1 }, skip: +from, limit: +count }
+		);
+
+		res.send(rates);
+	});
+
 	app.get('/other_user/:id', async (req, res) => {
 		const id = ObjectId(req.params.id);
 		const user = await User.findOne({ _id: id }).lean();

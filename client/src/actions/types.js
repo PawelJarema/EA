@@ -7,6 +7,7 @@ export const FETCH_AUCTIONS = 'fetch_auctions';
 export const FETCH_AUCTION = 'fetch_auction';
 export const COUNT_AUCTIONS = 'count_auctions';
 export const FETCH_OTHER_USER = 'fetch_other_user';
+export const FETCH_OPINIONS = 'fetch_opinions';
 export const FETCH_CHATS = 'fetch_chats';
 export const PING_PRZELEWY_24 = 'ping_przelewy_24';
 export const AUTH_ADMIN = 'auth_admin';

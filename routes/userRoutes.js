@@ -163,8 +163,6 @@ module.exports = app => {
                     });
                 });
                 
-                console.log('hash', hash);
-                
                 if (user.security) {
                     user.security.password = hash;
                 } else {

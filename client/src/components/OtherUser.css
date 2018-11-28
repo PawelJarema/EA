@@ -77,7 +77,11 @@
 	padding: 8px;
 	column-count: 6;
 }
-
+.OtherUser .auctions > li {
+	-webkit-column-break-inside: avoid;
+          page-break-inside: avoid;
+               break-inside: avoid;
+}
 .OtherUser .auction {
 	position: relative;
 	top: 0;
@@ -97,10 +101,6 @@
 	border-bottom: 2px solid #aaa;
 	border-right: 1px solid #bbb;
 	border-radius: 5px;
-	
-	-webkit-column-break-inside: avoid;
-          page-break-inside: avoid;
-               break-inside: avoid;
 }
 .OtherUser .auction:hover {
 
@@ -124,7 +124,9 @@
 
 
 .Deliveries {
-	padding: 30px;
+	padding-top: 60px;
+	max-width: var(--html-w);
+	margin: auto;
 }
 .Deliveries h1 {
 	margin-bottom: 10px;
@@ -136,9 +138,13 @@
 	margin-right: 10px;
 	font-size: 40px;
 }
+.Deliveries .name {
+	color: var(--link-blue);
+}
 .Deliveries .price {
+	padding-left: 10px;
 	color: black;
 }
-.Deliveries .price .value {
-	margin-left: 10px;
+.Deliveries .price:after {
+	content: ' zł';
 }

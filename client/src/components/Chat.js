@@ -53,17 +53,27 @@ class Chat extends Component {
 	}
 
 	openChatBox() {
+
 		this.setState(prev => ({ chatBoxOpen: !prev.chatBoxOpen }));
 	}
 
 	openChat(chat) {
 		let unseen = this.state.unseen;
 		if (chat.unseen) {
+			this.readAllInterval = setTimeout(() => this.props.readAllMessages(chat._id), 1000);
 			chat.unseen = false;
 			unseen -= 1;
 		}
+		
 		this.setState({ chatBoxMode: 'messages', messages: chat.messages, title: chat.title, chat, unseen }, this.scrollToBottom);
 
+	}
+
+	closeChat() {
+		this.setState({ chatBoxMode: 'chats' });
+		if (this.readAllInterval) {
+			clearTimeout(this.readAllInterval);
+		}
 	}
 
 	scrollToBottom() {
@@ -101,14 +111,10 @@ class Chat extends Component {
 		this.scrollToBottom();
 	}
 
-	closeChat() {
-		this.setState({ chatBoxMode: 'chats' });
-	}
-
 	render() {
 		const { chatBoxMode, chats, chat, messages, user_id, title, unseen } = this.state;
 		const chatBox = (
-			<div className="chat-box">
+			<div ref={ (e) => this.chatboxRef = e } className="chat-box">
 				<div className="close-chat-box" onClick={this.openChatBox}><i className="material-icons">close</i></div>
 				{
 					chatBoxMode === 'chats' && (

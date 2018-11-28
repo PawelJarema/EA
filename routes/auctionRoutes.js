@@ -343,6 +343,8 @@ module.exports = app => {
 
         const is_main = category === 'Kategorie' || main_names.indexOf(category) !== -1;
 
+        console.log(category.toUpperCase());
+        
         if (is_main) {
             let result = [];
             let items = 0;

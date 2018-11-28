@@ -34,8 +34,9 @@ const ProductCategories = {
 
 class Logo extends Component {
     render() {
+        // <Link to="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></Link>
         return (
-            <Link to="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></Link>
+            <Link to="/"><div className="logo"><img src="/assets/logo.png" alt="logo"/></div></Link>
         );
     }
 }
@@ -140,6 +141,7 @@ class SearchField extends Component {
 }
 
 class UserLinks extends Component {
+    // <i className="material-icons">account_circle</i>
     render() {
         const user = this.props.user;
         
@@ -149,7 +151,7 @@ class UserLinks extends Component {
                     <Link to="/moje-aukcje">Moje aukcje</Link>
                     <Chat socket={ this.props.socket } id={user._id} />
                     <span className="link">
-                        <i className="material-icons">account_circle</i>
+                        <img src="/assets/icons/user.png" />
                         <div className="dropdown">
                             <a href="/api/logout" className="logout">Wyloguj</a>
                             <Link to="/konto/ustawienia" className="settings">Ustawienia</Link>

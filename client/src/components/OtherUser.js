@@ -2,10 +2,71 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as otherUserActions from '../actions/otherUserActions';
+import * as opinionActions from '../actions/opinionActions';
 import './OtherUser.css';
 import Modal from './Modal';
 
 import SinceHelper from '../helpers/sinceHelper';
+
+class Opinions extends Component {
+	constructor(props) {
+		super(props);
+		this.state = { opinions: [], fetched: 0, per_fetch: 10 };
+		this.firstfetch = false;
+	}
+
+	componentWillReceiveProps(props) {
+		if (props.opinions) {
+			this.setState(prev => ({ opinions: prev.opinions.concat(props.opinions), fetched: (props.opinions.length ? prev.fetched + props.opinions.length : -1) }));
+		}
+
+		if (props.other_user && !this.firstfetch) {
+			const data = { 
+				user_id: props.other_user._id, 
+				from: this.state.fetched, 
+				count: this.state.per_fetch 
+			};
+
+			this.props.fetchOpinions(data);
+			this.firstfetch = true;
+		}
+	}
+
+	render() {
+		const { opinions } = this.props;
+		console.log(opinions);
+
+		if (opinions && opinions.length > 0) {
+			return (
+				<div className="opinions">
+					<table>
+					<tbody>
+					{
+						opinions.map((opinion, index) => (
+							<tr key={"opinion_" + index}>
+								<td>{ opinion.auction }</td>
+								<td>{ opinion.text }</td>
+								<td>{ opinion.rate }</td>
+							</tr>
+						))
+					}
+					</tbody>
+					</table>
+				</div>
+			);
+		} else if (opinions && opinions.length === 0 || opinions === false) {
+			return (
+				<div className="no-result">
+					<i className="material-icons">star_outline</i>
+					<h1>Brak opinii</h1>
+					<p>Sprzedawca nie ma jeszcze opinii</p>
+				</div>
+			);
+		} else {
+			return null;
+		}
+	}
+}
 
 class Deliveries extends Component {
 	constructor(props) {
@@ -14,42 +75,44 @@ class Deliveries extends Component {
 		this.state = {};
 	}
 
-	componentDidMount() {
-		
-	}
-
 	render() {
 		const user = this.props.other_user;
 
-		return (
-			<div className="Deliveries">
-				{
-					(user && user.deliveries.length !== 0) && (
-						<div className="delivery-methods">
-							<h1><i className="material-icons">local_shipping</i>Metody dostawy</h1>
-							<p>Dostępne metody dostawy przedmiotu:</p>
-							<br />
-							{
-								user.deliveries.map((delivery, index) => (
-									<div key={'delivery_' + index} className="delivery">
-										<span className="price"><span style={{ display: 'inline-block', width: 330}}>{index + 1}. {delivery.name}</span><span className="value">{ delivery.price }</span></span>
-									</div>
-								))
-							}
-						</div>
-					)
-				}
-				{
-					(!user || !user.deliveries.length) && (
-						<div className="no-result">
-							<i className="material-icons">local_shipping</i>
-							<h1>Nie dodano metod dostawy</h1>
-							<p>Sprzedawca nie dodał jeszcze metod dostawy. <br /> Zapytaj o wysyłkę w zakładce 'Sprzedawca'</p>
-						</div>
-					)
-				}
-			</div>
-		);
+		if (user && user.deliveries.length !== 0) {
+			return (
+				<div className="Deliveries">
+					{
+							<div className="delivery-methods">
+								<h1><i className="material-icons">local_shipping</i>Metody dostawy</h1>
+								<p>Dostępne metody dostawy:</p>
+								<br />
+								<table>
+								<tbody>
+								{
+									user.deliveries.map((delivery, index) => (
+										<tr key={'delivery_' + index} className="delivery">
+											<td className="name">{delivery.name}</td>
+											<td className="price">{ delivery.price }</td>
+										</tr>
+									))
+								}
+								</tbody>
+								</table>
+							</div>
+					}
+				</div>
+			);
+		} else if (user && !user.deliveries.length) {
+			return (
+				<div className="no-result">
+					<i className="material-icons">local_shipping</i>
+					<h1>Nie dodano metod dostawy</h1>
+					<p>Sprzedawca nie dodał metod dostawy. <br /> Zapytaj o wysyłkę w zakładce 'Sprzedawca'</p>
+				</div>
+			);
+		} else {
+			return null;
+		}
 	}
 }
 
@@ -97,7 +160,9 @@ class Seller extends Component {
 		const user = this.props.other_user;
 		const auction = this.props.auction;
 		const withUs = user ? SinceHelper(new Date().getTime() - user.joindate) : null;
-		
+
+		// TODO wystaw opinie tylko jeśli user znajduje się na liście raters
+		// <button className="rate standard-button">Wystaw opinie</button> 
 		return (
 			<div className="OtherUser Seller">
 				{
@@ -107,7 +172,7 @@ class Seller extends Component {
 								<div className="column">
 									<h3 className="name">{ `${user.firstname || ''} ${user.lastname || (!user.firstname && 'Anonim' : '')}` }</h3>
 									<div className="city">{ user.address ? user.address.city : null }</div>
-									<div className="with-us">{ (withUs ? `${ user.firstname || '' } jest z nami ${withUs}` : null) }</div>
+									<div className="with-us transparent">{ (withUs ? `${ user.firstname || '' } jest z nami ${withUs}` : null) }</div>
 								</div>
 								<div className="column">
 									<div className="stars">
@@ -121,12 +186,12 @@ class Seller extends Component {
 													}
 													{
 														Array.from({ length: 5 - user.rating }, (v, k) => k).map(i => (
-															<i key={'empty_star_' + i} className="material-icons bad">sentiment_dissatisfied</i>
+															<i key={'empty_star_' + i} className="material-icons bad">star_outline</i>
 														))
 													}
 												</div>
 											) : (
-												<p>{user.firstname} nie ma jeszcze opinii.</p>
+												<p className="">{user.firstname} nie ma jeszcze opinii.</p>
 											)
 										}
 										
@@ -144,7 +209,7 @@ class Seller extends Component {
 									{
 										auction._user !== this.props.user._id && (<div>
 											<button className="message standard-button" onClick={this.openModal}><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
-											<button className="rate standard-button">Wystaw opinie</button>
+											
 										</div>)
 									}
 								</div>
@@ -160,15 +225,15 @@ class Seller extends Component {
 							<div className="auctions-title">
 								<h3>Aukcje sprzedawcy</h3>
 							</div>
-							<div className="auctions">
+							<ul className="auctions">
 								{
-									user.auctions ? user.auctions.map((auction, index) => (
-										<Link key={"auction" + index} className="auction" to={`/aukcje/${auction._id}`}><div className="title">{auction.title}</div><div className="description">{auction.shortdescription}</div></Link>
+									user.auctions && user.auctions.length > 0 ? user.auctions.map((auction, index) => (
+										<li key={"auction" + index}><Link className="auction" to={`/aukcje/${auction._id}`}><div className="title">{auction.title}</div><div className="description">{auction.shortdescription}</div></Link></li>
 									))
 									:
-									<div>Brak bieżących auckji</div>
+									<div className="transparent" style={{ marginLeft: 20 }}>Brak czynnych auckji</div>
 								}
-							</div>
+							</ul>
 						</div>
 					)
 				}
@@ -178,11 +243,16 @@ class Seller extends Component {
 }
 
 
+function mapOpinionAndOtherUserStateToProps({ opinions, other_user }) {
+	return { opinions, other_user };
+}
+
 function mapOtherUserStateToProps({ other_user }) {
 	return { other_user };
 }
 
+Opinions = connect(mapOpinionAndOtherUserStateToProps, opinionActions)(Opinions);
 Deliveries = connect(mapOtherUserStateToProps, otherUserActions)(Deliveries);
 Seller = connect(mapOtherUserStateToProps, otherUserActions)(Seller);
 
-export { Seller, Deliveries };
+export { Seller, Deliveries, Opinions };

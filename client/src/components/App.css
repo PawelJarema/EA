@@ -25,6 +25,7 @@ button {
     
     --nav-h: 100px;
     --input-h: 40px;
+    --html-w: 650px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -129,6 +130,9 @@ nav {
     display: block;
     font-size: 36px;
     color: var(--orange);
+}
+.logo img {
+    max-height: calc(var(--nav-h) - 5px);
 }
 
 .main-container {
@@ -266,6 +270,10 @@ nav {
 .user-links a, .user-links span.link {
     position: relative;
     cursor: pointer;
+}
+.user-links a, .user-links span.link img {
+    vertical-align: middle;
+    min-width: 40px;
 }
 
 .user-links a .dropdown, .user-links span.link .dropdown {

@@ -26,6 +26,32 @@ const getUnseenChats = async id => {
 }
 
 module.exports = app => {
+	app.post('/chats/read_all_messages', requireLogin, async (req, res) => {
+		const { chat_id } = req.body;
+		const user_id = req.user._id;
+
+		const chat = await Chat.findOne({ _id: ObjectId(chat_id) });
+		if (!chat) {
+			console.log('no chat found with id: ' + chat_id);
+			res.send(false);
+		}
+
+		chat.messages.map(message => {
+			if (String(message._to) === String(user_id)) {
+				message.seen = true;
+				console.log('seen set');
+			}
+		});
+
+		await chat
+			.save()
+			.then(
+				doc => { console.log('chat updated successfully'); res.send(true); },
+				err => { console.log('error saving chat', err); res.send(false); }
+			);
+
+	});
+
 	app.get('/chats/get_all', requireLogin, async (req, res) => {
 		const id = ObjectId(req.user._id);
 		res.send(await getUnseenChats(id));

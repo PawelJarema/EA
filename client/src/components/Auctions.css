@@ -233,7 +233,20 @@
 
 .AuctionDetails {
 }
+.AuctionDetails .end-tag {
+    position: relative;
+    top: -55px;
+    left: 10px;
+    max-width: 65%;
+    font-size: 20px;
+    text-align: center;
+    color: var(--good);
+    padding: 10px;
+    border: 2px dotted #ccc;
+    background: white;
 
+    transform: rotate(-15deg);
+}
 .AuctionDetails .background {
     position: absolute;
     top: 0;
@@ -268,7 +281,7 @@
     margin-bottom: 30px;
 }
 .AuctionDetails .photos .photo-big {
-    /*border: 1px solid #ddd;*/
+   
 }
 .AuctionDetails .photos .image-wrapper { 
     box-sizing: border-box;
@@ -281,7 +294,6 @@
 .AuctionDetails .photos .photo-big img {
     min-width: 100%;
     min-height: 100%;
-    object-fit: cover;
 }
 .AuctionDetails .photos-small {
     display: flex;
@@ -300,7 +312,6 @@
 .AuctionDetails .thumbnail-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: fill;
 }
 .AuctionDetails .text {
     margin-top: -90px;
@@ -333,7 +344,6 @@
     transform: translateY(-50%);
 }*/
 .AuctionDetails .html-description img {
-    
     height: auto;
 }
 .AuctionDetails .html-description h1, .AuctionDetails .html-description h2, .AuctionDetails .html-description h3 {
@@ -341,7 +351,7 @@
 }
 .AuctionDetails .html-description {
     padding-top: 60px; 
-    max-width: 650px;
+    max-width: var(--html-w);
     margin-left: 30px;
     margin: auto;
     text-align: left;
@@ -468,7 +478,6 @@
     border: 1px solid #ccc;
     border-right: 1px solid #aaa;
     border-bottom: 1px solid #999;
-    box-shadow: 1px 1px 1px #bbb;
 
     min-height: 500px;
     overflow-y: scroll; 
@@ -593,6 +602,9 @@
 .FrontPage .six-column .column:hover .title {
     opacity: 1;
 }
+.FrontPage .six-column .column:hover .description, .FrontPage .six-column .column:hover .price-div {
+    
+}
 .FrontPage .six-column .description {
     font-size: 14px;
     padding: 10px;
@@ -648,4 +660,35 @@
     width: 100%;
     height: 1px;
     background: #ddd;
+}
+
+.AuctionDetails .all-bids {
+    padding-top: 60px;
+    max-width: var(--html-w);
+    margin: auto;
+}
+
+.AuctionDetails .all-bids h1 {
+    margin-bottom: 20px;
+}
+.AuctionDetails .all-bids .price {
+    padding-left: 10px;
+    font-weight: 100;
+    color: inherit;
+}
+.AuctionDetails .all-bids .price:after {
+    content: ' zł';
+}
+.AuctionDetails .all-bids .bidder:first-child {
+    color: var(--link-blue);
+}
+.AuctionDetails .all-bids .bidder.me {
+    color: var(--orange);
+}
+
+.AuctionDetails ul.auctions {
+    list-style: none;
+    left: 0;
+    margin: 0;
+    padding: 0;
 }

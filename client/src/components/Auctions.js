@@ -10,7 +10,7 @@ import './Auctions.css';
 import { Link } from 'react-router-dom';
 import { Pagination } from './Pagination';
 import { ProfileLinks } from './Profile';
-import { Seller, Deliveries } from './OtherUser';
+import { Seller, Deliveries, Opinions } from './OtherUser';
 
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
@@ -250,15 +250,18 @@ class AuctionDetails extends Component {
                                                 ))
                                             }
                                         </p> 
-                                        <div>
+                                        <div className={ (auction.ended ? 'transparent' : '') }>
                                             <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
                                                     <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota" min={auction.price.current_price + 1} step="1" />
-                                                    <button type="submit" onClick={this.submit}><i className="material-icons">gavel</i>Podbij</button>
+                                                    <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Podbij</button>
                                                 </form>)
                                             }
                                         </div>
+                                        {
+                                            auction.ended && <div className="end-tag">Aukcja Zakończona</div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -274,22 +277,36 @@ class AuctionDetails extends Component {
                                 <div className="tab-content-area">
                                     <div className="active" id="bids">
                                         {  
-                                            auction.bids.map((bid, index) => (
-                                                <p 
-                                                    key={'bid_' + index} 
-                                                    className={`bid${bidders[bid._user]._id === user._id ? ' me' : ''}`}
-                                                >
+                                            auction.bids.length ? (
+                                                <div className="all-bids">
+                                                    <h1><i className="material-icons">gavel</i> Stan licytacji</h1>
+                                                    <table>
+                                                    <tbody>
                                                     {
-                                                        `${bidders[bid._user].firstname} ${bidders[bid._user].lastname} ${ 
-                                                            index === 0 
-                                                            ? 
-                                                            auction.price.current_price 
-                                                            :
-                                                            bid.price
-                                                        }` 
+                                                        auction.bids.map((bid, index) => (
+                                                            <tr 
+                                                                key={'bid_' + index} 
+                                                                className={`bidder ${bidders[bid._user]._id === user._id ? 'me' : ''}`}
+                                                            >
+                                                                <td>{ index + 1 }.</td>
+                                                                <td>{bidders[bid._user].firstname || ''} {bidders[bid._user].lastname || (!(bidders[bid._user].firstname ? 'Anonim' : ''))}</td>
+                                                                <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
+                                                            </tr>
+                                                        ))
                                                     }
-                                                </p>
-                                            ))
+                                                    </tbody>
+                                                    </table>
+                                                </div>
+                                            ) : (
+                                                <div className="no-result">
+                                                    <i className="material-icons">gavel</i>
+                                                    <h1>Nikt nie licytuje</h1>
+                                                    <p>Podbij stawkę minimalną i bądź pierwszy!</p>
+                                                </div>
+                                            )
+                                        }
+                                        {
+
                                         }
                                         <div className="background">
                                             <i className="material-icons">gavel</i>
@@ -303,7 +320,7 @@ class AuctionDetails extends Component {
                                             <div className="no-result">
                                                 <i className="material-icons">sentiment_dissatisfied</i>
                                                 <h1>Brak dodatkowych informacji</h1>
-                                                <p>Sprzedawca nie dodał opisu rozszerzonego.<br />Zadaj pytanie o przedmiot w zakładce 'Sprzedawca'</p>
+                                                <p>Sprzedawca nie dodał opisu.<br />Zadaj pytanie o przedmiot w zakładce 'Sprzedawca'</p>
                                             </div>
                                         }
                                         <div className="background">
@@ -311,18 +328,19 @@ class AuctionDetails extends Component {
                                         </div>
                                     </div>
                                     <div id="opinions">
+                                        <Opinions />
                                         <div className="background">
                                             <i className="material-icons">star_outline</i>
                                         </div>
                                     </div>
                                     <div id="seller">
-                                        <Seller auction={ auction } other_user={other_user} user={user} socket={this.props.socket} />
+                                        <Seller auction={ auction } user={user} socket={this.props.socket} />
                                         <div className="background">
                                             <i className="material-icons">account_circle</i>
                                         </div>
                                     </div>
                                     <div id="shipping">
-                                        <Deliveries auction={ auction } other_user={other_user} />
+                                        <Deliveries />
                                         <div className="background">
                                             <i className="material-icons">local_shipping</i>
                                         </div>
