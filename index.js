@@ -11,7 +11,7 @@ require('./services/Passport');
 
 mongoose.connect(keys.mongoURI);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || process.env.NODE_ENV === 'production' ? 80 : 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
