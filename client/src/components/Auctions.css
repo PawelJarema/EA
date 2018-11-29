@@ -32,6 +32,11 @@
     opacity: 0.4;
 }
 
+.div-image-block {
+    width: 100%;
+    height: 100%;
+}
+
 .thumbnails {
     overflow: hidden;
 }
@@ -162,11 +167,14 @@
     font-size: 20px;
     font-weight: 400;
 }
+
 .price > .value {
-    color: black;
-    font-size: 20px;
-    font-weight: bold;
-    vertical-align: middle;
+    font-size: 25px;
+    font-weight: bolder;
+
+    margin-left: 5px;
+    color: #444;
+    vertical-align: baseline;
 }
 .AuctionList .auction .text .value:after, .price > .value:after {
     content: ' zł';
@@ -239,6 +247,7 @@
     left: 10px;
     max-width: 65%;
     font-size: 20px;
+    font-weight: 500;
     text-align: center;
     color: var(--good);
     padding: 10px;
@@ -281,7 +290,8 @@
     margin-bottom: 30px;
 }
 .AuctionDetails .photos .photo-big {
-   
+   background: white;
+   border: 1px solid #eee;
 }
 .AuctionDetails .photos .image-wrapper { 
     box-sizing: border-box;
@@ -304,6 +314,7 @@
     flex: 0 0 13.8%;
     min-height: 90px;
     margin-top: 15px;
+    background: transparent;
     cursor: pointer;
 }
 .AuctionDetails .thumbnail-wrapper:not(:last-child) {
@@ -692,3 +703,98 @@
     margin: 0;
     padding: 0;
 }
+
+.opinions table {
+    width: 80%;
+}
+.opinions tr td:first-child {
+    width: 80%;
+}
+.opinions tr td {
+    position: relative;
+    padding: 45px 20px;
+    padding-bottom: 30px;
+    font-weight: bold;
+    
+}
+.opinions tr:not(:last-child) td {
+    border-bottom: 1px solid #ddd;
+}
+.opinions tr .auction-details {
+    position: absolute;
+    top: 10px;
+    left: 22px;
+    font-size: 12px;
+    font-weight: 100;
+    line-height: 1.4;
+    opacity: .7;
+}
+.opinions tr .auction-details .date {
+    opacity: .8;
+}
+.opinions tr .auction-details .title {
+    font-weight: 400;
+}
+.opinions tr .opinion:before {
+    content: '„';
+}
+.opinions tr .opinion:after {
+    content: '‟';
+}
+.opinions tr .opinion {
+    display: inline-block;
+}
+.opinions tr .rater {
+    display: inline-block;
+    margin-top: 6px;
+    opacity: .7;
+}
+.opinions tr .rater:before {
+    content: ' -- ';
+}
+
+.pagination, .pagination a {
+    user-select: none;
+}
+.pagination-chevron {
+    position: relative;
+    top: -2px;
+    color: var(--link-blue);
+    opacity: 0.5;
+}
+.pagination-chevron:hover {
+    opacity: 1;
+}
+.price-value:after {
+    content: ' zł';
+}
+.AuctionDetails .price {
+    display: inline-block;
+}
+.AuctionDetails .buy-now {
+    opacity: .8;
+    margin-top: -18px;
+    margin-left: -18px;
+    display: inline-block;
+    vertical-align: middle;
+    transform: rotate(-2deg);
+}
+.AuctionDetails .min-price {
+    opacity: .3;
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-left: 1px;
+}
+.AuctionDetails .min-price .price-value {
+}
+.AuctionDetails .buy-now .standard-button {
+    margin-left: 20px;
+    padding: 13px 10px;
+    background: transparent;
+    border: 1px dashed #ccc;
+    border: none;
+
+}
+.AuctionDetails .buy-now .standard-button:hover {
+    color: var(--link-blue);
+};

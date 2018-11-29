@@ -10,13 +10,19 @@ const { ObjectId } = mongoose.Types;
 module.exports = app => {
 	app.post('/other_user/opinions', async (req, res) => {
 		const { user_id, from, count } = req.body;
-		console.log(req.body);
 
 		const rates = await Rate.find(
 			{ _user: user_id }, 
-			{ date: 1, _user: 1, auction: 1, rate: 1, text: 1},
+			{ date: 1, _user: 1, _rater: 1, auction: 1, rate: 1, text: 1},
 			{ sort: { date: -1 }, skip: +from, limit: +count }
-		);
+		).lean();
+
+		for (let i = 0; i < rates.length; i++) {
+			const rate = rates[i];
+			const rater = await User.findOne({ _id: ObjectId(rate._rater) }, { firstname: 1, lastname: 1 });
+
+			rate.rater = `${rater.firstname || ''} ${rater.lastname || (!rater.firstname ? 'Anonim' : '')}`;
+		}
 
 		res.send(rates);
 	});

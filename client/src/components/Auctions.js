@@ -125,7 +125,7 @@ class RawImage extends Component {
     render() {
         const data = this.props.data;
         //return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
-        return <img className="absolute-center" style={{ backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }} />;
+        return <div className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }}></div>;
     }
 }
 
@@ -134,6 +134,7 @@ class AuctionDetails extends Component {
         super(props);        
         this.state = { auction: '', photo: 0 };
         this.seePhoto = this.seePhoto.bind(this);
+        this.buyNow = this.buyNow.bind(this);
         this.submit = this.submit.bind(this);
     }
 
@@ -175,6 +176,14 @@ class AuctionDetails extends Component {
         tab.scrollIntoView({behavior: 'smooth', block: 'center'});
     }
 
+    buyNow() {
+        const auction = this.state.auction;
+        const reply = window.confirm(`Czy chcesz kupić ${auction.title} za ${auction.price.buy_now_price} zł ?`);
+        if (reply) {
+            this.props.buyNow(auction._id);
+        }
+    }
+
     submit(event) {
         event.preventDefault();
 
@@ -205,6 +214,9 @@ class AuctionDetails extends Component {
 
         const active_photo = this.state.photo;
         const thumbnails = auction ? auction.photos.slice(0, active_photo).concat(auction.photos.slice(active_photo + 1)) : null;
+
+        const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price && auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
+        const min_price = auction ? !auction.ended && auction.price.min_price && !auction.price.hide_min_price : false;
 
         return (
             <div className="AuctionDetails">
@@ -244,6 +256,7 @@ class AuctionDetails extends Component {
                                         <h1>{ auction.title }</h1>
                                         <p>{auction.shortdescription}</p>
                                         <p className="attribute-tags">
+                                            <span className="attribute">Ilość<span>{ auction.quantity }</span></span>
                                             {
                                                 auction.attributes.map(attr => (
                                                     <span key={`${attr.name}_${attr.value}`} className="attribute">{attr.name}<span>{attr.value}</span></span>
@@ -252,6 +265,8 @@ class AuctionDetails extends Component {
                                         </p> 
                                         <div className={ (auction.ended ? 'transparent' : '') }>
                                             <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
+                                            { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ auction.price.buy_now_price }</span>!</button></div> : null }
+                                            { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ auction.price.min_price }</span></div> : null }
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
                                                     <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota" min={auction.price.current_price + 1} step="1" />
@@ -442,6 +457,7 @@ class MyAuctionList extends Component {
         this.p24TransactionTest = this.p24TransactionTest.bind(this);
     }
 
+
     componentWillReceiveProps(props) {
         if (props.my_auctions) {
             if (typeof props.my_auctions[props.my_auctions.length - 1] === 'number') {
@@ -473,6 +489,7 @@ class MyAuctionList extends Component {
 
     componentDidMount() {
         const { mode, page, per_page } = this.state;
+        this.props.clearPagination();
         this.paginate(page, per_page);
     }
 
@@ -527,7 +544,10 @@ class MyAuctionList extends Component {
                         pages > 1 && my_auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
                     }
                     {
-                        !my_auctions ? <Progress /> : my_auctions.map((auction, index) => (
+                        my_auctions === 'empty' && <Progress />
+                    }
+                    {
+                        my_auctions && my_auctions != 'empty' && my_auctions.length > 0 && my_auctions.map((auction, index) => (
                             <div key={'my_auction_' + index} className="auction">
                                 <div className="image-wrapper">
                                     { auction.photos.length ? <RawImage data={auction.photos[0]} /> : <div className="no-image"/> }
@@ -548,9 +568,9 @@ class MyAuctionList extends Component {
                                     }
                                     <div className="actions dont-hide">
                                         <div>
-                                            <Link to={'/aukcje/' + auction._id }><button>Zobacz</button></Link>
+                                            <Link to={'/aukcje/' + auction._id }><button className="standard-button">Zobacz</button></Link>
                                             {
-                                                mode === 'ended_bids' && auction.bids[0]._user === user._id && !auction.rated && <RateAuction auction={auction} clickHandler={this.rateAuction} />
+                                                mode === 'ended_bids' && auction.bids[0] && auction.bids[0]._user === user._id && !auction.rated && <RateAuction auction={auction} clickHandler={this.rateAuction} />
                                             }
                                             {
                                                 mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
@@ -562,7 +582,7 @@ class MyAuctionList extends Component {
                         ))
                     }
                     {
-                        my_auctions && my_auctions.length < 1 && (
+                        my_auctions === false && (
                             <div className="no-result">
                                 <div>
                                     <i className="material-icons">folder_open</i>
@@ -691,7 +711,7 @@ class AuctionList extends Component {
 
                                     <div className="actions">
                                         <div>
-                                            <Link to={'/aukcje/' + auction._id }><button>Zobacz szczegóły</button></Link>
+                                            <Link to={'/aukcje/' + auction._id }><button className="standard-button">Zobacz szczegóły</button></Link>
                                             <button>Licytuj</button>
                                             <i className="material-icons like-icon" onClick={ (e) => { if (e.target.innerHTML.indexOf('outline') !== -1) this.props.likeAuction(auction._id); e.target.innerHTML = 'favorite'; } }>favorite_outline</i>
                                         </div>

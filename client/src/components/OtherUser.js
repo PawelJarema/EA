@@ -7,34 +7,69 @@ import './OtherUser.css';
 import Modal from './Modal';
 
 import SinceHelper from '../helpers/sinceHelper';
+import DateHelper from '../helpers/dateHelper';
+
+class Rating extends Component {
+	render() {
+		const { rating } = this.props;
+
+		return (
+			<div>
+				{
+					Array.from({ length: 5 - (5 - rating) }, (v, k) => k).map(i => (
+						<i key={'star_' + i} className="material-icons orange">star</i>
+					))
+				}
+				{
+					Array.from({ length: 5 - rating }, (v, k) => k).map(i => (
+						<i key={'empty_star_' + i} className="material-icons orange">star_outline</i>
+					))
+				}
+			</div>
+		);
+	}
+}
 
 class Opinions extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { opinions: [], fetched: 0, per_fetch: 10 };
-		this.firstfetch = false;
+		this.state = { opinions: [], fetched: 0, per_fetch: 4, more: true };
+		this.fetchMore = this.fetchMore.bind(this);
+	}
+
+	componentWillUnmount() {
+		this.props.clearOpinions();
 	}
 
 	componentWillReceiveProps(props) {
 		if (props.opinions) {
-			this.setState(prev => ({ opinions: prev.opinions.concat(props.opinions), fetched: (props.opinions.length ? prev.fetched + props.opinions.length : -1) }));
-		}
-
-		if (props.other_user && !this.firstfetch) {
-			const data = { 
-				user_id: props.other_user._id, 
-				from: this.state.fetched, 
-				count: this.state.per_fetch 
-			};
-
-			this.props.fetchOpinions(data);
-			this.firstfetch = true;
+			const opinion_count = props.opinions.length;
+			if (opinion_count) {
+				this.setState(prev => ({ opinions: prev.opinions.concat(props.opinions), fetched: (opinion_count ? prev.fetched + opinion_count : -1), more: opinion_count === prev.per_fetch }));
+			} else {
+				this.setState({ more: false });
+			}
 		}
 	}
 
+	fetchMore() {
+		const data = { 
+			user_id: this.props.other_user._id, 
+			from: this.state.fetched, 
+			count: this.state.per_fetch 
+		};
+		this.props.fetchOpinions(data);
+
+	}
+
 	render() {
-		const { opinions } = this.props;
-		console.log(opinions);
+		const { opinions, more } = this.state;
+		const { other_user } = this.props;
+
+		if (other_user && !this.first_fetch) {
+			this.first_fetch = true;
+			this.fetchMore();
+		}
 
 		if (opinions && opinions.length > 0) {
 			return (
@@ -44,14 +79,14 @@ class Opinions extends Component {
 					{
 						opinions.map((opinion, index) => (
 							<tr key={"opinion_" + index}>
-								<td>{ opinion.auction }</td>
-								<td>{ opinion.text }</td>
-								<td>{ opinion.rate }</td>
+								<td><span className="auction-details"><span className="date">{DateHelper(opinion.date)}</span><br/><span className="title">{ opinion.auction }</span></span><h3 className="opinion">{ opinion.text }</h3><span className="rater">{opinion.rater}</span></td>
+								<td><Rating rating={opinion.rate} /></td>
 							</tr>
 						))
 					}
 					</tbody>
 					</table>
+					{ more && <div style={{marginLeft: 18, marginBottom: 30}}><button className="standard-button" onClick={this.fetchMore}>Zobacz więcej...</button></div> }
 				</div>
 			);
 		} else if (opinions && opinions.length === 0 || opinions === false) {
@@ -178,18 +213,7 @@ class Seller extends Component {
 									<div className="stars">
 										{
 											user.rating !== null ? (
-												<div>
-													{
-														Array.from({ length: 5 - (5 - user.rating) }, (v, k) => k).map(i => (
-															<i key={'star_' + i} className="material-icons">star</i>
-														))
-													}
-													{
-														Array.from({ length: 5 - user.rating }, (v, k) => k).map(i => (
-															<i key={'empty_star_' + i} className="material-icons bad">star_outline</i>
-														))
-													}
-												</div>
+												<Rating rating={user.rating} />
 											) : (
 												<p className="">{user.firstname} nie ma jeszcze opinii.</p>
 											)
@@ -242,6 +266,9 @@ class Seller extends Component {
 	}
 }
 
+function mapOpinionStateToProps({ opinions }) {
+	return { opinions };
+}
 
 function mapOpinionAndOtherUserStateToProps({ opinions, other_user }) {
 	return { opinions, other_user };

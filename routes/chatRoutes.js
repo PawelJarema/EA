@@ -8,7 +8,7 @@ const multer = require('multer');
 const upload = multer();
 
 const getUnseenChats = async id => {
-	let chats = await Chat.find({ $or: [{ _user_1: id }, { _user_2: id }] }, {}, { sort: { date: -1 }, limit: 30 }).lean();
+	let chats = await Chat.find({ $or: [{ _user_1: id }, { _user_2: id }] }, {}, { sort: { date: -1 }, limit: 9 }).lean();
 
 	let unseen = 
 		chats.filter(chat => 

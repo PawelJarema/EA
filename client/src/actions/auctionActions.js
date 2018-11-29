@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { FETCH_AUCTIONS, FETCH_AUCTION, FETCH_MESSAGE } from './types';
 
+export const buyNow = id => async dispatch => {
+	const res = await axios.post('/auction/buy_now/' + id);
+	const message = await axios.get('/api/flash_message');
+
+	dispatch({ type: FETCH_AUCTION, payload: res.data });
+	dispatch({ type: FETCH_MESSAGE, payload: message.data });
+}
+
 export const postBid = (id, formData) => async dispatch => {
 	const res = await axios.post('/auction/bid/' + id, formData);
 	const message = await axios.get('/api/flash_message');

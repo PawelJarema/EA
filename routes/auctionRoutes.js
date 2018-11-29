@@ -21,6 +21,10 @@ const imageminGifsicle = require('imagemin-gifsicle');
 
 const Sharp = require('sharp');
 
+const buyNowWonTemplate = require('../services/emailTemplates/buyNowWonTemplate');
+const buyNowItemSoldTemplate = require('../services/emailTemplates/buyNowItemSoldTemplate');
+const Mailer = require('../services/Mailer');
+
 const currentUserId = (req) => {
     if (req.user) {
         return ObjectId(req.user._id);
@@ -29,6 +33,35 @@ const currentUserId = (req) => {
     }
 }
 
+async function addBidders(auction) {
+    let auction_object = auction.toObject(),
+        bidders_object = {};
+    const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
+    const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
+    bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+    auction_object.bidders = bidders_object;
+    return auction_object;
+}
+
+async function buyNowNotifications(user, owner, auction) {
+    let subject, recipients, mailer;
+    let res;
+
+    const price = auction.price.buy_now_price;
+    const username = `${user.firstname || ''} ${user.lastname || !user.firstname ? 'Anonim' : ''}`;
+    
+    subject = 'Kupiłeś przedmiot ' + auction.title;
+    recipients = [{ email: user.contact.email }];
+    mailer = new Mailer({ subject, recipients }, buyNowWonTemplate(auction._id, auction.title, price));
+    res = await mailer.send();
+
+    subject = `${username} kupi od Ciebie ${auction.title} w opcji Kup Teraz`;
+    recipients = [{ email: owner.contact.email }];
+    mailer = new Mailer({ subject, recipients }, buyNowItemSoldTemplate(auction._id, auction.title, username, price));
+    res = await mailer.send();
+}
+
+// TODO
 module.exports = app => {
     app.post('/auction/rate', requireLogin, async (req, res) => {
         const rate = req.body;
@@ -37,6 +70,7 @@ module.exports = app => {
         auction.rated = true;
 
         rate._user = ObjectId(rate._user);
+        rate._rater = ObjectId(req.user._id);
 
         delete rate._auction;
         const newRate = new Rate(rate).save().then(
@@ -89,7 +123,11 @@ module.exports = app => {
         const count = await Auction.countDocuments(query);
         auctions.push(count);
 
-        res.send(auctions);
+        if (count === 0) {
+            res.send(false);
+        } else {
+            res.send(auctions);
+        }
     });
 
     app.post('/auction/my_auctions/:page/:per_page', requireLogin, async (req, res) => {
@@ -109,7 +147,44 @@ module.exports = app => {
         const count = await Auction.countDocuments(query);
         auctions.push(count);
 
-        res.send(auctions);
+        if (count === 0) {
+            res.send(false);
+        } else {
+            res.send(auctions);
+        }
+    });
+
+    app.post('/auction/buy_now/:id', requireLogin, async (req, res) => {
+        const user = req.user;
+        const auction_id = req.params.id;
+
+        const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
+        const owner = await User.findOne({ _id: ObjectId(auction._user) });
+
+        auction.quantity = auction.quantity - 1;
+        if (auction.buynowpayees) {
+            auction.buynowpayees.push(ObjectId(user._id));
+        } else {
+            auction.buynowpayees = [ObjectId(user._id)];
+        }
+
+        if (auction.quantity === 0) {
+            auction.ended = true;
+        }
+
+        await auction.save().then(
+            async doc => {
+                req.session.message = 'Kupiłeś ' + auction.title;
+                res.send(await addBidders(doc));
+
+                await buyNowNotifications(user, owner, doc);
+            },
+            async err => {
+                console.log(err);
+                req.session.error = 'Nastąpił błąd. Spróbuj ponownie';
+                res.send(await addBidderd(auction));
+            }
+        );
     });
 
     app.post('/auction/bid/:id', [requireLogin, upload.any()], async (req, res) => {
@@ -171,6 +246,7 @@ module.exports = app => {
                 doc = doc.toObject();
                 
                 let bidders_object = {};
+
                 bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
                 doc.bidders = bidders_object;
 

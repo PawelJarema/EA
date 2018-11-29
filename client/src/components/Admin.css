@@ -67,8 +67,8 @@
 .AdminPanel table td:not(:last-child), .AdminPanel table th:not(:last-child) {
 	
 }
-.AdminPanel table tr:nth-child(2n + 1) {
-	background: #f9f9f9;
+.AdminPanel table tr:nth-child(2n + 2) {
+	background: #f5f5f5;
 }
 .AdminPanel .user-list table td:nth-child(n + 5) {
 	text-align: center;

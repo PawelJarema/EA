@@ -3,9 +3,11 @@ const { ObjectId } = mongoose.Types;
 require('../models/Admin');
 require('../models/User');
 require('../models/Auction');
+require('../models/Rate');
 const Admin = mongoose.model('admin');
 const User = mongoose.model('user');
 const Auction = mongoose.model('auction');
+const Rate = mongoose.model('rate');
 const Mailer = require('../services/Mailer');
 const userDeletedTemplate = require('../services/emailTemplates/userDeletedTemplate');
 const mailUserTemplate = require('../services/emailTemplates/mailUserTemplate');
@@ -18,6 +20,14 @@ const multer = require('multer');
 const upload = multer();
 
 const DOCUMENT_DOCTYPES = ['user', 'auction'];
+
+async function fetchOpinions(user_id) {
+	const opinions = await Rate.find({ _user: ObjectId(user_id) }, { rate: 1 });
+	const count = opinions.length;
+	const rate = count ? (opinions.map(opinion => opinion.rate).reduce((a, b) => a + b) / count).toFixed(2) : 0;
+
+	return ({ count, rate });
+}
 
 async function paginateAuctions(page, per_page) {
 	const auctions = await Auction.find(
@@ -41,6 +51,11 @@ async function paginateUsers(page, per_page) {
 		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
 	).lean();
 	const pages = Math.ceil(await User.countDocuments() / +per_page);
+
+	for (let i = 0; i < users.length; i++) {
+		const user = users[i];
+		user.opinion = await fetchOpinions(user._id);
+	}
 
 	return ({ 'user': users, count: pages });
 }
@@ -80,10 +95,8 @@ module.exports = app => {
     });
 
 	app.post('/api/mail_all_users', upload.any(), async (req, res) => {
-		console.log(req.body);
 		const { admin_id, subject, message } = req.body;
 		
-
 		const admin = await Admin.findOne({ _id: ObjectId(admin_id) });
 		if (!admin) {
 			res.send(false);

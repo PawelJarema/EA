@@ -13,7 +13,11 @@ import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 class NoDocuments extends Component {
 	render() {
-		return <div className="absolute-center">nic tu nie ma</div>;
+		return (
+			<div className="absolute-center">
+				<p className="transparent"><i className="material-icons" style={{marginRight: 10}}>filter_none</i>Na razie nic tu nie ma</p>
+			</div>
+		);
 	}
 }
 
@@ -57,7 +61,7 @@ class BulkMail extends Component {
 class AuctionList extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { page: 1, pages: 1, per_page: 10, mailbox: false };
+		this.state = { page: 1, pages: 1, per_page: 5, mailbox: false };
 
 		this.paginateTo = this.paginateTo.bind(this);
 		this.openMailbox = this.openMailbox.bind(this);
@@ -126,7 +130,6 @@ class AuctionList extends Component {
 
 		if (!admin) 
 			return <Redirect to="/admin" />;
-
 
 		if (documents) {
 			return (
@@ -309,7 +312,7 @@ class UserList extends Component {
 										<td>{ (doc.address ? `${doc.address.street}\n${doc.address.postal} ${doc.address.city}` : 'użytkownik nie dodał danych adresowych') }</td>
 										<td>{ (doc.balance ? `${doc.balance.account_number}` : 'użytkownik nie dodał konta') }</td>
 										<td>{ (doc.agreements ? (doc.agreements.corespondence ? 'Tak' : 'Nie') : 'Nie określono') }</td>
-										<td>opinia</td>
+										<td title='głosy / średnia ocena'>{ `${doc.opinion.count} / ${doc.opinion.rate}` }</td>
 										<td>
 											{
 												( doc.agreements && doc.agreements.corespondence ? <i className="material-icons action" onClick={() => this.openMailbox(doc.contact.email)} title="wyślij wiadomość">mail_outline</i> : null)

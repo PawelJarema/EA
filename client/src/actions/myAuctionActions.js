@@ -9,6 +9,10 @@ export const rateAuction = data => async dispatch => {
 	//dispatch({ type: FETCH_AUCTIONS, payload: res.data });
 }
 
+export const clearPagination = () => async dispatch => {
+	dispatch ({ type: FETCH_MY_AUCTIONS, payload: 'empty' });
+}
+
 export const paginate = (page, items_per_page) => async dispatch => {
 	const res = await axios.post(`/auction/my_auctions/${page}/${items_per_page}`);
 	dispatch ({ type: FETCH_MY_AUCTIONS, payload: res.data });

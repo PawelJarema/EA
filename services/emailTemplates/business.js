@@ -1,7 +1,8 @@
 const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    name: 'E-Aukcje.pl',
+    name: 'Eaukcje.pl',
     email: 'noreply@eaukcje.pl',
-    host: (production ? 'http://46.101.229.199:5000/' : 'http://localhost:3000/')
+    host: (production ? 'http://eaukcje.pl/' : 'http://localhost:3000/'),
+    logo: 'http://drive.google.com/uc?export=view&id=1m1uMNGwcRDcjL8m2w7z2Rl4hKvzKwzA8'
 };

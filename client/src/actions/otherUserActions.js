@@ -9,6 +9,7 @@ export const postQuestion = (formData) => async dispatch => {
 };
 
 export const fetchOtherUser = (id) => async dispatch => {
+	dispatch({ type: FETCH_OTHER_USER, payload: false });
 	const res = await axios.get('/other_user/' + id);
 	dispatch({ type: FETCH_OTHER_USER, payload: res.data });
 };
