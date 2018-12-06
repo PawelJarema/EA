@@ -49,9 +49,9 @@ if (process.env.NODE_ENV === 'production') {
     });
 
    // SSL CERT
-   const privateKey = fs.readFileSync('/cert/privkey.pem', 'utf8');
-   const certificate = fs.readFileSync('/cert/cert.pem', 'utf8');
-   const ca = fs.readFileSync('/cert/chain.pem', 'utf8');
+   const privateKey = fs.readFileSync('./cert/privkey.pem', 'utf8');
+   const certificate = fs.readFileSync('./cert/cert.pem', 'utf8');
+   const ca = fs.readFileSync('./cert/chain.pem', 'utf8');
 
    const credentials = {
       key: privateKey,
