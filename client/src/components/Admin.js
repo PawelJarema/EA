@@ -332,7 +332,6 @@ class UserList extends Component {
 		} else if (documents === false) {
 			return <NoDocuments />;
 		} else {
-			console.log(documents);
 			return null;
 		}
 	}
@@ -366,12 +365,12 @@ class Provision extends Component {
 
 		return (
 			<div className="Provision">
-				<h1>Prowizja</h1>
-				<h3><i className="material-icons">attach_money</i>Prowizja od transakcji</h3>
-				<p>Ustaw prowizję, jaką będziesz pobierał od sprzedawców</p>
+				<h1>Opłaty</h1>
+				<h3><i className="material-icons">attach_money</i>Koszt wystawienia aukcji</h3>
+				<p>Ustaw koszt, który poniesie sprzedawca wystawiając aukcję w serwisie</p>
 				<p>
 					<input name="provision" type="range" min="1" max="60" step="1" value={provision} onChange={(e) => this.setState({ provision: e.target.value })}/>
-					<span>{provision}%</span>
+					<span>{provision} zł</span>
 				</p>
 				<button className="standard-button" onClick={() => this.props.postProvision({ admin_id: admin._id, provision })}>Zapisz</button>
 			</div>
@@ -413,7 +412,7 @@ class AdminLinks extends Component {
 		return (
 			<div className="links">
 				<h2><i className="material-icons">verified_user</i>Administracja</h2>
-				<NavLink to="/admin/prowizja" activeClassName="active">Prowizja serwisu</NavLink>
+				<NavLink to="/admin/prowizja" activeClassName="active">Opłaty</NavLink>
 				<NavLink to="/admin/uzytkownicy" activeClassName="active">Użytkownicy</NavLink>
 				<NavLink to="/admin/aukcje">Aukcje</NavLink>
 				<NavLink to="/admin/baza-mailingowa">Baza mailingowa</NavLink>

@@ -25,7 +25,7 @@ const userSchema = new Schema({
     },
     balance: {
         balance: balanceSchema,
-        current_credits: Number,
+        credits: { type: Number, default: 5 },
         account_number: String
     },
     deliveries: [{ name: String, price: Number }],

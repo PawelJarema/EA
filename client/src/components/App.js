@@ -510,9 +510,10 @@ class App extends Component {
   render() {
     const { socket } = this.state;
     const { flash, tech_break } = this.props;
+
     const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
-    if (tech_break === false) {
+    if (tech_break && tech_break.techbreak === false) {
         return (
           <div className="App">
             { 
@@ -555,7 +556,7 @@ class App extends Component {
             </BrowserRouter>
           </div>
         );
-    } else if (tech_break === true) {
+    } else if (tech_break && tech_break.techbreak === true) {
         return (
             <div className="App">
                 {

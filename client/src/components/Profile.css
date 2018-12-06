@@ -230,3 +230,17 @@
     color: var(--good);
     opacity: 0.8;
 }
+
+.CreateAuction .Modal .content {
+    text-align: center;
+    padding: 20px;
+}
+.CreateAuction .Modal .content p, .CreateAuction .Modal .content input {
+    width: 100%;
+}
+.CreateAuction .Modal .content p:first-child {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+.CreateAuction .Modal .content p:last-child {
+}

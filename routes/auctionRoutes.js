@@ -472,9 +472,6 @@ module.exports = app => {
     app.post('/auction/create_or_update', [requireLogin, upload.any()], async (req, res) => {
         const data = req.body;
         const attributes = await Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key]}));
-        
-        console.log(data);
-        console.log(attributes);
 
         let auction = null;
 
@@ -542,7 +539,11 @@ module.exports = app => {
             });
         });
 
+        const user = await User.findOne({ _id: ObjectId(req.user._id) });
+        const { credits } = user.balance;
+        user.balance.credits = credits ? (+credits - 1) : 4;
+        await user.save();
+
         res.send({});
-  
     });
 };

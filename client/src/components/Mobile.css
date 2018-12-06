@@ -336,6 +336,22 @@ nav .user-links .search-mobile {
 		margin: 1px;
 	}
 }
+@media screen and (max-width: 976px) {
+	.App .Modal {
+		width: 100%;
+		height: calc(100% - var(--nav-h) - var(--input-h) * 2.5);
+	}
+	.App .Modal .actions {
+		display: flex;
+		justify-content: center;
+	}
+	.App .Modal button {
+		margin-top: 0 !important;
+	}
+	.App .Modal button:first-child {
+		margin-right: 10px;
+	}
+}
 @media screen and (max-width: 965px) {
 	nav .search-auctions {
 		height: 186px;
@@ -405,6 +421,14 @@ nav .user-links .search-mobile {
 	}
 	.App .Profile .user-settings ol {
 		display: none;
+	}
+
+	.App .FrontPage h1 {
+		text-align: center;
+		margin-left: -20px;
+	}
+	.App .FrontPage .auction {
+		box-shadow: none;
 	}
 	footer .footer-bar {
 		padding: 7px 0px;

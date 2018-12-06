@@ -14,6 +14,9 @@ export const newAuction = (formData) => async dispatch => {
     const message_res = await axios.get('/api/flash_message');
     
     dispatch({ type: FETCH_MESSAGE, payload: message_res.data });
+
+    const user = await axios.get('/api/current_user');
+    dispatch({ type: FETCH_USER, payload: user.data });
 }
 
 export const postDeliveries = (formData) => async dispatch => {

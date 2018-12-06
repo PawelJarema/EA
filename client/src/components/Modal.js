@@ -9,11 +9,8 @@ class Modal extends Component {
 	}
 
 	render() {
-		const open = this.props.open;
-		const title = this.props.title;
+		const { open, title, actions, close, cancel } = this.props;
 		const content = this.props.children;
-		const actions = this.props.actions;
-		const close = this.props.close;
 
 		return (
 			<div ref={ (e) => this.modalRef = e } className={"Modal absolute-center" + (open ? ' open' : '')}>
@@ -24,7 +21,7 @@ class Modal extends Component {
 					{ content }
 				</div>
 				<div className="actions dont-hide">
-					{ actions }<button className="standard-button" onClick={close}>Anuluj</button>
+					{ actions }{ cancel !== false ? <button className="standard-button" onClick={close}>Anuluj</button> : null }
 				</div>
 			</div>
 		);

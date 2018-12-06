@@ -19,7 +19,6 @@ const sendItemTemplate	= require('../services/emailTemplates/sendItemTemplate');
 
 // 	verify: 'https://sandbox.przelewy24.pl/trnVerify'
 
-
 function TransactionId(title, price, buyer, owner_id) {
 	return md5([ title, price, buyer._id, owner_id ].join('|'));
 }
@@ -30,6 +29,65 @@ module.exports = app => {
 		P24.testRestAccess();
 
 		res.send(true);
+	});
+
+	app.post('/przelewy24/buyCredits', requireLogin, async (req, res) => {
+		const buyer = req.user;
+		const { qty, cost } = req.body;
+
+		req.session.boughtCredits = qty;
+		const title = 'Kupno kredytów eaukcje.pl w liczbie ' + qty;
+		const transaction_id = TransactionId('buy credits', +qty * +cost, buyer, new Date().getTime());
+
+		let data = {
+			p24_merchant_id: keys.przelewy24Id,
+			p24_pos_id: keys.przelewy24Id,
+			p24_session_id: transaction_id,
+			p24_amount: (+qty * +cost) * 100, 
+			p24_currency: 'PLN',
+			p24_description: title,
+			p24_email: buyer.contact.email,
+			p24_client: `${buyer.firstname || ''} ${buyer.lastname || buyer.firstname ? '' : 'Anonim'}`,
+			p24_address: buyer.address ? buyer.address.street : '',
+			p24_zip: buyer.address ? buyer.address.postal : '',
+			p24_city: buyer.address ? buyer.address.city : '',
+			p24_country: 'PL',
+			p24_phone: buyer.contact.phone ? buyer.contact.phone : '',
+			p24_url_return: business.host + 'przelewy24/creditCallback',
+			p24_url_status: business.host + 'przelewy24/creditStatus',
+			p24_wait_for_result: 0,
+			p24_time_limit: 0,
+			p24_channel: 16,
+			p24_transfer_label: 'Kupno kredytów eaukcje.pl',
+			p24_api_version: '3.2',
+			p24_regulation_accept: true
+		};
+
+		const token = await P24.registerTransaction(data);
+		// TODO put in database ?
+		req.session.message = 'Za chwilę zostaniesz przekierowany na stronę Przelewy24. Proszę czekać...';
+		res.send(P24.requestTransactionUrl(token));
+	});
+
+	app.get('/przelewy24/creditCallback', async (req, res) => {
+		const { boughtCredits } = req.session;
+		if (boughtCredits) {
+			req.session.message = "Zakup kredytów przebiegł pomyślnie";
+			const user = await User.findOne({ _id: ObjectId(req.user._id)});
+			const { credits } = user.balance;
+
+			user.balance.credits = credits ? +credits + +boughtCredits : +boughtCredits;
+			await user.save();
+
+			req.session.boughtCredits = null;
+		}
+
+		res.redirect('/konto/aukcje/dodaj');
+	});
+
+	app.post('/przelewy24/creditStatus', async (req, res) => {
+		console.log('creditStatus', req.body);
+		
 	});
 
 	app.post('/przelewy24/registerTransaction', requireLogin, async (req, res) => {
@@ -82,6 +140,7 @@ module.exports = app => {
 				{ upsert: true }
 			);
 
+		req.session.message = 'Za chwilę zostaniesz przekierowany na stronę Przelewy24. Proszę czekać...';
 		//res.send(P24.requestTransactionUrl(token));
 
 		// try to dispatchTransaction via passage SOAP

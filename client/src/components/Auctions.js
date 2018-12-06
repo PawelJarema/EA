@@ -20,6 +20,42 @@ import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
 
+class BuyCredits extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { qty: 1 };
+        this.pay = this.pay.bind(this);
+    }
+
+    pay() {
+        const { qty } = this.state;
+        const cost = this.props.tech_break.provision;
+        this.props.buyCredits({ qty, cost });
+    }
+
+    render() {
+        const cost = this.props.tech_break.provision;
+        const { qty } = this.state;
+
+        return (
+            <Modal
+                open={true}
+                title={<span><span className="thin"><i className="material-icons">payment</i></span><div className="title-text"><span className="thin">Wyczerpałeś kredyty na poczet aukcji </span></div></span>}
+                actions={<button className="standard-button" onClick={this.pay}><i className="material-icons">payment</i>Zakup</button>}
+                cancel={false}
+                close={false}
+            >
+                <form ref={ (e) => this.formRef = e}>
+                    <p>Koszt zamieszczenia 1 aukcji: <b>{ cost } zł</b></p>
+                    <p><input type="range" max={99} min={1} value={qty} onChange={ (e) => this.setState({ qty: e.target.value })}/></p> 
+                    <p>Zakup kredyty dla { qty } aukcji. Razem: <b>{ qty * cost } zł</b></p>
+                </form>
+            </Modal>
+        )
+    }
+}
+
 class Pay extends Component {
     constructor(props) {
         super(props);
@@ -897,7 +933,11 @@ class CreateUpdateAction extends Component {
    }
     
    componentDidMount() {
-       let options = document.querySelector('.rich-text-editor select').childNodes,
+        let editor = document.querySelector('.rich-text-editor select');
+        if (!editor) 
+            return;
+
+        let options = editor.childNodes,
            option_text = ['Akapit', 'Duży nagłówek', 'Średni nagłówek', 'Mały nagłówek', 'Linia kodu'];
        
        for (let i = 0, l = options.length; i < l; i++) {
@@ -1017,9 +1057,17 @@ class CreateUpdateAction extends Component {
     }
     
    render() {
-       const update = this.props.update === true;
-       const categories = this.props.categories;
+       const { user, update, categories } = this.props;
        
+       if (!user.balance.credits) {
+            return (
+                <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
+                    <ProfileLinks active="addauction" />
+                    <BuyCredits user={user} />
+                </div>
+            );
+       }
+
        return (
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
                 <ProfileLinks active="addauction" />
@@ -1159,6 +1207,9 @@ function mapAuctionsStateToProps({ auctions }) {
 function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
+function mapUserAndCategoryStateToProps({ user, categories }) {
+    return { user, categories };
+}
 
 function mapOtherUserStateToProps({ other_user }) {
     return { other_user };
@@ -1167,10 +1218,14 @@ function mapOtherUserStateToProps({ other_user }) {
 function combineUserAndAuctionsStateToProps({ auctions, user }) {
     return { auctions, user };
 }
+function mapTechBreakStatesToProps({ tech_break }) {
+    return { tech_break };
+}
 
+BuyCredits = connect(mapTechBreakStatesToProps, przelewy24Actions)(BuyCredits);
 Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actions})(Pay);
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
-CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
+CreateUpdateAction = connect(mapUserAndCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
 MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
 AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
