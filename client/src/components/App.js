@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import './Mobile.css';
 
 import { BrowserRouter, Route, Link, Switch, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -96,18 +97,20 @@ class SearchField extends Component {
     }
 
     render() {
-        if (this.props.categories === null || this.props.categories === false)
+        const { open, categories } = this.props;
+        const className = "search-auctions" + (open ? ' open' : '');
+        if (categories === null || categories === false)
             return null;
         
-        let categories = [];
+        let all_categories = [];
         
-        this.props.categories.map(category => {
-            categories.push({ type: 'main', name: category.name });
-            categories = categories.concat(category.subcategories.map(subcategory => ({ type: 'child', name: subcategory.name })));
+        categories.map(category => {
+            all_categories.push({ type: 'main', name: category.name });
+            all_categories = all_categories.concat(category.subcategories.map(subcategory => ({ type: 'child', name: subcategory.name })));
         });
         
         return (
-            <div className="search-auctions">
+            <div className={className}>
                 <div className="inputs">
                     <i className="material-icons">search</i>
                     <span>
@@ -118,7 +121,7 @@ class SearchField extends Component {
                         { 
                             this.state.select && (<div className="select">
                                 {
-                                    categories && categories
+                                    all_categories && all_categories
                                         .map(category => (
                                            category.type === 'main' 
                                            ?
@@ -141,14 +144,17 @@ class SearchField extends Component {
 }
 
 class UserLinks extends Component {
-    // <i className="material-icons">account_circle</i>
     render() {
-        const user = this.props.user;
+        const { user, open, searchHandler } = this.props;
+        const className = "user-links" + (open ? ' open' : '');
+
+        const Search = <span className="link search-mobile" onClick={searchHandler}><i className="material-icons">search</i></span>;
         
         if (user !== false && user !== null) {
             return (
-                <div className="user-links">
+                <div className={className}>
                     <Link to="/moje-aukcje">Moje aukcje</Link>
+                    { Search }
                     <Chat socket={ this.props.socket } id={user._id} />
                     <span className="link">
                         <img src="/assets/icons/user.png" />
@@ -162,8 +168,9 @@ class UserLinks extends Component {
             );
         } else if (user !== null) {
             return (
-                <div className="user-links">
-                    <Link to="/konto/zaloguj">Zaloguj się</Link>
+                <div className={className}>
+                    { Search }
+                    <Link to="/konto/zaloguj">Zaloguj</Link>
                     <Link to="/konto/zarejestruj">Zarejestruj się</Link>
                 </div>
             );
@@ -173,13 +180,45 @@ class UserLinks extends Component {
     }
 }
 
-class Navi extends Component {
+class MobileMenu extends Component {
     render() {
+        const { open, clickHandler } = this.props;
+
+        return (
+            <div className={"MobileMenu" + (open ? ' open' : '')} onClick={clickHandler}>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        );
+    }
+}
+
+class Navi extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { mobile: false, search: false };
+        this.clickHandler = this.clickHandler.bind(this);
+        this.searchHandler = this.searchHandler.bind(this);
+    }
+
+    clickHandler() {
+        this.setState(prev => ({mobile: !prev.mobile }));
+    }
+
+    searchHandler() {
+        this.setState(prev => ({search: !prev.search}));
+    }
+
+    render() {
+        const { mobile, search } = this.state;
+
         return (
             <nav>
                 <Logo />
-                <SearchField />
-                <UserLinks socket={ this.props.socket } />
+                <SearchField open={search} />
+                <MobileMenu open={mobile} clickHandler={this.clickHandler} />
+                <UserLinks open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} />
             </nav>
         );
     }

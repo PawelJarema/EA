@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Landing.css';
 import { connect } from 'react-redux';
 import * as authActions from '../actions/authActions';
-import Regex from '../services/regexHelper';
+import Regex from '../helpers/regexHelper';
 
 class RegistrationPanel extends Component {
     render() {

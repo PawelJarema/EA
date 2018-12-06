@@ -9,6 +9,7 @@ const userSchema = new Schema({
     firstname: String,
     lastname: String,
     birthdate: Number,
+    pesel: Number,
     joindate: Number,
     address: addressSchema,
     auth: {

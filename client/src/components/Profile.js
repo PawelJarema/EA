@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { CreateUpdateAction } from './Auctions';
 import Progress from './Progress';
 
-import RegexHelper from '../services/regexHelper';
+import RegexHelper from '../helpers/regexHelper';
 
 
 
@@ -29,7 +29,8 @@ function userToState(user) {
     state.firstname = (user.firstname || '');
     state.lastname = (user.lastname || '');
     state.birthdate = user.birthdate ? moment(user.birthdate) : moment();
-    
+    state.pesel = user.pesel;
+
     if (user.address) {
         let address = user.address;
         state.street = address.street || '';
@@ -160,6 +161,14 @@ class Settings extends Component {
             message[8] = 'Nieprawidłowy format E-maila do faktur';
         }
 
+        if (!state.pesel || !RegexHelper.pesel.test(state.pesel)) {
+            message[9] = 'Wymagany pesel: 11 cyfr';
+        }
+
+        if (!state.phone || !RegexHelper.phone.test(state.phone)) {
+            message[10] = 'Wymagany telefon';
+        }
+
         this.setState({ message }, () => {
             let messages = document.querySelectorAll('.ProfileSettings .validation-message');
             for (let i = message.length - 1; i >= 0; i--) {
@@ -224,6 +233,11 @@ class Settings extends Component {
                             <span className="validation-message city">{ this.state.message[4] }</span>
                         </p>
                         <p>
+                            <input name="pesel" type="number" placeholder="Pesel" value={state.pesel} onChange={handleInput} />
+                            <span className="validation-message">{ this.state.message[9] }</span>
+                        </p>
+                        <p>
+
                             <span style={{ marginTop: 10 }} >
                                 <div className="label">Data urodzenia</div>
                                 <DatePicker dateFormat="DD/MM/YYYY" locale="pl" selected={this.state.birthdate} onChange={this.handleDate} showYearDropdown dropdownMode="select" />
@@ -250,7 +264,8 @@ class Settings extends Component {
                             <span className="validation-message">{ this.state.message[8] }</span>
                         </p>
                         <p>
-                            <input name="phone" type="text" placeholder="Telefon" value={state.phone} onChange={handleInput} />
+                            <input name="phone" type="number" placeholder="Telefon" value={state.phone} onChange={handleInput} />
+                            <span className="validation-message">{ this.state.message[10] }</span>
                         </p>
                     </fieldset>
                     <fieldset>

@@ -44,6 +44,7 @@
 }
 .Modal .content {
 	flex: 1 1 auto;
+	overflow-y: scroll;
 }
 .Modal .content form {
 	height: 100%;

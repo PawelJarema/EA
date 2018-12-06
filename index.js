@@ -1,3 +1,6 @@
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
 const express = require('express');
 const app = express();
 
@@ -44,6 +47,28 @@ if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
     });
-}
 
-app.listen(PORT, () => console.log(`Server launched on port ${ PORT }`));
+   // SSL CERT
+   const privateKey = fs.readFileSync('/cert/privkey.pem', 'utf8');
+   const certificate = fs.readFileSync('/cert/cert.pem', 'utf8');
+   const ca = fs.readFileSync('/cert/chain.pem', 'utf8');
+
+   const credentials = {
+      key: privateKey,
+      cert: certificate,
+      ca: ca
+   };
+
+  const httpsServer = https.createServer(credentials, app);
+  httpsServer.listen(443, () => {
+      console.log('HTTPS Server running on port 443');
+  });
+  const httpServer = http.createServer((req, res) => {
+      res.writeHead(301,{Location: `https://${req.headers.host}${req.url}`});
+      res.end();
+  });
+
+  httpServer.listen(80);
+} else {
+    app.listen(PORT, () => console.log(`Server launched on port ${ PORT }`));
+}

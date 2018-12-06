@@ -111,7 +111,7 @@ module.exports = app => {
         const mode = req.body.mode;
 
         const query = { bids: { $elemMatch: { _user: ObjectId(req.user._id) }}, ended: (mode === 'ended' ? true : ({ $ne: true })) };
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1};
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1 };
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(
@@ -135,7 +135,7 @@ module.exports = app => {
         const mode = req.body.mode;
 
         const query = { _user: req.user._id, ended: (mode === 'ended' ? true : ({ $ne: true })) };
-        const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1};
+        const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1 };
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
         
         const auctions = await Auction.find(

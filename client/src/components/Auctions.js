@@ -20,6 +20,97 @@ import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
 
+class Pay extends Component {
+    constructor(props) {
+        super(props);
+
+        this.getPriceAndQty = this.getPriceAndQty.bind(this);
+        this.pay = this.pay.bind(this);
+
+        this.state = { ...(this.getPriceAndQty()), delivery_price: 0, delivery_method: '' };
+    }
+
+    getPriceAndQty() {
+        const { auction, user } = this.props;
+        const bought_now = auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1;
+        const qty = bought_now ? auction.buynowpayees.filter(id => id === user._id).length : 1;
+        const price = bought_now ? auction.price.buy_now_price * qty : auction.price.current_price;
+
+        return { price, qty };
+    }
+
+    componentDidMount() {
+        const { _user } = this.props.auction;
+        this.props.fetchOtherUser(_user);
+    }
+
+    pay() {
+        const { auction, user } = this.props;
+        const { price, qty, delivery_price, delivery_method } = this.state;
+
+        if (!delivery_method) {
+            alert('Wybierz metodę dostawy');
+            return;
+        }
+
+        const data = {
+            title: auction.title,
+            price,
+            shipping_price: delivery_price,
+            shipping_method: delivery_method,
+            qty,
+            owner_id: auction._user,
+            auction_id: auction._id
+        };
+
+        this.props.registerP24Transaction(data);
+    }
+
+    render() {
+        const { price, delivery_price, qty } = this.state;
+        const { user, other_user, auction, callback } = this.props;
+
+        if (other_user) {
+            return (
+                <div className="Pay">
+                    <Modal
+                        open={true}
+                        title={<span><span className="thin"><i className="material-icons">payment</i></span><div className="title-text"><span className="thin">Zapłać za: </span> {auction.title} </div></span>}
+                        actions={<button className="standard-button" onClick={this.pay}><i className="material-icons">payment</i>Zapłać</button>}
+                        close={callback}
+                    >
+                        <form ref={ (e) => this.payformRef = e }>
+                            <b>Zakupiłeś { qty } szt.</b> Wybierz metodę dostawy:
+                            <table>
+                            <tbody>
+                            {
+                                other_user.deliveries.map((delivery, index) => (
+                                    <tr>
+                                        <td>
+                                            <input key={'delivery_' + index} name="delivery" type="radio" value={1} onChange={() => this.setState({ delivery_price: delivery.price, delivery_method: delivery.name })} />
+                                        </td>
+                                        <td>
+                                            {delivery.name}
+                                        </td>
+                                        <td>
+                                            {delivery.price} zł
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                            </tbody>
+                            </table>
+                        </form>
+                        <h1>Do zapłaty: { price + delivery_price } zł</h1>
+                    </Modal>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+}
+
 class Auction extends Component {
     render() {
         const auction = this.props.auction;
@@ -121,7 +212,6 @@ class FrontPage extends Component {
 }
 
 class RawImage extends Component {
-
     render() {
         const data = this.props.data;
         //return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
@@ -132,10 +222,11 @@ class RawImage extends Component {
 class AuctionDetails extends Component {
     constructor(props) {
         super(props);        
-        this.state = { auction: '', photo: 0 };
+        this.state = { auction: '', photo: 0, pay: false };
         this.seePhoto = this.seePhoto.bind(this);
         this.buyNow = this.buyNow.bind(this);
         this.submit = this.submit.bind(this);
+        this.payCallback = this.payCallback.bind(this);
     }
 
     componentDidMount() {
@@ -184,6 +275,12 @@ class AuctionDetails extends Component {
         }
     }
 
+    payCallback() {
+        this.setState({ pay: false });
+    }
+
+
+
     submit(event) {
         event.preventDefault();
 
@@ -208,7 +305,7 @@ class AuctionDetails extends Component {
     }
 
     render() {
-        const { auction } = this.state;
+        const { auction, pay } = this.state;
         const { bidders } = auction || { bidders: {} };
         const { user, other_user } = this.props;
 
@@ -217,12 +314,19 @@ class AuctionDetails extends Component {
 
         const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price && auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
         const min_price = auction ? !auction.ended && auction.price.min_price && !auction.price.hide_min_price : false;
+        const payee = auction ? auction.payees && auction.payees.indexOf(user._id) !== -1 : false;
+        const buy_now_payee = auction ? auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1 : false;
 
         return (
             <div className="AuctionDetails">
                 {
                     !auction ? <Progress /> : (
                         <div className="auction-view">
+
+                            {
+                                pay && <Pay user={ user } auction={ auction } callback={ this.payCallback } />
+                            }
+
                             <div className="basic-info">
                                 <div className="photos">
                                     <div className="photo-big">
@@ -276,6 +380,9 @@ class AuctionDetails extends Component {
                                         </div>
                                         {
                                             auction.ended && <div className="end-tag">Aukcja Zakończona</div>
+                                        }
+                                        {
+                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? auction.price.current_price : auction.price.buy_now_price} zł</button></div>
                                         }
                                     </div>
                                 </div>
@@ -448,13 +555,14 @@ class RateAuction extends Component {
 class MyAuctionList extends Component {
     constructor(props) {
         super(props);
-        this.state = { page: 1, per_page: 10, pages: 1};
+        this.state = { page: 1, per_page: 10, pages: 1, pay: false };
         this.paginate = this.paginate.bind(this);
         this.paginateTo = this.paginateTo.bind(this);
         this.rateAuction = this.rateAuction.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
         this.pingPrzelewy24 = this.pingPrzelewy24.bind(this);
         this.p24TransactionTest = this.p24TransactionTest.bind(this);
+        this.payCallback = this.payCallback.bind(this);
     }
 
 
@@ -509,7 +617,6 @@ class MyAuctionList extends Component {
     }
 
     p24TransactionTest() {
-        alert('a');
         this.props.registerP24Transaction();
     }
 
@@ -526,19 +633,23 @@ class MyAuctionList extends Component {
         }        
     }
 
+    payCallback() {
+        this.setState({ pay: false });
+    }
 
     render() {
         const { user, my_auctions } = this.props;
-        const { page, per_page, pages } = this.state;
+        const { page, per_page, pages, pay } = this.state;
         const { mode } = this.props;
-        
-        // <button className="standard-button" onClick={this.pingPrzelewy24}>Ping Przelewy24</button>
-        // <button className="standard-button" onClick={this.p24TransactionTest}>Register Przelewy24 Transaction</button>
 
         return (
             <div className="Profile MyAuctions">
                 <ProfileLinks active={mode} />
                 <div className="AuctionList">
+
+                    {
+                        pay && <Pay user={ user } auction={ pay } callback={ this.payCallback } />
+                    }
                     
                     {
                         pages > 1 && my_auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={this.paginateTo} />
@@ -574,6 +685,11 @@ class MyAuctionList extends Component {
                                             }
                                             {
                                                 mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
+                                            }
+                                            {
+                                                (auction.payees && auction.payees.indexOf(user._id) !== -1 || auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1) && (
+                                                    <a className="link-button" onClick={() => this.setState({ pay: auction })}><i className="material-icons">payment</i>Zapłać</a>
+                                                )
                                             }
                                         </div>
                                     </div>
@@ -1029,7 +1145,7 @@ class CreateUpdateAction extends Component {
 }
 
 function mapMyAuctionsAndUserStateToProps({ user, my_auctions }) {
-    return { user, my_auctions, user };
+    return { user, my_auctions };
 }
 
 function mapMyAuctionsStateToProps({ my_auctions }) {
@@ -1044,14 +1160,19 @@ function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
 
-function combineUserAndAuctionsStateToProps({ auctions, user}) {
+function mapOtherUserStateToProps({ other_user }) {
+    return { other_user };
+}
+
+function combineUserAndAuctionsStateToProps({ auctions, user }) {
     return { auctions, user };
 }
 
+Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actions})(Pay);
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, {...myAuctionActions, ...przelewy24Actions})(MyAuctionList);
+MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
 AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

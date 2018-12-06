@@ -365,6 +365,7 @@
     max-width: var(--html-w);
     margin-left: 30px;
     margin: auto;
+    padding-bottom: 30px;
     text-align: left;
     line-height: 1.4;
 }
@@ -797,4 +798,31 @@
 }
 .AuctionDetails .buy-now .standard-button:hover {
     color: var(--link-blue);
+}
+
+.Pay .Modal .title-text {
+
+}
+.Pay .Modal .content {
+    padding: 20px;
+    text-align: center;
+}
+.Pay h1 {
+    text-align: center;
+}
+.Pay table {
+    margin: 20px auto;
+    text-align: left;
+
+    border-top: 1px solid var(--link-blue);
+    border-bottom: 1px solid var(--link-blue);
+
+    opacity: .7;
+}
+.Pay table td {
+    padding: 5px;
+    color: var(--link-blue);
+}
+.Pay table td input {
+    cursor: pointer;
 }

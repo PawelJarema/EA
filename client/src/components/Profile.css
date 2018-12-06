@@ -68,6 +68,7 @@
     margin-right: 15px;
 }
 .Profile .user-settings fieldset input:not([type='checkbox']) {
+    box-sizing: border-box;
     height: var(--input-h);
     margin-top: 10px;
     margin-bottom: 10px;
@@ -195,11 +196,11 @@
     opacity: .8;
 }
 .Profile.Delivery form input[type='text'] {
-    width: 50%;
+    width: 58%;
 }
 .Profile.Delivery form input[type='number'] {
     border-left: none;
-    width: 18%;
+    width: 22%;
 }
 .Profile.Delivery form .remove {
     cursor: pointer;
@@ -223,7 +224,7 @@
 .Profile.Delivery .deliveries > div:after {
     position: absolute;
     top: 24px;
-    left: 71%;
+    left: calc(80% - 25px);
     content: ' zł';
     font-size: 12px;
     color: var(--good);

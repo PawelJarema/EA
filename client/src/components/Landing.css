@@ -13,13 +13,18 @@
 
 .registration-panel .column {
     flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
 }
 .registration-panel .column:first-child .container {
-    padding-top: 100px;
+    padding-top: 50px;
     padding-left: 100px;
 }
 .registration-panel.login .column:first-child .container {
-    padding-top: 180px;
+    
+ 
 }
 
 .registration-panel .column .container {

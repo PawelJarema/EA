@@ -1,0 +1,472 @@
+.MobileMenu {
+	display: none;
+	flex-direction: column;
+	justify-content: space-between;
+
+	width: 45px;
+	height: 28px;
+
+	margin-right: var(--page-margin);
+	cursor: pointer;
+}
+
+.MobileMenu div {
+	width: 100%;
+	height: 3px;
+	background: var(--orange);
+
+	transform-origin: center;
+
+	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+
+.MobileMenu.open div:first-child {
+	-webkit-transform: translateY(12.5px) rotate(-45deg);
+	transform: translateY(12.5px) rotate(-45deg);
+}
+.MobileMenu.open div:nth-child(2) {
+	width: 0%;
+	opacity: 0;
+}
+.MobileMenu.open div:last-child {
+	-webkit-transform: translateY(-12.5px) rotate(45deg);
+	transform: translateY(-12.5px) rotate(45deg);
+}
+
+nav .user-links .search-mobile {
+	display: none;
+}
+
+
+
+@media screen and (max-width: 2000px) { 
+	:root {
+		--page-margin: 250px;
+	}
+}
+@media screen and (max-width: 1800px) { 
+	:root {
+		--page-margin: 180px;
+	}
+}
+@media screen and (max-width: 1700px) {
+	:root {
+		--page-margin: 100px;
+	}
+}
+
+@media screen and (max-width: 1350px) {
+	.App .registration-panel {
+		flex-wrap: wrap;
+		flex-direction: column;
+		margin: 0;
+	}
+	.App .registration-panel .column {
+		box-sizing: border-box;	
+		padding: 50px;
+	}
+	.App .registration-panel.login .column .container, .App .registration-panel.register .column .container {
+		min-width: 300px;
+		padding: 0;
+		margin: 0 auto;
+	}
+	.App .registration-panel .column .container > img {
+		display: none;
+	}
+	.App .registration-panel .column:first-child {
+		order: 2;
+		padding-top: 0;
+	}
+	.App .registration-panel .column:last-child {
+		padding-bottom: 40px;
+	}
+	.App .registration-panel .options {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.App .registration-panel .options span:last-child {
+		margin-top: -15px;
+	}
+	.App .registration-panel .options span:first-child {
+		order: 1;
+		display: none;
+	}
+}
+@media screen and (max-width: 1300px) {
+	.MobileMenu {
+		display: flex;
+	}
+
+	nav {
+		flex-wrap: wrap;
+	}
+
+	nav .user-links {
+		position: fixed;
+		top: calc(var(--nav-h) - 1px);
+		right: 0px;
+
+		display: none;
+		flex-direction: column;
+		align-items: center;
+
+		margin: 0;
+		padding: 20px 40px;
+		padding-bottom: 40px;
+		background: white;
+
+		border-left: 1px solid #eee;
+		border-bottom: 1px solid #eee;
+
+		z-index: 30;
+	}
+
+	nav .user-links.open {
+		display: flex;
+	}
+	nav .search-auctions.open {
+		display: flex;
+	}
+
+	nav .user-links .search-mobile {
+		display: block;
+	}
+
+	nav .user-links.open > a, nav .user-links.open > span {
+		margin: 0;
+		min-height: 44px;
+		line-height: 44px;
+	}
+	nav .user-links.open > span.link {
+		margin: 0;
+	}
+	nav .user-links.open > a:not(:last-child), nav .user-links.open > span:not(:last-child) {
+		margin-bottom: 20px;
+	}
+
+	nav .search-auctions {
+		position: fixed;
+		top: var(--nav-h);
+		display: none;
+
+		box-sizing: border-box;
+		flex: 0 0 100%;
+		order: 3;
+
+		justify-content: flex-end;
+		align-items: center;
+		
+		margin-top: -2px;
+		padding: 0 var(--page-margin);
+		height: 70px;
+		background: white;
+		border-bottom: 1px solid #eee;
+		border-right: 1px solid #eee;
+	}
+
+	.breadcrumbs { 
+		display: none;
+	}
+}
+@media screen and (max-width: 1270px) {
+	.App .AuctionDetails .basic-info {
+		flex-direction: column;
+	}
+	.App .AuctionDetails .basic-info .text {
+		text-align: center;
+		width: 100%;
+		
+		margin: 40px 0;
+	}
+	.App .AuctionDetails .basic-info .text h1 {
+		max-width: 100%;
+		margin: 0;
+		margin-bottom: 20px;
+	}
+	.App .AuctionDetails .basic-info .text .content {
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 1295px) {
+	.App .AuctionListSearch, .App .MyAuctions, .App .Profile {
+		flex-direction: column;
+	}
+	.App .Profile .links {
+		margin: 0;
+		margin-bottom: 60px;
+	}
+	.App .AuctionListSearch .advanced-search {
+		margin: 0;
+		order: 2;
+	}
+	.App .Profile .user-settings {
+		max-width: none;
+		width: 100%;
+	}
+	.App .Profile .user-settings fieldset {
+		box-sizing: border-box;
+		margin-left: 0;
+		margin-right: 0;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.App .Profile .pagination-wrapper:last-child {
+		margin-bottom: 0;
+	}
+	.App .OtherUser .auctions {
+		column-count: 5;
+	}
+}
+@media screen and (max-width: 1224px) { 
+	.App .AuctionDetails .opinions table {
+		width: 100%;
+	}
+	.App .AuctionDetails .opinions table td {
+		width: auto;
+	}
+}
+@media screen and (max-width: 751px) {
+	.App .AuctionDetails .opinions table td:first-child {
+		border: none;
+		padding-bottom: 5px;
+	}
+	.App .AuctionDetails .opinions table td:last-child {
+		padding: 0 20px;
+		padding-bottom: 20px;
+		width: 100%;
+	}
+	.App .AuctionDetails .opinions table td {
+		display: inline-table;
+
+	}
+
+}
+@media screen and (max-width: 1155px) {
+	.App .OtherUser .auctions {
+		column-count: 4;
+	}
+}
+@media screen and (max-width: 975px) {
+	.App .OtherUser .user-data {
+		flex-direction: column;
+		margin-top: 20px;
+		margin-left: 20px;
+	}
+	.App .OtherUser .user-data button {
+		margin: 0;
+		margin-top: 10px;
+	}
+	.App .OtherUser .user-data .column {
+		margin: 0;
+	}
+	.App .OtherUser .auctions {
+		column-count: 3;
+	}
+}
+@media screen and (max-width: 961px) {
+	.App .AuctionDetails .tab-view .tab-controls {
+		display: flex;
+		flex-direction: column;
+	}
+	.App .AuctionDetails .tab-view .tab-controls a {
+		display: block;
+		border-right: 1px solid #ccc;
+	}
+	.App .AuctionDetails .tab-view .tab-controls a.active {
+		order: 5;
+	}
+}
+@media screen and (max-width: 853px) {
+	.App .AuctionDetails .photos-small {
+		flex-wrap: wrap;
+	}
+	.App .AuctionDetails .photos-small .thumbnail-wrapper {
+		flex: 0 0 calc(25% - 6px);
+		margin-bottom: 5px;
+	}
+}
+@media screen and (max-width: 770px) {
+	.App .OtherUser .auctions {
+		column-count: 2;
+	}
+}
+@media screen and (max-width: 490px) {
+	.App .OtherUser .auctions {
+		column-count: 1;
+	}
+	.App .OtherUser .auctions .auction {
+		word-break: normal;
+	}
+}
+
+@media screen and (max-width: 1200px) {
+	footer .category-links {
+		display: none;
+	}
+}
+@media screen and (max-width: 1150px) {
+	footer .footer-bar {
+		flex-wrap: wrap;
+		height: calc(var(--input-h) * 3);
+	}
+	footer .footer-bar div {
+		flex: 0 0 100%;
+	}
+	footer .footer-bar div:nth-child(n + 3) {
+		color: white;
+	}
+}
+@media screen and (max-width: 1050px) {
+	.FrontPage .two-third-column, .FrontPage .three-column  {
+		flex-direction: column;
+	}
+	.App .FrontPage .two-third-column .column, .App .FrontPage .three-column .column{
+		margin: 0;
+	}
+	.App .FrontPage .two-third-column .column:not(:last-child), .App .FrontPage .three-column .column:not(:last-child) {
+		margin-bottom: 20px;
+	}
+	.App .FrontPage .six-column {
+		flex-wrap: wrap;
+	}
+	.App .FrontPage .six-column .column {
+		flex: 0 0 calc(33.33% - 2px);
+		margin: 1px;
+	}
+}
+@media screen and (max-width: 965px) {
+	nav .search-auctions {
+		height: 186px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	nav .search-auctions .inputs .select-value, nav .search-auctions .inputs input {
+		box-sizing: border-box;
+		width: 250px;
+		border-radius: 0px;
+		border: 1px solid #ccc;
+
+	}
+	nav .search-auctions .inputs input {
+		display: block;
+	}
+	nav .search-auctions .inputs .select-value {
+		border-top: 1px solid #eee;
+	}
+	nav .search-auctions .inputs .select {
+		box-sizing: border-box;
+	}
+	nav .search-auctions .search-button {
+		margin: 10px 0;
+		border-radius: 4px;
+		margin-bottom: 30px;
+	}
+}
+@media screen and (max-width: 855px) {
+	.App .AuctionList .auction {
+		flex-direction: column;
+	}
+	.App .AuctionList .auction div {
+		flex: 0 0 100%;
+	}
+	.App .AuctionList .auction .image-wrapper {
+		width: 100%;
+		height: none;
+	}
+	.App .AuctionList .auction .text {
+		box-sizing: border-box;
+		text-align: center;
+		padding: 0 10px;
+		max-width: none;
+		width: 100%;
+	}
+}
+@media screen and (max-width: 700px) {
+	.App .FrontPage .six-column .column {
+		flex: 0 0 calc(50% - 2px);
+		margin: 1px;
+	}
+}
+
+@media screen and (max-width: 580px) {
+	:root {
+		--page-margin: 45px;
+	}
+	.App .main-container {
+		margin: 0;
+	}
+
+	.App .Profile .user-settings {
+		box-sizing: border-box;
+		padding: 0 20px;
+		
+	}
+	.App .Profile .user-settings ol {
+		display: none;
+	}
+	footer .footer-bar {
+		padding: 7px 0px;
+		font-size: 13px;
+		height: 70px;
+	}
+	footer .footer-bar div {
+		line-height: 20px;
+	}
+}
+
+@media screen and (max-width: 510px) {
+	nav .user-links {
+		border: 1px solid #eee;
+		border-left: 1px solid #ccc;
+		border-bottom: 1px solid #ccc;
+
+		box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1), 0 5px 20px 0 rgba(0, 0, 0, 0.1) !important
+		
+	}
+	nav .user-links.open ~ .search-auctions {
+		opacity: .5;
+	}
+}
+
+@media screen and (max-width: 450px) {
+	.Chat .chat-box {
+		width: 100% !important;
+	}
+	.App h1 {
+		text-align: center;
+		margin-left: -20px;
+	}
+	.App .html-description h1 {
+		margin-left: 0;
+	}
+}
+
+@media screen and (max-width: 410px) {
+	.App .registration-panel .column {
+		box-sizing: border-box;	
+		padding: 50px 25px;
+	}
+	.App .registration-panel.login .column .container, .App .registration-panel.register .column .container {
+		min-width: 260px;
+		padding: 0;
+		margin: 0 auto;
+	}
+}
+
+@media screen and (max-width: 340px) {
+	:root {
+		--page-margin: 20px;
+	}
+
+	.logo img {
+		max-width: 120px;
+	}
+
+	.App .AuctionList .auction .actions button {
+		display: block;
+		margin: 5px auto;
+		min-width: 180px;
+	}
+}

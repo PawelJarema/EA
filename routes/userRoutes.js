@@ -71,6 +71,7 @@ module.exports = app => {
            lastname = r.lastname,
            street = r.street,
            postal = r.postal,
+           pesel = r.pesel,
            city = r.city,
            email = r.email,
            invoice_email = r.invoice_email,
@@ -97,6 +98,8 @@ module.exports = app => {
         user.birthdate = birthdate ? parseInt(birthdate) : user.birthdate;
         user.joindate = user.joindate || new Date().getTime();
 
+        user.pesel = pesel || user.pesel;
+        
         if (!user.address) {
             user.address = {};
         }
