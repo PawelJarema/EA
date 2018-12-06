@@ -1,7 +1,24 @@
 module.exports = app => {
+	const fs = require('fs');
 	const http = require('http');
+	const https = require('https');
+	const production = process.env.NODE_ENV === 'production';
+
+
+	// SSL CERT
+	const privateKey = fs.readFileSync('../cert/privkey.pem', 'utf8');
+	const certificate = fs.readFileSync('../cert/cert.pem', 'utf8');
+	const ca = fs.readFileSync('../cert/chain.pem', 'utf8');
+
+	const credentials = {
+    	key: privateKey,
+    	cert: certificate,
+    	ca: ca
+  	};
+
+
+	const chatServer = production ? https.createServer(credentials, app) : http.createServer(app);
 	const socketIo = require('socket.io');
-	const chatServer = http.createServer(app);
 	const io = socketIo(chatServer);
 
 	const mongoose = require('mongoose');
