@@ -4,7 +4,7 @@ const qs 			= require('qs');
 const md5 			= require('md5');
 const keys 			= require('../config/keys');
 const business 		= require('../services/emailTemplates/business');
-const P24 			= require('../services/przelewy24')();
+const P24 			= require('../services/Przelewy24')();
 
 const mongoose 		= require('mongoose');
 const { ObjectId } 	= mongoose.Types;
