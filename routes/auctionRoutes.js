@@ -68,6 +68,7 @@ module.exports = app => {
 
         const auction = await Auction.findOne({ _id: ObjectId(rate._auction)});
         auction.rated = true;
+        auction.raters = auction.raters.filter(id => String(id) !== String(req.user._id));
 
         rate._user = ObjectId(rate._user);
         rate._rater = ObjectId(req.user._id);
@@ -111,7 +112,7 @@ module.exports = app => {
         const mode = req.body.mode;
 
         const query = { bids: { $elemMatch: { _user: ObjectId(req.user._id) }}, ended: (mode === 'ended' ? true : ({ $ne: true })) };
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1 };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(

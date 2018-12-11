@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as profileActions from '../actions/profileActions';
+import * as invoiceActions from '../actions/invoiceActions';
 import './Profile.css';
 
 import DatePicker from 'react-datepicker';
@@ -9,8 +10,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { Link } from 'react-router-dom';
 import { CreateUpdateAction } from './Auctions';
+import { Opinions } from './OtherUser';
 import Progress from './Progress';
-
+import { Pagination } from './Pagination';
 import RegexHelper from '../helpers/regexHelper';
 
 
@@ -22,6 +24,10 @@ moment.updateLocale('pl', {
    weekdaysShort: ['Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob', 'Nie'],
    weekdaysMin: ['Pn', 'Wt', 'Śr', 'Cz', 'Pi', 'So', 'Ni']
 });
+
+function username(user) {
+    return `${user.firstname || ''} ${user.lastname || (user.firstname ? '' : 'Anonim')}`;
+}
 
 function userToState(user) {
     let state = {};
@@ -78,15 +84,148 @@ class ProfileLinks extends Component {
                 </div>
                 <a href="#" className={(active.indexOf('auction') !== -1 || !(user && user.deliveries && user.deliveries.length) ? ' open' : '')} onClick={toggleOpen}>Moje aukcje</a>
                 <div className="dropdown">
-                    <Link className={ (active) === 'auctiondelivery' ? 'active' : null } to="/konto/aukcje/dostawa">Dostawa { user && (!user.deliveries || !user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
+                    <Link className={ (active === 'auctiondelivery' ? 'active' : null) } to="/konto/aukcje/dostawa">Dostawa { user && (!user.deliveries || !user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
                     <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję<span className="badge" title={`możesz dodać jeszcze ${credits}`}>{ credits }</span></Link>
                     <Link className={ (active === 'current_auctions' ? 'active' : null) } to="/moje-aukcje">Bieżące</Link>
                     <Link className={ (active === 'ended_auctions' ? 'active' : null) } to='/moje-aukcje/zakonczone'>Zakończone</Link>
                 </div>
-                <a href="#">Opinie</a>
-                <a href="#">Saldo</a>
+                <Link className={ (active === 'opinions' ? 'active' : null) } to="/konto/opinie">Opinie</Link>
+                <Link className={ (active === 'invoices' ? 'active' : null) } to="/konto/faktury">Faktury</Link>
             </div>
         );
+    }
+}
+
+class Invoices extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { vat: false, page: 1, pages: 1, per_page: 10 };
+        this.handlePagination = this.handlePagination.bind(this);
+        this.sendInvoice = this.sendInvoice.bind(this);
+    }
+
+    componentDidMount() {
+        const { page, per_page } = this.state;
+
+        this.props.paginateInvoices(page, per_page);
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.invoices) {
+            if (typeof props.invoices[props.invoices.length - 1] === 'number') {
+                this.setState({ pages: props.invoices.pop() });
+            }
+        }
+    }
+
+    handlePagination(index) {
+        const { per_page } = this.state;
+        this.setState({ page: index}, () => {
+            this.props.paginateInvoices(index, per_page);
+        });
+    }
+
+    sendInvoice(invoice) {
+        const { vat, page, per_page } = this.state;
+        this.props.sendInvoice(invoice._id, vat);
+        this.props.paginateInvoices(page, per_page);
+    }
+
+    render() {
+        const { page, pages, vat } = this.state;
+        const { user, invoices } = this.props;
+
+        if (invoices === null) {
+            return <Progress />;
+        }
+
+        if (!invoices) {
+            return (
+                <div className="Profile ProfileSettings">
+                    <ProfileLinks active="invoices" />
+                    <div className="Invoices">
+                        <div className="no-result">
+                            <i className="material-icons">folder_open</i>
+                            <h1>Brak danych</h1>
+                            <p>Nie ma danych do ofakturowania</p>
+                            <p>Aby wystawić fakturę, sprzedaj przedmiot</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="Profile ProfileSettings">
+                <ProfileLinks active="invoices" />
+                <div className="Invoices">
+
+                    {
+                        invoices.length > 10 && <Pagination page={page} pages={pages} clickHandler={this.handlePagination} />
+                    }
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nabywca i Tytuł</th>
+                                <th>Ilość (szt.)</th>
+                                <th>Opłaty</th>
+                                <th>Metoda dostawy</th>
+                                <th>
+                                    <div>
+                                         <input name="vat" type="checkbox" checked={ vat } onChange={(e) => this.setState({ vat: e.target.checked })} /> Prześlij z VAT
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                invoices.map((invoice, index) => (
+                                    <tr key={`invoice_${index}`}>
+                                        <td>
+                                            <span className="buyer">{ username(invoice.buyer) }</span>
+                                            <span className="title">{ invoice.title }</span>
+                                        </td>
+                                        <td>
+                                            { invoice.qty || 1 }
+                                        </td>
+                                        <td>
+                                            <span className="item">{ invoice.price } zł</span>
+                                            <span className="delivery">{ invoice.delivery_price } zł</span>
+                                            <span className="price total">{ invoice.price + invoice.delivery_price } zł</span>
+                                        </td>
+                                        <td>
+                                            <span className="delivery-method">{ invoice.delivery_method }</span>
+                                        </td>
+                                        <td>
+                                            {
+                                                <button className="standard-button" onClick={() => this.sendInvoice(invoice)}>{ (invoice.sent ? 'Przypomnij' : 'Wyślij') }</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    <Pagination page={page} pages={pages} clickHandler={this.handlePagination} />
+                </div>
+            </div>
+        )
+    }
+}
+
+class MyOpinions extends Component {
+    render() {
+        const { user } = this.props;
+
+        return (
+            <div className="Profile ProfileSettings">
+                <ProfileLinks active="opinions" />
+                <div className="MyOpinions">
+                    <Opinions other_user={user} />
+                </div>
+            </div>
+        )
     }
 }
 
@@ -418,8 +557,14 @@ function mapUserStateToProps({ user }) {
     return { user };
 }
 
+function mapUserAndInvoiceStateToProps({ user, invoices }) {
+    return { user, invoices };
+}
+
+Invoices = connect(mapUserAndInvoiceStateToProps, invoiceActions)(Invoices);
+MyOpinions = connect(mapUserStateToProps)(MyOpinions);
 ProfileLinks = connect(mapUserStateToProps)(ProfileLinks);
 Settings = connect(mapUserStateToProps, profileActions)(Settings);
 Delivery = connect(mapUserStateToProps, profileActions)(Delivery);
 
-export { ProfileLinks, Settings, CreateUpdateAction, Delivery };
+export { ProfileLinks, Settings, CreateUpdateAction, Delivery, MyOpinions, Invoices };

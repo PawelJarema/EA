@@ -36,6 +36,10 @@ export const fetchAuction = (id) => async dispatch => {
 	dispatch({ type: FETCH_AUCTION, payload: res.data });
 }
 
+export const clearAuction = () => async dispatch => {
+	dispatch({ type: FETCH_AUCTION, payload: false });
+}
+
 export const paginate = (page, items_per_page, options) => async dispatch => {
 	let query = '';
 

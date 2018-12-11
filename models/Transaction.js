@@ -11,9 +11,12 @@ const transactionSchema = new Schema({
     _auction: ObjectId,
     title: String,
     price: Number,
+    qty: Number,
     delivery_price: Number,
     delivery_method: String,
-    confirmed: Boolean
+    confirmed: Boolean,
+    vat: Boolean,
+    sent: Boolean
 });
 
 mongoose.model('transaction', transactionSchema);

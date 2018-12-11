@@ -276,13 +276,18 @@ class AuctionDetails extends Component {
 
     componentDidMount() {
         const auction_id = this.props.match.params.id;
+
+        this.props.clearOtherUser();
+        this.props.clearAuction();
         this.props.fetchAuction(auction_id);
     }
 
     componentWillReceiveProps(props) {
         if (props.auctions) {
-            this.setState({ auction: props.auctions });
-            this.props.fetchOtherUser(props.auctions._user);
+            if (!this.state.auction || String(props.auctions._id) !== String(this.state.auction._id)) {
+                this.setState({ auction: props.auctions });
+                this.props.fetchOtherUser(props.auctions._user);
+            }
         }
         if (props.match.params.id !== this.props.match.params.id) {
             this.setState({ auction: null }, () => this.props.fetchAuction(props.match.params.id));
@@ -324,8 +329,6 @@ class AuctionDetails extends Component {
         this.setState({ pay: false });
     }
 
-
-
     submit(event) {
         event.preventDefault();
 
@@ -362,6 +365,7 @@ class AuctionDetails extends Component {
         const payee = auction ? auction.payees && auction.payees.indexOf(user._id) !== -1 : false;
         const buy_now_payee = auction ? auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1 : false;
 
+        
         return (
             <div className="AuctionDetails">
                 {
@@ -495,7 +499,7 @@ class AuctionDetails extends Component {
                                         </div>
                                     </div>
                                     <div id="opinions">
-                                        <Opinions />
+                                        <Opinions other_user={other_user}/>
                                         <div className="background">
                                             <i className="material-icons">star_outline</i>
                                         </div>
@@ -726,7 +730,7 @@ class MyAuctionList extends Component {
                                         <div>
                                             <Link to={'/aukcje/' + auction._id }><button className="standard-button">Zobacz</button></Link>
                                             {
-                                                mode === 'ended_bids' && auction.bids[0] && auction.bids[0]._user === user._id && !auction.rated && <RateAuction auction={auction} clickHandler={this.rateAuction} />
+                                                mode === 'ended_bids' && auction.raters && auction.raters.indexOf(user._id) !== -1 && <RateAuction auction={auction} clickHandler={this.rateAuction} />
                                             }
                                             {
                                                 mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
@@ -1227,6 +1231,9 @@ function mapOtherUserStateToProps({ other_user }) {
 function combineUserAndAuctionsStateToProps({ auctions, user }) {
     return { auctions, user };
 }
+function mapMyAuctionsUserAndOtherUserStateToProps({ auctions, user, other_user }) {
+    return { auctions, user, other_user };
+}
 function mapTechBreakStatesToProps({ tech_break }) {
     return { tech_break };
 }
@@ -1237,6 +1244,6 @@ FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapUserAndCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
 MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
-AuctionDetails = connect(combineUserAndAuctionsStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
+AuctionDetails = connect(mapMyAuctionsUserAndOtherUserStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

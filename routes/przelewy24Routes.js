@@ -108,32 +108,67 @@ module.exports = app => {
 		res.send(true);
 	});
 
+
+	/* 
+
+	date: Number,
+    token: String,
+    transaction_id: String,
+    _buyer: ObjectId,
+    _seller: ObjectId,
+    _auction: ObjectId,
+    title: String,
+    price: Number,
+    delivery_price: Number,
+    delivery_method: String,
+    confirmed: Boolean 
+
+    */
 	app.post('/przelewy24/registerTransaction', requireLogin, async (req, res) => {
 		const { paySimple, title, price, shipping_price, shipping_method, qty, owner_id, auction_id } = req.body;
 		const buyer = req.user;
 
-		// na P24 Passage account
+		// no P24 Passage account
 		if (paySimple) {
 			const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
 			const owner = await User.findOne({ _id: ObjectId(owner_id) });
 
-			const buynowpayee = auction.buynowpayees && auction.buynowpayees.indexOf(req.user._id) !== -1;
-			const payee = auction.payees && auction.payees.indexOf(req.user._id !== -1);
+			const buynowpayee = auction.buynowpayees && auction.buynowpayees.indexOf(buyer._id) !== -1;
+			const payee = auction.payees && auction.payees.indexOf(buyer._id !== -1);
 
 			if (buynowpayee) {
-				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(req.user._id));
+				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(buyer._id));
 			}
 
 			if (payee) {
-				auction.payees = auction.payees.filter(id => String(id) !== String(req.user.id));
+				auction.payees = auction.payees.filter(id => String(id) !== String(buyer.id));
 				if (auction.payees.length === 0) {
 					auction.paid = true;
 				}
 			}
 
+			if (auction.raters) {
+				auction.raters.push(ObjectId(buyer._id));
+			} else {
+				auction.raters = [ObjectId(buyer._id)];
+			}
+
 			await auction.save();
 
-			const buyer = req.user;
+			const transaction = new Transaction({
+				date: new Date().getTime(),
+				_buyer: ObjectId(buyer._id),
+				_seller: ObjectId(owner._id),
+				_auction: ObjectId(auction._id),
+				title,
+				price,
+				qty,
+				delivery_price: shipping_price,
+				delivery_method: shipping_method,
+				confirmed: true
+			});
+			await transaction.save();
+
 			const name = `${buyer.firstname || ''} ${buyer.lastname || (buyer.firstname ? '' : 'Anonim')}`;
 			const mailer = new Mailer(
 				{ subject: 'Kupujący oznaczył aukcję jako opłaconą', recipients: [{ email: owner.contact.email }] },

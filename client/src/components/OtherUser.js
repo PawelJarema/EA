@@ -89,7 +89,7 @@ class Opinions extends Component {
 					{ more && <div style={{marginLeft: 18, marginBottom: 30}}><button className="standard-button" onClick={this.fetchMore}>Zobacz więcej...</button></div> }
 				</div>
 			);
-		} else if (opinions && opinions.length === 0 || opinions === false) {
+		} else if (opinions && opinions.length === 0 && this.props.opinions) {
 			return (
 				<div className="no-result">
 					<i className="material-icons">star_outline</i>
@@ -266,6 +266,10 @@ class Seller extends Component {
 	}
 }
 
+function mapUserStateToProps({ user }) {
+	return { user };
+}
+
 function mapOpinionStateToProps({ opinions }) {
 	return { opinions };
 }
@@ -278,7 +282,7 @@ function mapOtherUserStateToProps({ other_user }) {
 	return { other_user };
 }
 
-Opinions = connect(mapOpinionAndOtherUserStateToProps, opinionActions)(Opinions);
+Opinions = connect(mapOpinionStateToProps, opinionActions)(Opinions);
 Deliveries = connect(mapOtherUserStateToProps, otherUserActions)(Deliveries);
 Seller = connect(mapOtherUserStateToProps, otherUserActions)(Seller);
 

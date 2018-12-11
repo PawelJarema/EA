@@ -8,6 +8,7 @@ import myAuctionReducer from './myAuctionReducer';
 import statisticReducer from './statisticReducer';
 import otherUserReducer from './otherUserReducer';
 import opinionReducer from './opinionReducer';
+import invoiceReducer from './invoiceReducer';
 import chatReducer from './chatReducer';
 import adminReducer from './adminReducer';
 import adminPanelReducer from './adminPanelReducer';
@@ -25,6 +26,7 @@ export default combineReducers({
    auction_count: statisticReducer,
    other_user: otherUserReducer,
    opinions: opinionReducer,
+   invoices: invoiceReducer,
    chats: chatReducer,
    admin_panel: adminPanelReducer,
    tech_break: techBreakReducer,

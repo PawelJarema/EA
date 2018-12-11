@@ -12,7 +12,7 @@ import * as techBreakActions from '../actions/techBreakActions';
 
 import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
-import { Settings, CreateUpdateAction, Delivery, ProfileLinks } from './Profile';
+import { Settings, CreateUpdateAction, Delivery, ProfileLinks, MyOpinions, Invoices } from './Profile';
 import { AdminPanel, TechBreak } from './Admin';
 import Progress from './Progress';
 import Chat from './Chat';
@@ -540,6 +540,8 @@ class App extends Component {
                         <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
                         <Route path="/konto/zaloguj" component={ LoginLanding } />
                         <Route path="/konto/ustawienia" component={ Settings } />
+                        <Route path="/konto/opinie" component={ MyOpinions } />
+                        <Route path="/konto/faktury" component={ Invoices } />
                         <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
                         <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                         <Route path="/konto/aukcje/dostawa" component={ Delivery } />

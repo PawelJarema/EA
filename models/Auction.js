@@ -37,6 +37,7 @@ const auctionSchema = new Schema({
     paid: Boolean,
     payees: [ObjectId],
     buynowpayees: [ObjectId],
+    raters: [ObjectId],
     rated: Boolean
 });
 

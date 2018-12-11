@@ -13,3 +13,7 @@ export const fetchOtherUser = (id) => async dispatch => {
 	const res = await axios.get('/other_user/' + id);
 	dispatch({ type: FETCH_OTHER_USER, payload: res.data });
 };
+
+export const clearOtherUser = () => async dispatch => {
+	dispatch({ type: FETCH_OTHER_USER, payload: false });
+};

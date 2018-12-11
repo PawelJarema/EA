@@ -35,6 +35,7 @@ require('./routes/userRoutes')(app);
 require('./routes/categoryRoutes')(app);
 require('./routes/auctionRoutes')(app);
 require('./routes/otherUserRoutes')(app);
+require('./routes/invoiceRoutes')(app);
 require('./routes/chatRoutes')(app);
 require('./routes/przelewy24Routes')(app);
 require('./routes/adminRoutes')(app);
