@@ -140,7 +140,7 @@ class Invoices extends Component {
             return <Progress />;
         }
 
-        if (!invoices) {
+        if (!invoices || invoices.length === 0) {
             return (
                 <div className="Profile ProfileSettings">
                     <ProfileLinks active="invoices" />
@@ -165,19 +165,21 @@ class Invoices extends Component {
                         invoices.length > 10 && <Pagination page={page} pages={pages} clickHandler={this.handlePagination} />
                     }
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Nabywca i Tytuł</th>
-                                <th>Ilość (szt.)</th>
-                                <th>Opłaty</th>
-                                <th>Metoda dostawy</th>
-                                <th>
-                                    <div>
-                                         <input name="vat" type="checkbox" checked={ vat } onChange={(e) => this.setState({ vat: e.target.checked })} /> Prześlij z VAT
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+                        {
+                            invoices.length > 0 && (<thead>
+                                <tr>
+                                    <th>Nabywca i Tytuł</th>
+                                    <th>Ilość (szt.)</th>
+                                    <th>Opłaty</th>
+                                    <th>Metoda dostawy</th>
+                                    <th>
+                                        <div>
+                                             <input name="vat" type="checkbox" checked={ vat } onChange={(e) => this.setState({ vat: e.target.checked })} /> Prześlij z VAT
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>)
+                        }
                         <tbody>
                             {
                                 invoices.map((invoice, index) => (
