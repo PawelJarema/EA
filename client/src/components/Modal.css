@@ -1,7 +1,7 @@
 .Modal {
 	position: fixed;
 	width: 50%;
-	height: 350px;
+	min-height: 350px;
 	display: none;
 	border: 1px solid #ccc;
 	background: white;

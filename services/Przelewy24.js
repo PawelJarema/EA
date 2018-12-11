@@ -35,6 +35,7 @@ module.exports = function(mode) {
 	}
 
 	async function MerchantRegister(merchant) {
+		console.log('registering merchant...');
 		soap.createClient(
 			endpoints[mode],
 			(err, client) => {

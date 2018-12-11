@@ -6,9 +6,9 @@ module.exports = app => {
 
 
 	// SSL CERT
-	const privateKey = fs.readFileSync('../cert/privkey.pem', 'utf8');
-	const certificate = fs.readFileSync('../cert/cert.pem', 'utf8');
-	const ca = fs.readFileSync('../cert/chain.pem', 'utf8');
+	const privateKey = production ? fs.readFileSync('../cert/privkey.pem', 'utf8') : null;
+	const certificate = production ? fs.readFileSync('../cert/cert.pem', 'utf8') : null;
+	const ca = production ? fs.readFileSync('../cert/chain.pem', 'utf8') : null;
 
 	const credentials = {
     	key: privateKey,

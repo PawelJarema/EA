@@ -182,7 +182,8 @@ module.exports = app => {
                 joindate: new Date().getTime(),
                 contact: { email: email },
                 security: { password: hash, verified: false },
-                agreements: { rodo_1: true, rodo_2: true }
+                agreements: { rodo_1: true, rodo_2: true },
+                balance: { credits: 5 }
             }).save();
             
             let id = newUser._id;

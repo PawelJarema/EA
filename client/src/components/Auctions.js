@@ -63,7 +63,8 @@ class Pay extends Component {
         this.getPriceAndQty = this.getPriceAndQty.bind(this);
         this.pay = this.pay.bind(this);
 
-        this.state = { ...(this.getPriceAndQty()), delivery_price: 0, delivery_method: '' };
+        // paySimple: when no P24 Passage methods
+        this.state = { ...(this.getPriceAndQty()), delivery_price: 0, delivery_method: '', paySimple: true }; 
     }
 
     getPriceAndQty() {
@@ -82,7 +83,7 @@ class Pay extends Component {
 
     pay() {
         const { auction, user } = this.props;
-        const { price, qty, delivery_price, delivery_method } = this.state;
+        const { paySimple, price, qty, delivery_price, delivery_method } = this.state;
 
         if (!delivery_method) {
             alert('Wybierz metodę dostawy');
@@ -90,6 +91,7 @@ class Pay extends Component {
         }
 
         const data = {
+            paySimple, 
             title: auction.title,
             price,
             shipping_price: delivery_price,
@@ -102,7 +104,10 @@ class Pay extends Component {
         this.props.registerP24Transaction(data);
     }
 
+
     render() {
+        const paySimple = this.state; // no P24 Passage account
+
         const { price, delivery_price, qty } = this.state;
         const { user, other_user, auction, callback } = this.props;
 
@@ -112,7 +117,7 @@ class Pay extends Component {
                     <Modal
                         open={true}
                         title={<span><span className="thin"><i className="material-icons">payment</i></span><div className="title-text"><span className="thin">Zapłać za: </span> {auction.title} </div></span>}
-                        actions={<button className="standard-button" onClick={this.pay}><i className="material-icons">payment</i>Zapłać</button>}
+                        actions={<button className="standard-button" onClick={this.pay}><i className="material-icons">payment</i>{ (paySimple ? 'Oznacz jako opłacone' : 'Zapłać') }</button>}
                         close={callback}
                     >
                         <form ref={ (e) => this.payformRef = e }>
@@ -137,7 +142,11 @@ class Pay extends Component {
                             </tbody>
                             </table>
                         </form>
+
                         <h1>Do zapłaty: { price + delivery_price } zł</h1>
+                        {
+                            paySimple && <p><br/>Wykonaj teraz przelew na konto Sprzedawcy: <b>{ other_user.balance.account_number }</b> <br/> Następnie oznacz aukcję jako opłaconą.</p>
+                        }
                     </Modal>
                 </div>
             );

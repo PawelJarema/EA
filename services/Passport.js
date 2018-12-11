@@ -56,7 +56,7 @@ async (accessToken, refreshToken, profile, done) => {
             agreements: { rodo_1: true, rodo_2: true }
         });
             
-        newUser.balance = { balance: new Balance({ _user: newUser._id })};
+        newUser.balance = { balance: new Balance({ _user: newUser._id }), credits: 5 };
             
         await newUser.save();
         
@@ -97,7 +97,7 @@ async (accessToken, refreshToken, profile, done) => {
             agreements: { rodo_1: true, rodo_2: true }
         });
         
-        newUser.balance = { balance: new Balance({ _user: newUser._id }) };
+        newUser.balance = { balance: new Balance({ _user: newUser._id }), credits: 5 };
         
         await newUser.save();
         
@@ -136,7 +136,7 @@ async (accessToken, refreshToken, profile, done) => {
             agreements: { rodo_1: true, rodo_2: true }
         });
         
-        newUser.balance = { balance: new Balance({ _user: newUser._id }) };
+        newUser.balance = { balance: new Balance({ _user: newUser._id }), credits: 5 };
         
         await newUser.save();
         
@@ -171,7 +171,7 @@ async (accessToken, refreshToken, profile, done) => {
             agreements: { rodo_1: true, rodo_2: true }
         });
         
-        newUser.balance = { balance: new Balance({ _user: newUser._id }) };
+        newUser.balance = { balance: new Balance({ _user: newUser._id }), credits: 5 };
         
         await newUser.save();
         

@@ -339,7 +339,6 @@ nav .user-links .search-mobile {
 @media screen and (max-width: 976px) {
 	.App .Modal {
 		width: 100%;
-		height: calc(100% - var(--nav-h) - var(--input-h) * 2.5);
 	}
 	.App .Modal .actions {
 		display: flex;

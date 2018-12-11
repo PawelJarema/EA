@@ -1,21 +1,28 @@
-const axios 		= require('axios');
-const requireLogin 	= require('../middleware/requireLogin');
-const qs 			= require('qs');
-const md5 			= require('md5');
-const keys 			= require('../config/keys');
-const business 		= require('../services/emailTemplates/business');
-const P24 			= require('../services/Przelewy24')();
+const axios 			= require('axios');
+const requireLogin 		= require('../middleware/requireLogin');
+const qs 				= require('qs');
+const md5 				= require('md5');
+const keys 				= require('../config/keys');
+const business 			= require('../services/emailTemplates/business');
+const P24 				= require('../services/Przelewy24')();
 
-const mongoose 		= require('mongoose');
-const { ObjectId } 	= mongoose.Types;
+const mongoose 			= require('mongoose');
+const { ObjectId } 		= mongoose.Types;
+
 require('../models/User');
 require('../models/Admin');
-const User 			= mongoose.model('user');
-const Admin 		= mongoose.model('admin');
-const Transaction 	= mongoose.model('transaction');
+require('../models/Auction');
+require('../models/CreditTransaction');
+
+const User 				= mongoose.model('user');
+const Admin 			= mongoose.model('admin');
+const Auction 			= mongoose.model('auction');
+const Transaction 		= mongoose.model('transaction');
+const CreditTransaction	= mongoose.model('creditTransaction');
 
 const Mailer 			= require('../services/Mailer');
 const sendItemTemplate	= require('../services/emailTemplates/sendItemTemplate');
+const paySimpleTemplate	= require('../services/emailTemplates/paySimpleTemplate');
 
 // 	verify: 'https://sandbox.przelewy24.pl/trnVerify'
 
@@ -35,7 +42,6 @@ module.exports = app => {
 		const buyer = req.user;
 		const { qty, cost } = req.body;
 
-		req.session.boughtCredits = qty;
 		const title = 'Kupno kredytów eaukcje.pl w liczbie ' + qty;
 		const transaction_id = TransactionId('buy credits', +qty * +cost, buyer, new Date().getTime());
 
@@ -64,35 +70,81 @@ module.exports = app => {
 		};
 
 		const token = await P24.registerTransaction(data);
-		// TODO put in database ?
+
+		const transaction = new CreditTransaction({
+			date: new Date().getTime(),
+			_user: ObjectId(req.user._id),
+			p24_session_id: transaction_id,
+			token,
+			qty,
+			done: false
+		});
+		await transaction.save();
+
 		req.session.message = 'Za chwilę zostaniesz przekierowany na stronę Przelewy24. Proszę czekać...';
 		res.send(P24.requestTransactionUrl(token));
 	});
 
 	app.get('/przelewy24/creditCallback', async (req, res) => {
-		const { boughtCredits } = req.session;
-		if (boughtCredits) {
-			req.session.message = "Zakup kredytów przebiegł pomyślnie";
-			const user = await User.findOne({ _id: ObjectId(req.user._id)});
-			const { credits } = user.balance;
-
-			user.balance.credits = credits ? +credits + +boughtCredits : +boughtCredits;
-			await user.save();
-
-			req.session.boughtCredits = null;
-		}
-
 		res.redirect('/konto/aukcje/dodaj');
 	});
 
 	app.post('/przelewy24/creditStatus', async (req, res) => {
 		console.log('creditStatus', req.body);
 		
+		const { p24_session_id } = req.body;
+		const transaction = await CreditTransaction.findOne({ p24_session_id });
+
+		const user = await User.findOne({ _id: ObjectId(transaction._user) });
+		const { credits } = user.balance;
+		const { qty } = transaction;
+
+		user.balance.credits = credits ? +credits + +qty : +qty;
+		transaction.done = true;
+
+		await user.save();
+		await transaction.save();
+		if (req.session) req.session.message = "Zakup kredytów przebiegł pomyślnie";
+		res.send(true);
 	});
 
 	app.post('/przelewy24/registerTransaction', requireLogin, async (req, res) => {
-		const { title, price, shipping_price, shipping_method, qty, owner_id, auction_id } = req.body;
+		const { paySimple, title, price, shipping_price, shipping_method, qty, owner_id, auction_id } = req.body;
 		const buyer = req.user;
+
+		// na P24 Passage account
+		if (paySimple) {
+			const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
+			const owner = await User.findOne({ _id: ObjectId(owner_id) });
+
+			const buynowpayee = auction.buynowpayees && auction.buynowpayees.indexOf(req.user._id) !== -1;
+			const payee = auction.payees && auction.payees.indexOf(req.user._id !== -1);
+
+			if (buynowpayee) {
+				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(req.user._id));
+			}
+
+			if (payee) {
+				auction.payees = auction.payees.filter(id => String(id) !== String(req.user.id));
+				if (auction.payees.length === 0) {
+					auction.paid = true;
+				}
+			}
+
+			await auction.save();
+
+			const buyer = req.user;
+			const name = `${buyer.firstname || ''} ${buyer.lastname || (buyer.firstname ? '' : 'Anonim')}`;
+			const mailer = new Mailer(
+				{ subject: 'Kupujący oznaczył aukcję jako opłaconą', recipients: [{ email: owner.contact.email }] },
+				paySimpleTemplate(name, buyer.contact.phone, buyer.contact.email, buyer.address, title, (+price + +shipping_price), shipping_method, auction_id)
+			);
+			await mailer.send();
+
+			req.session.message = 'Sprzedawca został powiadomiony o wpłacie i poproszony o sprawdzenie stanu konta';
+			res.send(true);
+			return;
+		}
 
 		const transaction_id = TransactionId(title, price, buyer, owner_id);
 
@@ -156,6 +208,7 @@ module.exports = app => {
 		};
 
 		const resp = await P24.dispatchTransaction(batch);
+		console.log(resp);
 	});
 
 	app.post('/przelewy24/status', async (req, res) => {

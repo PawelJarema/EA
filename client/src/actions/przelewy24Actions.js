@@ -11,7 +11,7 @@ export const registerP24Transaction = data => async dispatch => {
 
 	dispatch({ type: FETCH_MESSAGE, payload: message.data });
 	
-	window.location.href = P24url.data;
+	if (P24url.data !== true) window.location.href = P24url.data;
 }
 
 export const buyCredits = data => async dispatch => {
