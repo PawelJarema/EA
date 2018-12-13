@@ -303,8 +303,8 @@ module.exports = app => {
         );
         const newest = await Auction.find(
             { _user: { $ne: user_id }, ended: { $ne: true } },
-            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } },
-            { sort: { 'date.start_date': 1 }, limit: 9 }
+            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, date: 1 },
+            { sort: { 'date.start_date': -1 }, limit: 9 }
         );
 
         res.send({ popular, newest });
