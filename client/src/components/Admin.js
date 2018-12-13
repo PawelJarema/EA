@@ -409,6 +409,7 @@ class AdminLinks extends Component {
 
 	render() {
 		const { tech_break } = this.props;
+
 		return (
 			<div className="links">
 				<h2><i className="material-icons">verified_user</i>Administracja</h2>
@@ -417,7 +418,9 @@ class AdminLinks extends Component {
 				<NavLink to="/admin/aukcje">Aukcje</NavLink>
 				<NavLink to="/admin/baza-mailingowa">Baza mailingowa</NavLink>
 				<a onClick={this.logoutAdmin}>Wyloguj</a>
-				<button className="standard-button" onClick={this.toggleTechBreak}>{( tech_break ? <i className="material-icons">power_off</i> : <i className="material-icons">power</i>)}{( tech_break ? 'Odwołaj przerwę techniczną' : 'Zarządź przerwę techniczną')}</button>
+				{
+					tech_break && <button className="standard-button" onClick={this.toggleTechBreak}>{( tech_break.techbreak ? <i className="material-icons">power_off</i> : <i className="material-icons">power</i>)}{( tech_break.techbreak ? 'Odwołaj przerwę techniczną' : 'Zarządź przerwę techniczną')}</button>
+				}
 			</div>
 		);
 	}

@@ -296,7 +296,6 @@ module.exports = app => {
     app.get('/auction/get_front_page_auctions', async (req, res) => {
         const user_id = currentUserId(req);
 
-        console.log('fetching stats');
         const popular = await Auction.find(
             { _user: { $ne: user_id }, ended: { $ne: true } }, 
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, likes: 1 }, 
@@ -422,8 +421,6 @@ module.exports = app => {
         const main_names = mains.map(c => c.name);
 
         const is_main = category === 'Kategorie' || main_names.indexOf(category) !== -1;
-
-        console.log(category.toUpperCase());
         
         if (is_main) {
             let result = [];

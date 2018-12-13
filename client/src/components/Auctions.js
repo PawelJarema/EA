@@ -333,9 +333,15 @@ class AuctionDetails extends Component {
     submit(event) {
         event.preventDefault();
 
+        const user = this.props.user;
         const auction = this.state.auction;
         const formData = new FormData(this.formBidRef);
         const bid_value = Number(this.bidInputRef.value);
+
+        if (!user) {
+            alert('Aby wziąć udział w licytacji musisz się zalogować');
+            return;
+        }
 
         if (!bid_value) {
             alert('Podaj stawkę licytacji');

@@ -132,7 +132,6 @@ module.exports = app => {
 		}
 	
 		const response = await mailer.send();
-		console.log(response);
 		
 		req.session.message = 'Wysłano wiadomość';
 		res.send(true);
@@ -227,8 +226,8 @@ module.exports = app => {
 		admin
 			.save()
 			.then(
-				doc => { res.send(admin.techbreak); },
-				err => { console.log(err); res.send(admin.techbreak) }
+				doc => { res.send(admin); },
+				err => { console.log(err); res.send(admin) }
 			);
 
 	});

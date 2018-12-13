@@ -478,6 +478,20 @@ class ProfileLinksClosed extends Component {
     }
 }
 
+class Page404 extends Component {
+    render() {
+        return (
+            <div>
+                <div className="no-result">
+                    <i className="material-icons">build</i>
+                    <h1>Błąd 404</h1>
+                    <p>Strona o którą prosisz nie istnieje</p>
+                </div>
+            </div>
+        )
+    }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -510,7 +524,7 @@ class App extends Component {
 
   render() {
     const { socket } = this.state;
-    const { flash, tech_break } = this.props;
+    const { user, flash, tech_break } = this.props;
 
     const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
@@ -530,24 +544,30 @@ class App extends Component {
             
                     
                     <div className="main-container">
-                        <Route exact path="/" component={ FrontPage } />
-                        <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
-                        <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
-                        <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
-                        <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
-                        <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
-                        <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
-                        <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
-                        <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
-                        <Route path="/konto/zaloguj" component={ LoginLanding } />
-                        <Route path="/konto/ustawienia" component={ Settings } />
-                        <Route path="/konto/opinie" component={ MyOpinions } />
-                        <Route path="/konto/faktury" component={ Invoices } />
-                        <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
-                        <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
-                        <Route path="/konto/aukcje/dostawa" component={ Delivery } />
-                        <Route path="/admin" component={ AdminPanel } />
-                        <Route exact path="/konto" component={ ProfileLinksClosed } />
+          
+                            <Route exact path="/" component={ FrontPage } />
+                            <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
+                            <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
+                            <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                            <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
+                            <Route path="/konto/zaloguj" component={ LoginLanding } />
+                            <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
+                            <Route path="/admin" component={ AdminPanel } />
+
+                            {
+                                user && <div>
+                                    <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />
+                                    <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
+                                    <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
+                                    <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
+                                    <Route path="/konto/ustawienia" component={ Settings } />
+                                    <Route path="/konto/opinie" component={ MyOpinions } />
+                                    <Route path="/konto/faktury" component={ Invoices } />
+                                    <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
+                                    <Route path="/konto/aukcje/dostawa" component={ Delivery } />
+                                    <Route exact path="/konto" component={ ProfileLinksClosed } />
+                                </div>
+                            }
                     </div>
 
                     <footer>
