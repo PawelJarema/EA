@@ -13,6 +13,7 @@ const passport = require('passport');
 require('./services/Passport');
 
 mongoose.connect(keys.mongoURI);
+//mongoose.connect('mongodb://127.0.0.1:27017/eaukcje');
 
 const PORT = process.env.PORT || process.env.NODE_ENV === 'production' ? 80 : 5000;
 
