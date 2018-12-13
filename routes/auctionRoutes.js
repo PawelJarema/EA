@@ -297,7 +297,6 @@ module.exports = app => {
         const user_id = currentUserId(req);
 
         console.log('fetching stats');
-        
         const popular = await Auction.find(
             { _user: { $ne: user_id }, ended: { $ne: true } }, 
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, likes: 1 }, 
@@ -309,7 +308,7 @@ module.exports = app => {
             { limit: 9, sort: { 'date.start_date': -1 } }
         );
 
-        res.send({ popular || [], newest || [] });
+        res.send({ popular, newest });
     });
 
     app.get('/auction/get_all/:page/:per_page', async (req, res) => {

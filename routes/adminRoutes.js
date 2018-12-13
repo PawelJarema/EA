@@ -207,7 +207,12 @@ module.exports = app => {
 
 	app.get('/api/tech_break', async (req, res) => {
 		const admin = await Admin.findOne({}, { techbreak: 1, provision: 1 });		
-		res.send(admin);
+		if (admin) {
+			res.send({ techbreak: admin.techbreak || false, provision: admin.provision });
+			return;
+		} else {
+			res.send({ techbreak: false, provision: 5 });
+		}
 	});
 
 	app.post('/api/tech_break', async (req, res) => {
