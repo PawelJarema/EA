@@ -9,4 +9,5 @@ module.exports = function(app) {
     app.use(proxy('/chats/**', { target: 'http://localhost:5000' }));
     app.use(proxy('/przelewy24/**', { target: 'http://localhost:5000' }));
     app.use(proxy('/invoices/**', { target: 'http://localhost:5000' }));
+    app.use(proxy('/import_export/**', { target: 'http://localhost:5000' }));
 }

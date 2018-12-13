@@ -309,6 +309,9 @@ nav {
     margin-left: 7px;
     opacity: .8;
 }
+.user-links a.account:after {
+    content: 'perm_identity';
+}
 .user-links a.logout:after {
     content: 'expand_more';
 }
@@ -552,4 +555,20 @@ strong {
 
 .thin {
     font-weight: 100;
+}
+
+.file-form {
+    position: relative;
+    margin-bottom: 30px;
+}
+.file-form input[type="file"] {
+    opacity: 0;
+    height: var(--input-h);
+    cursor: pointer;
+}
+.file-form .file-value {
+    position: absolute;
+    left: 0;
+
+    pointer-events: none;
 }

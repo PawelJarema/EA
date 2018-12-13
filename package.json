@@ -36,6 +36,8 @@
     "sendgrid": "^5.2.3",
     "sharp": "^0.21.0",
     "soap": "^0.25.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^10.1.1"
   }
 }

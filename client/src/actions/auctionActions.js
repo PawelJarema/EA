@@ -37,6 +37,7 @@ export const fetchAuction = (id) => async dispatch => {
 }
 
 export const clearAuction = () => async dispatch => {
+	dispatch({ type: FETCH_AUCTIONS, payload: false });
 	dispatch({ type: FETCH_AUCTION, payload: false });
 }
 

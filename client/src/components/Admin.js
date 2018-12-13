@@ -138,7 +138,7 @@ class AuctionList extends Component {
 						mailbox && (
 							<Modal
 								title={<span><i className="material-icons">mail_outline</i>Wyślij wiadomość w temacie auckji {mailbox.title}</span>}
-								actions={<button className="standard-button" onClick={this.sendMessage}>Send</button>}
+								actions={<button className="standard-button" onClick={this.sendMessage}>Wyślij</button>}
 								open={mailbox}
 								close={() => this.setState({mailbox:false})}
 							>

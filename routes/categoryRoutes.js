@@ -9,6 +9,7 @@ module.exports = app => {
             if (err) {
                 console.log(err);
             } else {
+            	console.log('categories', categories);
                 res.send(categories);
             }
         });

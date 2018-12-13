@@ -159,9 +159,10 @@ class UserLinks extends Component {
                     <span className="link">
                         <img src="/assets/icons/user.png" />
                         <div className="dropdown">
-                            <a href="/api/logout" className="logout">Wyloguj</a>
+                            <Link to="/konto/" className="account">Konto</Link>
                             <Link to="/konto/ustawienia" className="settings">Ustawienia</Link>
                             <Link to="/konto/aukcje/dodaj" className="add-auction">Dodaj Aukcję</Link>
+                            <a href="/api/logout" className="logout">Wyloguj</a>
                         </div>
                     </span>
                 </div>

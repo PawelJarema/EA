@@ -5,6 +5,7 @@ import * as myAuctionActions from '../actions/myAuctionActions';
 import * as profileActions from '../actions/profileActions';
 import * as otherUserActions from '../actions/otherUserActions';
 import * as przelewy24Actions from '../actions/przelewy24Actions';
+import * as importExportActions from '../actions/importExportActions';
 import './Auctions.css';
 
 import { Link } from 'react-router-dom';
@@ -612,6 +613,8 @@ class MyAuctionList extends Component {
         this.pingPrzelewy24 = this.pingPrzelewy24.bind(this);
         this.p24TransactionTest = this.p24TransactionTest.bind(this);
         this.payCallback = this.payCallback.bind(this);
+        this.exportAuction = this.exportAuction.bind(this);
+        this.importAuction = this.importAuction.bind(this);
     }
 
 
@@ -620,6 +623,13 @@ class MyAuctionList extends Component {
             if (typeof props.my_auctions[props.my_auctions.length - 1] === 'number') {
                 this.setState(prev => ({ pages: Math.ceil(props.my_auctions.pop() / prev.per_page) }));
             }
+        }
+        if (props.exported) {
+            var element = document.createElement('a');
+            var file = new Blob([props.exported], { type: 'text/xml' });
+            element.href = URL.createObjectURL(file);
+            element.download = 'auction.xml';
+            element.click();
         }
     }
 
@@ -686,6 +696,15 @@ class MyAuctionList extends Component {
         this.setState({ pay: false });
     }
 
+    exportAuction(id) {
+        this.props.exportAuction(id);
+    }
+
+    importAuction() {
+        const formData = new FormData(this.importFormRef);
+        this.props.importAuction(formData);
+    }
+
     render() {
         const { user, my_auctions } = this.props;
         const { page, per_page, pages, pay } = this.state;
@@ -695,6 +714,14 @@ class MyAuctionList extends Component {
             <div className="Profile MyAuctions">
                 <ProfileLinks active={mode} />
                 <div className="AuctionList">
+                    {
+                        mode === 'current_auctions' && (
+                            <form className="file-form" ref={(e) => this.importFormRef = e}>
+                                <input name="xml" type="file" onChange={this.importAuction}/>
+                                <span className="file-value"><button className="standard-button"><i className="material-icons">import_export</i> Importuj aukcję</button></span>
+                            </form>
+                        )
+                    }
 
                     {
                         pay && <Pay user={ user } auction={ pay } callback={ this.payCallback } />
@@ -734,6 +761,9 @@ class MyAuctionList extends Component {
                                             }
                                             {
                                                 mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
+                                            }
+                                            {
+                                                mode.indexOf('auction') !== -1 && <i className="material-icons" onClick={() => this.exportAuction(auction._id)} title='Export aukcji'>import_export</i>
                                             }
                                             {
                                                 (auction.payees && auction.payees.indexOf(user._id) !== -1 || auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1) && (
@@ -1205,6 +1235,10 @@ class CreateUpdateAction extends Component {
    }
 }
 
+function mapMyAuctionsUserAndExportedStateToProps({ user, my_auctions, exported }) {
+    return { user, my_auctions, exported };
+}
+
 function mapMyAuctionsAndUserStateToProps({ user, my_auctions }) {
     return { user, my_auctions };
 }
@@ -1243,7 +1277,7 @@ Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actio
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapUserAndCategoryStateToProps, profileActions)(CreateUpdateAction);
 AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-MyAuctionList = connect(mapMyAuctionsAndUserStateToProps, myAuctionActions)(MyAuctionList);
+MyAuctionList = connect(mapMyAuctionsUserAndExportedStateToProps, {...myAuctionActions, ...importExportActions})(MyAuctionList);
 AuctionDetails = connect(mapMyAuctionsUserAndOtherUserStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

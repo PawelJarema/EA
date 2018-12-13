@@ -14,6 +14,7 @@ import adminReducer from './adminReducer';
 import adminPanelReducer from './adminPanelReducer';
 import techBreakReducer from './techBreakReducer';
 import adminDocumentReducer from './adminDocumentReducer';
+import importExportReducer from './importExportReducer';
 
 export default combineReducers({
    admin: adminReducer,
@@ -30,5 +31,6 @@ export default combineReducers({
    chats: chatReducer,
    admin_panel: adminPanelReducer,
    tech_break: techBreakReducer,
-   documents: adminDocumentReducer
+   documents: adminDocumentReducer,
+   exported: importExportReducer
 });

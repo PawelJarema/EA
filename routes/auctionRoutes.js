@@ -305,6 +305,9 @@ module.exports = app => {
             { limit: 9, sort: { 'date.start_date': -1 } }
         );
 
+        console.log('front popular', popular);
+        console.log('front new', newest);
+        
         res.send({ popular, newest });
     });
 

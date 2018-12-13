@@ -39,6 +39,7 @@ require('./routes/invoiceRoutes')(app);
 require('./routes/chatRoutes')(app);
 require('./routes/przelewy24Routes')(app);
 require('./routes/adminRoutes')(app);
+require('./routes/importExportRoutes')(app);
 
 require('./services/cronScheduleTaskService')(app);
 
