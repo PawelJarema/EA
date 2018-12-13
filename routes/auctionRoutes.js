@@ -294,21 +294,22 @@ module.exports = app => {
     });
 
     app.get('/auction/get_front_page_auctions', async (req, res) => {
+        const user_id = currentUserId(req);
+
+        console.log('fetching stats');
+        
         const popular = await Auction.find(
-            { _user: { $ne: currentUserId(req) }, ended: { $ne: true } }, 
+            { _user: { $ne: user_id }, ended: { $ne: true } }, 
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, likes: 1 }, 
             { limit: 8, sort: { likes: -1 } }
         );
         const newest = await Auction.find(
-            { _user: { $ne: currentUserId(req) }, ended: { $ne: true } },
+            { _user: { $ne: user_id }, ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } },
             { limit: 9, sort: { 'date.start_date': -1 } }
         );
 
-        console.log('front popular', popular);
-        console.log('front new', newest);
-        
-        res.send({ popular, newest });
+        res.send({ popular || [], newest || [] });
     });
 
     app.get('/auction/get_all/:page/:per_page', async (req, res) => {
