@@ -322,7 +322,14 @@ class AuctionDetails extends Component {
         const auction = this.state.auction;
         const reply = window.confirm(`Czy chcesz kupić ${auction.title} za ${auction.price.buy_now_price} zł ?`);
         if (reply) {
-            this.props.buyNow(auction._id);
+            this.props
+                .buyNow(auction._id)
+                .then(() => { 
+                const auction_id = this.props.match.params.id;
+                this.props
+                    .fetchAuction(auction_id)
+                    .then(() => { this.setState({ auction: this.props.auctions }); });
+                });
         }
     }
 
@@ -356,7 +363,14 @@ class AuctionDetails extends Component {
             if (!reply) return;
         }
 
-        this.props.postBid(auction._id, formData);
+        this.props
+            .postBid(auction._id, formData)
+            .then(() => { 
+                const auction_id = this.props.match.params.id;
+                this.props
+                    .fetchAuction(auction_id)
+                    .then(() => { this.setState({ auction: this.props.auctions }); });
+                });
     }
 
     render() {
@@ -635,6 +649,8 @@ class MyAuctionList extends Component {
             var file = new Blob([props.exported], { type: 'text/xml' });
             element.href = URL.createObjectURL(file);
             element.download = 'auction.xml';
+
+            this.props.clearExported();
             element.click();
         }
     }
@@ -674,7 +690,9 @@ class MyAuctionList extends Component {
     }
 
     rateAuction(data) {
-        this.props.rateAuction(data);
+        this.props
+            .rateAuction(data)
+            .then(() => { this.paginateTo(this.state.page || 1) });
     }
 
     pingPrzelewy24() {
@@ -699,7 +717,7 @@ class MyAuctionList extends Component {
     }
 
     payCallback() {
-        this.setState({ pay: false });
+        this.setState({ pay: false }, () => { this.paginateTo(this.state.page || 1) });
     }
 
     exportAuction(id) {
@@ -708,7 +726,11 @@ class MyAuctionList extends Component {
 
     importAuction() {
         const formData = new FormData(this.importFormRef);
-        this.props.importAuction(formData);
+        this.props
+            .importAuction(formData)
+            .then(
+                () => { this.paginateTo(this.state.pages || 1) }
+            );
     }
 
     render() {
@@ -1107,7 +1129,9 @@ class CreateUpdateAction extends Component {
     
    render() {
        const { user, update, categories } = this.props;
-       
+       const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
+       const deliveries = user.deliveries && user.deliveries.length;
+
        if (!user.balance.credits) {
             return (
                 <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
@@ -1121,6 +1145,12 @@ class CreateUpdateAction extends Component {
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
                 <ProfileLinks active="addauction" />
                 <form ref={ e => this.formRef = e } className="user-settings" action="/auction/create_or_update" method="post" encType="multipart/form-data">
+                    {
+                        !userDataComplete && <p className="warn"><i className="material-icons">warning</i> Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</p>
+                    }
+                    {
+                        !deliveries && <p className="warn"><i className="material-icons">warning</i> Dodaj metody dostawy "<Link to="/konto/aukcje/dostawa">Metody dostawy towaru</Link>" !</p>
+                    }
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
                     <fieldset>

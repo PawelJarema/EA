@@ -76,71 +76,78 @@ module.exports = app => {
 						return;
 					}
 
-					const 	data 		= result.auction,
-							price 		= data.price[0],
-							date 		= data.date[0],
-							categories	= data.categories[0],
-							attributes	= data.attributes[0],
-							photos		= data.photos[0];
+					try {
+						const 	data 		= result.auction,
+								price 		= data.price[0],
+								date 		= data.date[0],
+								categories	= data.categories[0],
+								attributes	= data.attributes[0],
+								photos		= data.photos[0];
 
-					const 	user 		= req.user,
-							auction 	= new Auction({
-								_user: user._id,
-								title: data.title[0],
-								shortdescription: data.short_description[0] || '',
-								description: data.description[0] || '',
-								quantity: data.quantity[0] || 1,
-								likes: data.likes[0] || 0,
-								price: {
-									start_price: price.start_price[0],
-									min_price: price.min_price[0],
-									buy_now_price: price.buy_now_price[0],
-									hide_min_price: price.hide_min_price[0] === 'true'
-								},
-								date: {
-									start_date: new Date().getTime(),
-									duration: +date.duration[0]._
-								},
-								categories: {
-									main: categories.main[0],
-									sub: categories.sub[0]
-								},
-								attributes: [],
-								photos: []
-							});
+						const 	user 		= req.user,
+								auction 	= new Auction({
+									_user: user._id,
+									title: data.title[0],
+									shortdescription: data.short_description[0] || '',
+									description: data.description[0] || '',
+									quantity: data.quantity[0] || 1,
+									likes: data.likes[0] || 0,
+									price: {
+										start_price: price.start_price[0],
+										min_price: price.min_price[0],
+										buy_now_price: price.buy_now_price[0],
+										hide_min_price: price.hide_min_price[0] === 'true'
+									},
+									date: {
+										start_date: new Date().getTime(),
+										duration: +date.duration[0]._
+									},
+									categories: {
+										main: categories.main[0],
+										sub: categories.sub[0]
+									},
+									attributes: [],
+									photos: []
+								});
 
-					const code = md5([auction.title, date.start_date[0]._, auction.price.start_price].join('|'));
-					if (code !== data.verification_code[0]) {
-						req.session.error = 'Próba importu spreparowanego pliku';
+						const code = md5([auction.title, date.start_date[0]._, auction.price.start_price].join('|'));
+						if (code !== data.verification_code[0]) {
+							req.session.error = 'Próba importu spreparowanego pliku';
+							res.send(false);
+							return;
+						}
+
+						for (let i = 0; i < attributes.attribute.length; i ++) {
+							const attribute = attributes.attribute[i];
+							auction.attributes.push({ name: attribute.$.name, value: attribute._ })
+						}
+
+						for (let i = 0; i < photos.photo.length; i ++) {
+							const photo = photos.photo[i];
+							auction.photos.push({ type: photo.$.type, data: photo._ })
+						}
+
+						await auction
+							.save()
+							.then(
+								doc => {
+									req.session.message = 'Zaimportowano aukcję';
+									res.send(true);
+									return;
+								},
+								err => {
+									console.log(err);
+									req.session.error = 'Import nie powiódł się. Spróbuj ponownie';
+									res.send(false);
+									return;
+								} 
+							);
+					} catch(err) {
+						console.log(err);
+						req.session.error = 'Plik XML nie zawiera potrzebnych danych';
 						res.send(false);
 						return;
 					}
-
-					for (let i = 0; i < attributes.attribute.length; i ++) {
-						const attribute = attributes.attribute[i];
-						auction.attributes.push({ name: attribute.$.name, value: attribute._ })
-					}
-
-					for (let i = 0; i < photos.photo.length; i ++) {
-						const photo = photos.photo[i];
-						auction.photos.push({ type: photo.$.type, data: photo._ })
-					}
-
-					await auction
-						.save()
-						.then(
-							doc => {
-								req.session.message = 'Zaimportowano aukcję';
-								res.send(true);
-								return;
-							},
-							err => {
-								console.log(err);
-								req.session.error = 'Import nie powiódł się. Spróbuj ponownie';
-								res.send(false);
-								return;
-							} 
-						);
 
 			});
 		} else {

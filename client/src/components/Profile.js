@@ -15,8 +15,6 @@ import Progress from './Progress';
 import { Pagination } from './Pagination';
 import RegexHelper from '../helpers/regexHelper';
 
-
-
 moment.updateLocale('pl', {
    months: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
    monthsShort: ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'],
@@ -318,7 +316,7 @@ class Settings extends Component {
             for (let i = message.length - 1; i >= 0; i--) {
                 if (messages[i].innerHTML.length) {
                     messages[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return message.length === 0;
+                    return false;
                 }
             }
         });

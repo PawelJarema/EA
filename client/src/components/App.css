@@ -572,3 +572,21 @@ strong {
 
     pointer-events: none;
 }
+
+.warn {
+    font-weight: 400;
+    color: var(--orange);
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+.warn a {
+    color: var(--orange);
+    opacity: 0.8;
+}
+.warn a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}

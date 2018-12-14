@@ -169,6 +169,8 @@ module.exports = app => {
             auction.buynowpayees = [ObjectId(user._id)];
         }
 
+        auction.bids = auction.bids.filter(bid => String(bid._user) !== String(user._id));
+
         if (auction.quantity === 0) {
             auction.ended = true;
         }

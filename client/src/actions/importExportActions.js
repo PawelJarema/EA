@@ -7,6 +7,10 @@ export const exportAuction = id => async dispatch => {
 	dispatch({ type: EXPORTED_AUCTION, payload: res.data });
 }
 
+export const clearExported = id => async dispatch => {
+	dispatch({ type: EXPORTED_AUCTION, payload: false });
+}
+
 export const importAuction = formData => async dispatch => {
 	const res = await axios.post('/import_export/import', formData);
 	const message = await axios.get('/api/flash_message');
