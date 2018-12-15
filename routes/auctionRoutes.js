@@ -1,35 +1,58 @@
-const requireLogin = require('../middleware/requireLogin');
-const multer = require('multer');
-const upload = multer();
+const requireLogin          = require('../middleware/requireLogin');
+const multer                = require('multer');
+const upload                = multer();
 
-const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Types;
+const mongoose              = require('mongoose');
+const { ObjectId }          = mongoose.Types;
 require('../models/User');
 require('../models/Auction');
 require('../models/Category');
 require('../models/Rate');
-const User = mongoose.model('user');
-const Auction = mongoose.model('auction');
-const Category = mongoose.model('category');
-const Rate = mongoose.model('rate');
+require('../models/Like');
+const User                  = mongoose.model('user');
+const Auction               = mongoose.model('auction');
+const Category              = mongoose.model('category');
+const Rate                  = mongoose.model('rate');
+const Like                  = mongoose.model('like');
 
-const Imagemin = require('imagemin');
-const imageminPngquant = require('imagemin-pngquant');
-const imageminSvgo = require('imagemin-svgo');
-const imageminMozjpeg = require('imagemin-mozjpeg');
-const imageminGifsicle = require('imagemin-gifsicle');
+const Imagemin              = require('imagemin');
+const imageminPngquant      = require('imagemin-pngquant');
+const imageminSvgo          = require('imagemin-svgo');
+const imageminMozjpeg       = require('imagemin-mozjpeg');
+const imageminGifsicle      = require('imagemin-gifsicle');
 
-const Sharp = require('sharp');
+const Sharp     = require('sharp');
 
-const buyNowWonTemplate = require('../services/emailTemplates/buyNowWonTemplate');
-const buyNowItemSoldTemplate = require('../services/emailTemplates/buyNowItemSoldTemplate');
-const Mailer = require('../services/Mailer');
+const buyNowWonTemplate         = require('../services/emailTemplates/buyNowWonTemplate');
+const buyNowItemSoldTemplate    = require('../services/emailTemplates/buyNowItemSoldTemplate');
+const bidTemplate               = require('../services/emailTemplates/bidTemplate');
+const Mailer                    = require('../services/Mailer');
 
 const currentUserId = (req) => {
     if (req.user) {
         return ObjectId(req.user._id);
     } else {
         return null;
+    }
+}
+
+async function checkIfLiked(auctions, req) {
+    if (!req.user) {
+        return;
+    }
+
+    let 
+        ids         = await Like
+            .find({ _user: ObjectId(req.user._id) })
+            .lean(); 
+        ids         = ids.map(like => String(like._auction));
+
+    if (ids && ids.length) {
+        return auctions.map(auction => {
+            if (ids.indexOf(String(auction._id)) !== -1) 
+                auction.liked = true;
+            return auction;
+        });
     }
 }
 
@@ -121,6 +144,34 @@ module.exports = app => {
             options
         ).lean();
 
+
+        const count = await Auction.countDocuments(query);
+        auctions.push(count);
+
+        if (count === 0) {
+            res.send(false);
+        } else {
+            res.send(auctions);
+        }
+    });
+
+    app.post('/auction/my_liked_bids/:page/:per_page', requireLogin, async (req, res) => {
+        const { page, per_page } = req.params;
+
+        const likes = await Like.find({ _user: ObjectId(req.user._id) })
+            .lean();
+        const idArray = likes.map(like => ObjectId(like._auction));
+
+        const query = { _id: { $in: idArray }, ended: { $ne: true }};
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
+        const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
+
+        const auctions = await Auction.find(
+            query, 
+            projection, 
+            options
+        ).lean();
+
         const count = await Auction.countDocuments(query);
         auctions.push(count);
 
@@ -197,6 +248,7 @@ module.exports = app => {
 
         const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
         const bids = auction.bids;
+
         if (bids.length) {
             let existingBid = bids.filter(bid => String(bid._user) === String(req.user._id));
             let highestBid = bids.reduce((bid_1, bid_2) => bid_1.price > bid_2.price ? bid_1 : bid_2);
@@ -242,6 +294,17 @@ module.exports = app => {
             return 0;
         });
 
+        let bidMessage = 'Podbij stawkę, aby wyjść na prowadzenie.';
+        if (String(auction.bids[0]._user) === String(req.user._id)) {
+            bidMessage = 'Gratulujemy, w chwili obecnej prowadzisz w licytacji!';
+        }
+
+        const mailer = new Mailer({
+            subject: 'Wziąłeś udział w licytacji przedmiotu ' + auction.title,
+            recipients: [{ email: req.user.contact.email }]
+        }, bidTemplate(auction._id, auction.title, bidMessage));
+        await mailer.send();
+
         await auction
             .save()
             .then(async doc => {
@@ -269,11 +332,22 @@ module.exports = app => {
     });
 
     app.post('/auction/like/:id', requireLogin, async (req, res) => {
-        const id = req.params.id;
-        const auction = await Auction.findOne({ _id: ObjectId(id) });
-        auction.likes = auction.likes ? auction.likes + 1 : 1;
+        const   id          = req.params.id,
+                likeBool    = req.body.like,
+                auction     = await Auction.findOne({ _id: ObjectId(id) }),
+                likeObj     =  { _user: ObjectId(req.user._id), _auction: ObjectId(auction._id) };
 
-        auction.save();
+        let     like        = await Like.findOne(likeObj);
+
+        if (likeBool && !like) {
+            auction.likes   = auction.likes ? auction.likes + 1 : 1;
+            await new Like(likeObj).save();
+        } else if (!likeBool && like) {
+            auction.likes   = auction.likes - 1;
+            await like.remove();
+        }
+     
+        await auction.save();
     });
 
     app.get('/auction/get/:id', async (req, res) => {
@@ -322,6 +396,8 @@ module.exports = app => {
             { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } }, 
             { skip: (page-1) * per_page, limit: per_page}
         ).lean();
+
+        await checkIfLiked(auctions, req);
         auctions.push(count);
 
         res.send(auctions);
@@ -344,6 +420,8 @@ module.exports = app => {
 
         const count = await Auction.countDocuments(mongo_query);
         const auctions = await Auction.find(mongo_query, projection, options).lean();
+
+        await checkIfLiked(auctions, req);
         auctions.push(count);
 
         res.send(auctions);
@@ -411,6 +489,8 @@ module.exports = app => {
 
         const count = await Auction.countDocuments(mongo_query);
         const auctions = await Auction.find(mongo_query, projection,options).lean();
+
+        await checkIfLiked(auctions, req);
         auctions.push(count);
 
         res.send(auctions);
@@ -474,11 +554,10 @@ module.exports = app => {
     
     app.post('/auction/create_or_update', [requireLogin, upload.any()], async (req, res) => {
         const data = req.body;
+        const update = data.auction_id ? true : false;
         const attributes = await Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key]}));
 
-        let auction = null;
-
-        await new Auction({
+        let auction = new Auction({
             _user: ObjectId(req.user._id),
             title: data.title,
             shortdescription: data.shortdescription,
@@ -505,12 +584,34 @@ module.exports = app => {
             bids: [],
             ended: false,
             verified: false
-        })
-        .save()
-        .then(
-            doc => { req.session.message = 'Pomyślnie dodano aukcję'; auction = doc; },
-            (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się';}
-        );
+        });
+
+        if (update) {
+            auction._id = ObjectId(data.auction_id);
+            auction.date.start_date = data.start_date || new Date().getTime();
+
+            await Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
+                if (err) {
+                    console.log('error', err); 
+                    req.session.error = 'Edycja aukcji nie powiodła się';
+                    res.send({});
+                    return;
+                }  
+
+                if (doc) {
+                    req.session.message = 'Pomyślnie dokonano edycji aukcji'; 
+                    auction = doc;
+                    res.send({});
+                }
+            });
+        } else {
+            await auction
+                .save()
+                .then(
+                    doc => { req.session.message = 'Pomyślnie dodano aukcję'; auction = doc; res.send({}); },
+                    (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
+                );
+        }
 
         // map image files. resize, return promise buffers
         const promises = await req.files.map(file => ({
@@ -534,7 +635,6 @@ module.exports = app => {
                     progress++;
 
                     auction.photos.push({ type: type, data: optimisedBuffer.toString('base64') });
-
                     if (progress === req.files.length) {
                         auction.save();
                     }
@@ -542,11 +642,11 @@ module.exports = app => {
             });
         });
 
-        const user = await User.findOne({ _id: ObjectId(req.user._id) });
-        const { credits } = user.balance;
-        user.balance.credits = credits ? (+credits - 1) : 4;
-        await user.save();
-
-        res.send({});
+        if (!update) {
+            const user = await User.findOne({ _id: ObjectId(req.user._id) });
+            const { credits } = user.balance;
+            user.balance.credits = credits ? (+credits - 1) : 4;
+            await user.save();
+        }
     });
 };

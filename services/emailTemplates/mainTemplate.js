@@ -12,7 +12,7 @@ module.exports = (title, content) => {
                     p { padding: 0 10px; line-height: 1.7; }
                     footer { width: 100%; margin-top: 60px; padding: 20px 0; font-weight: 100; text-align: center; background: #fafafa; }
                     img { text-align: center; margin: 5px; }
-                    a { color: rgb(255,255,255); text-decoration: none; }
+                    a { color: #009bff; text-decoration: none; }
                     a:hover { text-decoration: underline; }
                     .quote { font-size: 14px; padding-left: 10px; border-left: 3px solid #eee; }
                     .img-wrapper { display: inline-block; vertical-align: middle; margin-right: 30px; }

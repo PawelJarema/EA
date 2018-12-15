@@ -20,6 +20,26 @@ import Modal from './Modal';
 import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
+import b64toBlob from 'b64-to-blob';
+
+function auctionPath(auction) {
+    const title = 
+        auction.title.toLowerCase()
+        .replace(/[żź]/g, 'z')
+        .replace(/ć/g, 'c')
+        .replace(/ń/g, 'n')
+        .replace(/ę/g, 'e')
+        .replace(/ą/g, 'a')
+        .replace(/ś/g, 's')
+        .replace(/ł/g, 'l')
+        .replace(/ć/g, 'c')
+        .replace(/ó/g, 'o')
+        .replace(/[^a-zA-Z\d\s:]/g, '')
+        .split(/\s/).join('-')
+        .replace(/-{2,}/, '-');
+        
+    return `/aukcje/${title}/${auction._id}`;
+}
 
 class BuyCredits extends Component {
     constructor(props) {
@@ -165,7 +185,7 @@ class Auction extends Component {
             return null;
 
         return (
-            <Link to={'/aukcje/' + auction._id}>
+            <Link to={auctionPath(auction)}>
                 <div className="auction">
                     <div className="photo">
                         {
@@ -261,7 +281,7 @@ class RawImage extends Component {
     render() {
         const data = this.props.data;
         //return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
-        return <div className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'cover' }}></div>;
+        return <div className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'contain' }}></div>;
     }
 }
 
@@ -637,7 +657,6 @@ class MyAuctionList extends Component {
         this.importAuction = this.importAuction.bind(this);
     }
 
-
     componentWillReceiveProps(props) {
         if (props.my_auctions) {
             if (typeof props.my_auctions[props.my_auctions.length - 1] === 'number') {
@@ -670,6 +689,9 @@ class MyAuctionList extends Component {
                 break;
             case 'ended_bids':
                 this.props.paginateEndedBids(page, per_page);
+                break;
+            case 'liked':
+                this.props.paginateLikedBids(page, per_page);
                 break;
             default:
                 alert('unknown mode');
@@ -765,10 +787,10 @@ class MyAuctionList extends Component {
                         my_auctions && my_auctions != 'empty' && my_auctions.length > 0 && my_auctions.map((auction, index) => (
                             <div key={'my_auction_' + index} className="auction">
                                 <div className="image-wrapper">
-                                    { auction.photos.length ? <RawImage data={auction.photos[0]} /> : <div className="no-image"/> }
+                                    { auction.photos.length ? <Link to={auctionPath(auction)}><RawImage data={auction.photos[0]} /></Link> : <div className="no-image"/> }
                                 </div>
                                  <div className="text">
-                                    <h3>{ auction.title }</h3>
+                                    <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
                                     <div className="short-description">{auction.shortdescription}</div>
                                     <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
                                     {
@@ -783,7 +805,7 @@ class MyAuctionList extends Component {
                                     }
                                     <div className="actions dont-hide">
                                         <div>
-                                            <Link to={'/aukcje/' + auction._id }><button className="standard-button">Zobacz</button></Link>
+                                            <Link to={auctionPath(auction)}><button className="standard-button">Zobacz</button></Link>
                                             {
                                                 mode === 'ended_bids' && auction.raters && auction.raters.indexOf(user._id) !== -1 && <RateAuction auction={auction} clickHandler={this.rateAuction} />
                                             }
@@ -791,11 +813,34 @@ class MyAuctionList extends Component {
                                                 mode === 'current_auctions' && <a className="link-button danger" onClick={() => this.confirmDelete(auction)}><i className="material-icons">delete_forever</i>Usuń</a>
                                             }
                                             {
+                                                mode === 'current_auctions' && <Link to={auctionPath(auction).replace('aukcje', 'edytuj-aukcje')}><i className="material-icons" style={{ fontSize: 20, margin: '0 6px' }} title='Edytuj'>edit</i></Link>
+                                            }
+                                            {
                                                 mode.indexOf('auction') !== -1 && <i className="material-icons" onClick={() => this.exportAuction(auction._id)} title='Export aukcji'>import_export</i>
                                             }
                                             {
                                                 (auction.payees && auction.payees.indexOf(user._id) !== -1 || auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1) && (
                                                     <a className="link-button" onClick={() => this.setState({ pay: auction })}><i className="material-icons">payment</i>Zapłać</a>
+                                                )
+                                            }
+                                            {
+                                                mode === 'liked' && (
+                                                    <i className="material-icons like-icon" 
+                                                        onClick={ 
+                                                            (e) => { 
+                                                                if (e.target.innerHTML.indexOf('outline') !== -1) {
+                                                                    e.target.innerHTML = 'favorite';
+                                                                    this.props.likeAuction(auction._id, true);
+                                                                } else {
+                                                                    e.target.innerHTML = 'favorite_outline';
+                                                                    this.props.likeAuction(auction._id, false);
+                                                                }
+                                                            }
+                                                        }
+                                                        title='Export aukcji'
+                                                    >
+                                                        favorite
+                                                    </i>
                                                 )
                                             }
                                         </div>
@@ -816,7 +861,9 @@ class MyAuctionList extends Component {
                                             ?  
                                             mode === 'ended_auctions' ? 'Żadna z twoich aukcji jeszcze się nie zakończyła' : 'Nie masz bieżących aukcji. Dodaj nową!' 
                                             :
-                                            mode === 'ended_bids' ? 'Żadna z aukcji w których bierzesz udział nie zakończyła się' : 'Nie bierzesz udziału w żadnych aukcjach. Zalicytuj!'
+                                            mode === 'ended_bids' ? 'Żadna z aukcji w których bierzesz udział nie zakończyła się' 
+                                            : 
+                                            (mode === 'liked' ? 'Polub więcej przedmiotów' : 'Nie bierzesz udziału w żadnych aukcjach. Zalicytuj!')
                                         }
                                     </p>
                                 </div>
@@ -910,6 +957,7 @@ class AuctionList extends Component {
 
     render() {
         const auctions = this.state.auctions;
+        const { user } = this.props;
 
         return (
             <div className="AuctionList">
@@ -924,19 +972,37 @@ class AuctionList extends Component {
                             <div key={ auction.title + '_' + i } className="auction">
                                 <div className="image-wrapper">
                                     {
-                                        auction.photos[0] ? <RawImage data={auction.photos[0]} /> : <div className="no-image"></div>
+                                        auction.photos[0] ? <Link to={auctionPath(auction)}><RawImage data={auction.photos[0]} /></Link> : <div className="no-image"></div>
                                     }
                                 </div>
                                 <div className="text">
-                                    <h3>{ auction.title }</h3>
+                                    <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
                                     <div className="short-description">{auction.shortdescription}</div>
                                     <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
 
                                     <div className="actions">
                                         <div>
-                                            <Link to={'/aukcje/' + auction._id }><button className="standard-button">Zobacz szczegóły</button></Link>
+                                            <Link to={auctionPath(auction)}><button className="standard-button">Zobacz</button></Link>
                                             <button>Licytuj</button>
-                                            <i className="material-icons like-icon" onClick={ (e) => { if (e.target.innerHTML.indexOf('outline') !== -1) this.props.likeAuction(auction._id); e.target.innerHTML = 'favorite'; } }>favorite_outline</i>
+                                            { 
+                                                user && (
+                                                    <i className="material-icons like-icon" 
+                                                        onClick={ 
+                                                            (e) => { 
+                                                                if (e.target.innerHTML.indexOf('outline') !== -1) {
+                                                                    e.target.innerHTML = 'favorite';
+                                                                    this.props.likeAuction(auction._id, true);
+                                                                } else {
+                                                                    e.target.innerHTML = 'favorite_outline';
+                                                                    this.props.likeAuction(auction._id, false);
+                                                                }
+                                                            }
+                                                        }
+                                                    >
+                                                        { auction.liked ? 'favorite' : 'favorite_outline' }
+                                                    </i>
+                                                )
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -1004,6 +1070,7 @@ class CreateUpdateAction extends Component {
    }
     
    componentDidMount() {
+        this.props.clearAuction();
         let editor = document.querySelector('.rich-text-editor select');
         if (!editor) 
             return;
@@ -1014,6 +1081,100 @@ class CreateUpdateAction extends Component {
        for (let i = 0, l = options.length; i < l; i++) {
            options[i].innerHTML = option_text.shift();
        }
+
+       const { update } = this.props;
+       const { id } = this.props.match.params;
+
+       if (update) {
+            this.props.fetchAuction(id);
+       }
+   }
+
+   componentWillReceiveProps(props) {
+        if (this.props.auctions)
+                return;
+
+        if (props.auctions) {
+            
+
+            const auction = props.auctions;
+            const queryInput = query => document.querySelector('input' + query);
+            const querySelect = query => document.querySelector('select' + query);
+            const queryByName = query => document.querySelector(`[name="${query}"]`);
+            let input;
+
+            // title
+            input = queryByName('title');
+            input.value = auction.title;
+
+            // categories
+            input = queryByName('main');
+            input.value = auction.categories.main;
+            this.handleCategory({ target: input });          
+            setTimeout(() => {
+                input = queryByName('sub');
+                input.value = auction.categories.sub;
+            }, 1000);
+            
+            // prices
+            input = queryByName('start_price');
+            input.value = auction.price.start_price;
+            input = queryByName('buy_now_price');
+            input.value = auction.price.buy_now_price;
+            input = queryByName('min_price');
+            input.value = auction.price.min_price;
+            input = queryByName('hide_min_price');
+            input.checked = auction.price.hide_min_price;
+
+            //time
+            input = queryByName('duration');
+            input.value = auction.date.duration;
+
+            // photos
+            let count = 1,
+                files = [];
+
+            if (auction.photos) {
+                auction.photos.forEach(photo => {
+                    const   type    = photo.type || 'image/jpeg',
+                            blob    = b64toBlob(photo.data, type),
+                            url     = window.URL.createObjectURL(blob);
+ 
+                    files.push(blob);
+                });
+
+                this.onDrop(files);
+            }
+
+            if (auction.quantity) {
+                input = queryByName('quantity');
+                input.value = auction.quantity;
+            }
+
+            if (auction.attributes) {
+                auction.attributes.map(attribute => {
+                    switch(attribute.name) {
+                        case 'Stan':
+                            input = queryInput(`[name="attribute_Stan"][value="${attribute.value}"]`);
+                            input.checked = true;
+                            break;
+                        default:
+                            this.addAttribute(attribute.name);
+                            input = queryByName(`attribute_${attribute.name}`);
+                            input.value = attribute.value;
+                    }
+                });
+            }
+
+            //descriptions
+            input = queryByName('shortdescription');
+            input.value = auction.shortdescription;
+
+            if (auction.description) {
+                const text = RichTextEditor.createValueFromString(auction.description, 'html');
+                this.handleRichText(text);
+            }
+        }
    }
     
    componentWillUnmount() {
@@ -1025,8 +1186,8 @@ class CreateUpdateAction extends Component {
        }
    }
     
-    addAttribute() {
-        let name = window.prompt('Podaj nazwę atrybutu', 'Rozmiar');
+    addAttribute(update_name) {
+        let name = typeof update_name === 'string' ? update_name : window.prompt('Podaj nazwę atrybutu', 'Rozmiar');
 
         if (!name)
             return;
@@ -1038,7 +1199,7 @@ class CreateUpdateAction extends Component {
         
         this.attributesRef.appendChild(input);
     }
-    
+
     onDropRejected() {
         alert('Zdjęcie ma niewłaściwy format pliku lub jest za duże');
     }
@@ -1052,10 +1213,9 @@ class CreateUpdateAction extends Component {
         if (files.length > (8 - this.state.images.length)) {
             files = files.slice(0, (8 - this.state.images.length));
         }
-        
+
         this.setState(prevState => ({    
             images: prevState.images.concat(files.map(file => ({ file: file, preview: URL.createObjectURL(file) })))
-        
         }));
     }
 
@@ -1122,13 +1282,18 @@ class CreateUpdateAction extends Component {
         }
 
         if (allValid) {
-            this.props.newAuction(formData);
+            if (this.props.update) {
+                formData.append('auction_id', this.props.auctions._id);
+                this.props.updateAuction(formData);
+            } else {
+                this.props.newAuction(formData);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
     
    render() {
-       const { user, update, categories } = this.props;
+       const { user, update, categories, auctions } = this.props;
        const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
        const deliveries = user.deliveries && user.deliveries.length;
 
@@ -1149,7 +1314,7 @@ class CreateUpdateAction extends Component {
                         !userDataComplete && <p className="warn"><i className="material-icons">warning</i> Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</p>
                     }
                     {
-                        !deliveries && <p className="warn"><i className="material-icons">warning</i> Dodaj metody dostawy "<Link to="/konto/aukcje/dostawa">Metody dostawy towaru</Link>" !</p>
+                        !deliveries && <p className="warn"><i className="material-icons">warning</i> Zanim dodasz aukcję, dodaj metody dostawy "<Link to="/konto/aukcje/dostawa">Metody dostawy towaru</Link>" !</p>
                     }
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
@@ -1264,6 +1429,7 @@ class CreateUpdateAction extends Component {
                         <br />
                         <button type="submit" onClick={this.submit}>{ update ? 'Edytuj' : 'Zapisz' }</button>
                     </fieldset>
+                    <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />
                     
                 </form>
             </div>
@@ -1286,12 +1452,18 @@ function mapMyAuctionsStateToProps({ my_auctions }) {
 function mapAuctionsStateToProps({ auctions }) {
     return { auctions };
 }
+function mapAuctionsAndUserStateToProps({ auctions, user }) {
+    return { auctions, user };
+}
 
 function mapCategoryStateToProps({ categories }) {
     return { categories };
 }
 function mapUserAndCategoryStateToProps({ user, categories }) {
     return { user, categories };
+}
+function mapAuctionsUserAndCategoryStateToProps({ auctions, user, categories }) {
+    return { auctions, user, categories };
 }
 
 function mapOtherUserStateToProps({ other_user }) {
@@ -1301,7 +1473,7 @@ function mapOtherUserStateToProps({ other_user }) {
 function combineUserAndAuctionsStateToProps({ auctions, user }) {
     return { auctions, user };
 }
-function mapMyAuctionsUserAndOtherUserStateToProps({ auctions, user, other_user }) {
+function mapAuctionsUserAndOtherUserStateToProps({ auctions, user, other_user }) {
     return { auctions, user, other_user };
 }
 function mapTechBreakStatesToProps({ tech_break }) {
@@ -1311,9 +1483,9 @@ function mapTechBreakStatesToProps({ tech_break }) {
 BuyCredits = connect(mapTechBreakStatesToProps, przelewy24Actions)(BuyCredits);
 Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actions})(Pay);
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
-CreateUpdateAction = connect(mapUserAndCategoryStateToProps, profileActions)(CreateUpdateAction);
-AuctionList = connect(mapAuctionsStateToProps, auctionActions)(AuctionList);
-MyAuctionList = connect(mapMyAuctionsUserAndExportedStateToProps, {...myAuctionActions, ...importExportActions})(MyAuctionList);
-AuctionDetails = connect(mapMyAuctionsUserAndOtherUserStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
+CreateUpdateAction = connect(mapAuctionsUserAndCategoryStateToProps, {...profileActions, ...auctionActions})(CreateUpdateAction);
+AuctionList = connect(mapAuctionsAndUserStateToProps, auctionActions)(AuctionList);
+MyAuctionList = connect(mapMyAuctionsUserAndExportedStateToProps, {...auctionActions, ...myAuctionActions, ...importExportActions})(MyAuctionList);
+AuctionDetails = connect(mapAuctionsUserAndOtherUserStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

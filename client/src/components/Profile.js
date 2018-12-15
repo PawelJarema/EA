@@ -87,6 +87,7 @@ class ProfileLinks extends Component {
                     <Link className={ (active === 'current_auctions' ? 'active' : null) } to="/moje-aukcje">Bieżące</Link>
                     <Link className={ (active === 'ended_auctions' ? 'active' : null) } to='/moje-aukcje/zakonczone'>Zakończone</Link>
                 </div>
+                <Link className={ (active) === 'liked' ? 'active' : null } to="/polubione-aukcje">Polubione aukcje</Link>
                 <Link className={ (active === 'opinions' ? 'active' : null) } to="/konto/opinie">Opinie</Link>
                 <Link className={ (active === 'invoices' ? 'active' : null) } to="/konto/faktury">Faktury</Link>
             </div>
@@ -259,11 +260,11 @@ class Settings extends Component {
         const type = input.type;
         const value = type === 'checkbox' ? input.checked : input.value;
         
-        this.setState({ [name]: value });
-        
-        if (this.state.message.length) {
-            this.validate();
-        }
+        this.setState({ [name]: value }, () => {
+            if (this.state.message.length) {
+                this.validate();
+            }
+        });
     }
     
     handleDate(date) {
@@ -292,8 +293,9 @@ class Settings extends Component {
         if (!state.birthdate) {
             message[5] = 'Wprowadź datę urodzenia';
         }
-        if (!state.account_number || !RegexHelper.account.test(state.account_number)) {
+        if (state.account_number && !RegexHelper.account.test(state.account_number)) {
             message[6] = 'Wpisz numer konta, na które będziesz otrzymywał wpłaty';
+            console.log()
         }
         if (!state.email || !RegexHelper.email.test(state.email)) {
             message[7] = 'Podaj aktualny E-mail';
@@ -313,7 +315,7 @@ class Settings extends Component {
 
         this.setState({ message }, () => {
             let messages = document.querySelectorAll('.ProfileSettings .validation-message');
-            for (let i = message.length - 1; i >= 0; i--) {
+            for (let i = messages.length - 1; i >= 0; i--) {
                 if (messages[i].innerHTML.length) {
                     messages[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return false;
@@ -321,9 +323,9 @@ class Settings extends Component {
             }
         });
         
-        window.scrollTo({ top: 0, behavior: 'smooth'});
-
-        return message.length === 0;
+        if (message.length === 0) {
+            return true;
+        }
     }
     
     submit(event) {
@@ -394,6 +396,8 @@ class Settings extends Component {
                             <input name="account_number" type="text" placeholder="Numer konta bankowego" value={state.account_number} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[6] }</span>
                         </p>
+
+                        <button type="submit" onClick={this.submit}>Dodaj numer konta</button>
                     </fieldset>
                     <fieldset>
                         <legend><i className="material-icons">email</i>Dane kontaktowe</legend>
@@ -406,7 +410,7 @@ class Settings extends Component {
                             <span className="validation-message">{ this.state.message[8] }</span>
                         </p>
                         <p>
-                            <input name="phone" type="number" placeholder="Telefon" value={state.phone} onChange={handleInput} />
+                            <input name="phone" type="text" placeholder="Telefon" value={state.phone} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[10] }</span>
                         </p>
                     </fieldset>
@@ -449,7 +453,7 @@ class Delivery extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { deliveries: 1, data: [] };
+        this.state = { deliveries: 1, data: [], hints: [], focus: null };
         this.addDelivery = this.addDelivery.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.submit = this.submit.bind(this);
@@ -485,7 +489,11 @@ class Delivery extends Component {
         const type = input.type === 'number' ? 'price' : 'name';
         const index = parseInt(input.name.replace(/(price_)|(delivery_)/, '')) - 1;
 
+        
         const data = this.state.data;
+        const methodsChosen = data.map(d => d.name);
+
+        const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska'].filter(hint => (new RegExp(value, 'i')).test(hint) && methodsChosen.indexOf(hint) === -1);
 
         if (!data[index]) {
             data.push({ [type]: value });
@@ -493,7 +501,7 @@ class Delivery extends Component {
             data[index][type] = value;
         }
 
-        this.setState({ data });
+        this.setState({ data, hints, focus: index });
     }
 
     submit(event) {
@@ -509,6 +517,7 @@ class Delivery extends Component {
 
     render() {
         const deliveries = this.state.data;
+        const { hints, focus } = this.state;
 
         return (
             <div className="Profile Delivery">
@@ -529,10 +538,30 @@ class Delivery extends Component {
                             <p ref={ (e) => this.deliveriesRef = e } className="deliveries">
                                 {
                                     Array.from({ length: this.state.deliveries}, (v, k) => k + 1).map(index => (
-                                        <div key={'deliveries_' + index}>
-                                            <input name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput}/>
+                                        <div className="hint-wrapper" key={'deliveries_' + index}>
+                                            <input className="hinted" name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput} onClick={this.handleInput}/>
                                             <input name={'price_' + (index)} type="number" placeholder="Cena dostawy" min="0" step="0.01" value={ this.state.data[index - 1] ? this.state.data[index - 1].price : null } onChange={this.handleInput}/>
                                             <i className="material-icons remove" onClick={this.removeFunc}>remove_circle_outline</i>
+                                            {
+                                                hints.length > 0 && focus === (index - 1) && (
+                                                    <ul className="hint-list">{ 
+                                                        hints.map((hint, hint_index) => ( 
+                                                            <li key={"hint_" + hint_index} onClick={
+                                                                () =>  {
+                                                                    const data = this.state.data || [];
+                                                                    if (!data[index - 1]) {
+                                                                        data.push({ name: hint });
+                                                                    } else {
+                                                                        data[index - 1]['name'] = hint;
+                                                                    }
+                                                                    this.setState({ data, hints: [] });
+
+                                                                }
+                                                            }>{hint}</li> 
+                                                        )) 
+                                                    }</ul>
+                                                )
+                                            }
                                         </div>
                                     ))
                                 }

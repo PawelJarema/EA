@@ -550,9 +550,10 @@ class App extends Component {
                             <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
                             <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
                             <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                            <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
+                            <Route exact path="/aukcje/:title/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
                             <Route path="/konto/zaloguj" component={ LoginLanding } />
-                            <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route path="/admin" component={ AdminPanel } />
 
                             {
@@ -561,10 +562,12 @@ class App extends Component {
                                     <Route exact path="/moje-aukcje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_auctions' /> } />
                                     <Route exact path="/moje-licytacje/" render={ (props) => <MyAuctionList {...props} mode='current_bids' /> } />
                                     <Route exact path="/moje-licytacje/zakonczone" render={ (props) => <MyAuctionList {...props} mode='ended_bids' /> } />
+                                    <Route exact path="/polubione-aukcje" render={ (props) => <MyAuctionList {...props} mode='liked' /> } />
                                     <Route path="/konto/ustawienia" component={ Settings } />
                                     <Route path="/konto/opinie" component={ MyOpinions } />
                                     <Route path="/konto/faktury" component={ Invoices } />
                                     <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAction } />
+                                    <Route path="/edytuj-aukcje/:title/:id" render={ (props) => <CreateUpdateAction {...props} update={true} /> } />
                                     <Route path="/konto/aukcje/dostawa" component={ Delivery } />
                                     <Route exact path="/konto" component={ ProfileLinksClosed } />
                                 </div>

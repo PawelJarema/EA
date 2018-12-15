@@ -590,3 +590,45 @@ strong {
     opacity: 1;
     text-decoration: underline;
 }
+
+.hint-wrapper {
+    position: relative;
+}
+.hint-list {
+    opacity: 0;
+    height: 1px;
+    position: absolute;
+    top: calc(var(--input-h) + 10px);
+    left: 0;
+    box-sizing: border-box;
+    width: 58%;
+    list-style: none;
+    background: white;
+    padding: 10px;
+    z-index: 5;
+    border: 1px solid #ddd;
+    border-top: none;
+}
+.hint-list li {
+    opacity: 0.5;
+    
+}
+.hint-list li:hover {
+    opacity: 1;
+    cursor: pointer; 
+}
+.hint-list li:not(:last-child) {
+    
+    margin-bottom: 5px;
+
+}
+.hint-wrapper input.hinted:focus ~ .hint-list {
+    opacity: 1;
+    height: auto;
+}
+
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

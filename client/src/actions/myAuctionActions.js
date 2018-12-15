@@ -33,6 +33,11 @@ export const paginateEndedBids = (page, items_per_page) => async dispatch => {
 	dispatch ({ type: FETCH_MY_AUCTIONS, payload: res.data });
 }
 
+export const paginateLikedBids = (page, items_per_page) => async dispatch => {
+	const res = await axios.post(`/auction/my_liked_bids/${page}/${items_per_page}`);
+	dispatch ({ type: FETCH_MY_AUCTIONS, payload: res.data });
+}
+
 export const deleteAuctionThenFetchMyAuctions = (id, page, items_per_page) => async dispatch => {
 	await axios.post(`/auction/delete/${id}`);
 	const res = await axios.post(`/auction/my_auctions/${page}/${items_per_page}`);

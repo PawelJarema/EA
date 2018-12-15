@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { FETCH_AUCTIONS, FETCH_AUCTION, FETCH_MESSAGE } from './types';
 
+export const updateAuction = (formData) => async dispatch => {
+    const res = await axios.post('/auction/create_or_update', formData);
+    const message_res = await axios.get('/api/flash_message');
+    
+    setTimeout(() => dispatch({ type: FETCH_MESSAGE, payload: message_res.data }), 1000);
+}
+
 export const buyNow = id => async dispatch => {
 	const res = await axios.post('/auction/buy_now/' + id);
 	const message = await axios.get('/api/flash_message');
@@ -17,8 +24,8 @@ export const postBid = (id, formData) => async dispatch => {
 	dispatch({ type: FETCH_MESSAGE, payload: message.data });
 }
 
-export const likeAuction = (id) => async dispatch => {
-	const res = await axios.post('/auction/like/' + id);
+export const likeAuction = (id, like) => async dispatch => {
+	const res = await axios.post('/auction/like/' + id, { like });
 }
 
 export const fetchFrontPageAuctions = () => async dispatch => {
