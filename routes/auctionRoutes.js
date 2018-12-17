@@ -249,6 +249,11 @@ module.exports = app => {
         const auction = await Auction.findOne({ _id: ObjectId(auction_id) });
         const bids = auction.bids;
 
+        if (+price < +auction.price.start_price) {
+            res.send(false);
+            return;
+        }
+
         if (bids.length) {
             let existingBid = bids.filter(bid => String(bid._user) === String(req.user._id));
             let highestBid = bids.reduce((bid_1, bid_2) => bid_1.price > bid_2.price ? bid_1 : bid_2);

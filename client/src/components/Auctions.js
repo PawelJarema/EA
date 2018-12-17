@@ -374,7 +374,7 @@ class AuctionDetails extends Component {
             alert('Podaj stawkę licytacji');
             return;
         } 
-        if (bid_value <= auction.price.current_price) {
+        if (bid_value <= auction.price.current_price || bid_value <= auction.price.start_price) {
             alert('Musisz przebić obecną stawkę');
             return;
         }
