@@ -109,6 +109,16 @@ nav .user-links .search-mobile {
 		display: flex;
 		justify-content: flex-end;
 	}
+
+	nav .search-auctions button {
+		border: 1px solid var(--orange);
+		background: white;
+		color: var(--hot-orange);
+	}
+	nav .search-auctions button:hover {
+		background: var(--hot-orange);
+		color: white;
+	}
 }
 @media screen and (max-width: 1024px) {
 	.MobileMenu {
