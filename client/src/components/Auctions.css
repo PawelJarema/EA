@@ -45,8 +45,8 @@
     -o-transition: background-size 2s ease-in;
     -webkit-transition: background-size 2s ease-in;
 }
-.div-image-block:hover {
-
+.AuctionDetails .photo-big .div-image-block {
+    background-size: contain;
 }
 
 .thumbnails {
