@@ -93,7 +93,24 @@ nav .user-links .search-mobile {
 		display: none;
 	}
 }
+
 @media screen and (max-width: 1300px) {
+	nav .search-auctions {
+		position: fixed;
+		width: 100%;
+		top: calc(var(--nav-h) - 1px);
+
+		box-sizing: border-box;
+		padding-bottom: 10px;
+		padding-right: var(--page-margin);
+		background: white;
+		border-bottom: 1px solid #eee;
+
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+@media screen and (max-width: 1024px) {
 	.MobileMenu {
 		display: flex;
 	}
@@ -124,6 +141,9 @@ nav .user-links .search-mobile {
 
 	nav .user-links.open {
 		display: flex;
+	}
+	nav .search-auctions {
+		justify-content: flex-start !important;
 	}
 	nav .search-auctions.open {
 		display: flex;
@@ -356,6 +376,9 @@ nav .user-links .search-mobile {
 		height: 186px;
 		flex-direction: column;
 		align-items: flex-start;
+	}
+	nav .search-auctions .inputs {
+		margin-top: 15px;
 	}
 	nav .search-auctions .inputs .select-value, nav .search-auctions .inputs input {
 		box-sizing: border-box;

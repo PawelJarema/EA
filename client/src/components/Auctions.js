@@ -460,10 +460,10 @@ class AuctionDetails extends Component {
                                         <div className={ (auction.ended ? 'transparent' : '') }>
                                             <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
                                             { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ auction.price.buy_now_price }</span>!</button></div> : null }
-                                            { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ auction.price.min_price }</span></div> : null }
+                                            { min_price ? <div className="min-price">Cena minimalna przedmiotu: <span className="price-value">{ auction.price.min_price }</span><br /><br /><br /></div> : null }
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
-                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota" min={auction.price.current_price + 1} step="1" />
+                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="1" />
                                                     <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Podbij</button>
                                                 </form>)
                                             }

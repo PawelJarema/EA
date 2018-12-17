@@ -795,7 +795,7 @@
     transform: rotate(-2deg);
 }
 .AuctionDetails .min-price {
-    opacity: .3;
+    opacity: .7;
     font-size: 14px;
     margin-bottom: 5px;
     margin-left: 1px;
