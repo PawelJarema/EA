@@ -20,7 +20,6 @@ const 	shopID 		= keys.przelewy24Id,
 
 module.exports = function(mode) {
 	mode = mode || process.env.NODE_ENV;
-	mode = 'development'; // TODO del
 	switch (mode) {
 		case 'development':
 			break;
@@ -86,9 +85,7 @@ module.exports = function(mode) {
 	return ({
 		
 		dispatchTransaction: async transaction => {
-			console.log('register merchant');
 			const resp = await MerchantRegister(transaction.seller);
-			console.log('MR: ', resp);
 
 			let data = {
 				login: shopID,
@@ -131,7 +128,6 @@ module.exports = function(mode) {
 				qs.stringify(data, { parseArrays: false })
 			);
 
-			console.log(res.data);
 			res_arr = res.data.split(/=|&/),
 			error = parseInt(res_arr[1]),
 			token = res_arr[3] || null;
