@@ -96,7 +96,7 @@ nav .user-links .search-mobile {
 
 @media screen and (max-width: 1300px) {
 	body {
-		padding-top: calc(var(--nav-h) + 53px);
+		padding-top: calc(var(--nav-h) + 82px);
 	}
 
 	nav .search-auctions {
@@ -126,9 +126,9 @@ nav .user-links .search-mobile {
 }
 @media screen and (max-width: 1024px) {
 	body {
-		padding-top: calc(var(--nav-h) + 53px);
+		padding-top: calc(var(--nav-h));
 	}
-	
+
 	.MobileMenu {
 		display: flex;
 	}
