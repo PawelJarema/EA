@@ -105,6 +105,14 @@ module.exports = app => {
 		await user.save();
 		await transaction.save();
 		if (req.session) req.session.message = "Zakup kredytów przebiegł pomyślnie";
+
+
+		if (P24.verifyTransaction(req.body)) {
+			console.log('pomyślnie zweryfikowano zakup kredytów');
+		} else {
+			console.log('zakup kredytów niezweryfikowany');
+		}
+
 		res.send(true);
 	});
 
