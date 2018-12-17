@@ -131,6 +131,7 @@ module.exports = function(mode) {
 				qs.stringify(data, { parseArrays: false })
 			);
 
+			console.log(res.data);
 			res_arr = res.data.split(/=|&/),
 			error = parseInt(res_arr[1]),
 			token = res_arr[3] || null;
