@@ -36,6 +36,17 @@
 .div-image-block {
     width: 100%;
     height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-size 2s ease-in !important;
+    -moz-transition: background-size 2s ease-in;
+    -ms-transition: background-size 2s ease-in;
+    -o-transition: background-size 2s ease-in;
+    -webkit-transition: background-size 2s ease-in;
+}
+.div-image-block:hover {
+
 }
 
 .thumbnails {

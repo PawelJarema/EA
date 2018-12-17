@@ -587,8 +587,14 @@ module.exports = app => {
         });
 
         if (update) {
-            auction._id = ObjectId(data.auction_id);
+            auction._id             = ObjectId(data.auction_id);
             auction.date.start_date = data.start_date || new Date().getTime();
+
+            const oldAuction        = await Auction.findOne({ _id: auction._id });
+            auction.bids            = oldAuction.bids;
+            auction.payees          = oldAuction.payees;
+            auction.buynowpayees    = oldAuction.buynowpayees;
+            auction.raters          = oldAuction.raters;
 
             await Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
                 if (err) {
