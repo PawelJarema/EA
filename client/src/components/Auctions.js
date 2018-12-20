@@ -495,16 +495,29 @@ class AuctionDetails extends Component {
                                                     <table>
                                                     <tbody>
                                                     {
-                                                        auction.bids.map((bid, index) => (
-                                                            <tr 
-                                                                key={'bid_' + index} 
-                                                                className={`bidder ${bidders[bid._user] && bidders[bid._user]._id === user._id ? 'me' : ''}`}
-                                                            >
-                                                                <td>{ index + 1 }.</td>
-                                                                <td>{bidders[bid._user].firstname || ''} {bidders[bid._user].lastname || (!(bidders[bid._user].firstname ? 'Anonim' : ''))}</td>
-                                                                <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
-                                                            </tr>
-                                                        ))
+                                                        auction.bids.map((bid, index) => {
+                                                            if (bidders[bid._user]) {
+                                                                return (
+                                                                    <tr 
+                                                                        key={'bid_' + index} 
+                                                                        className={`bidder bidders[bid._user]._id === user._id ? 'me' : ''}`}
+                                                                    >
+                                                                        <td>{ index + 1 }.</td>
+                                                                        <td>{bidders[bid._user].firstname || ''} {bidders[bid._user].lastname || (!(bidders[bid._user].firstname ? 'Anonim' : ''))}</td>
+                                                                        <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
+                                                                    </tr>
+                                                                );
+                                                            } else {
+                                                                retrun (
+                                                                    <tr key={'bid_' + index}>
+                                                                        <td>{ index + 1 }</td>
+                                                                        <td>..............</td>
+                                                                        <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
+                                                                    </td>
+                                                                );
+                                                            }
+                                                            
+                                                        })
                                                     }
                                                     </tbody>
                                                     </table>
