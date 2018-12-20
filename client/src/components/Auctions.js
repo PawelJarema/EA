@@ -498,7 +498,7 @@ class AuctionDetails extends Component {
                                                         auction.bids.map((bid, index) => (
                                                             <tr 
                                                                 key={'bid_' + index} 
-                                                                className={`bidder ${bidders[bid._user]._id === user._id ? 'me' : ''}`}
+                                                                className={`bidder ${bidders[bid._user] && bidders[bid._user]._id === user._id ? 'me' : ''}`}
                                                             >
                                                                 <td>{ index + 1 }.</td>
                                                                 <td>{bidders[bid._user].firstname || ''} {bidders[bid._user].lastname || (!(bidders[bid._user].firstname ? 'Anonim' : ''))}</td>
