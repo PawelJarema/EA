@@ -513,7 +513,7 @@ class AuctionDetails extends Component {
                                                                         <td>{ index + 1 }</td>
                                                                         <td>..............</td>
                                                                         <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
-                                                                    </td>
+                                                                    </tr>
                                                                 );
                                                             }
                                                             
