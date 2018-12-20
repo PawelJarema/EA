@@ -508,7 +508,7 @@ class AuctionDetails extends Component {
                                                                     </tr>
                                                                 );
                                                             } else {
-                                                                retrun (
+                                                                return (
                                                                     <tr key={'bid_' + index}>
                                                                         <td>{ index + 1 }</td>
                                                                         <td>..............</td>
