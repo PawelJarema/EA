@@ -87,7 +87,6 @@ const endAuction = async (auction_id) => {
 	let winning_bid,
 		winningUser;
 
-
 		const min_price = auction.price.min_price || 0;
 		let { quantity } = auction,
 			winner_ids = [],
@@ -138,6 +137,7 @@ const endAuction = async (auction_id) => {
 		}
 
 		if (losers.length) {
+			const subject = `Nie udało się wylicytować przedmiotu ${auction.title}`;
 			const recipients = losers.map(loser => ({ email: loser.contact.email }))
 			const bulkLoseMailer = new Mailer({ subject, recipients }, lostTemplate(auction.title));
 			await bulkLoseMailer.send();
