@@ -277,7 +277,7 @@ module.exports = app => {
             auction.price.current_price = price > highestPrice ? 
                 (price > highestPrice + 10 ? highestPrice + 10 : price) 
                 : 
-                (price + 10 < highestPrice ? price + 10 : highestPrice);
+                (highestPrice > price + 10 ? price + 10 : highestPrice);
 
         } else {
             auction.bids.push(
