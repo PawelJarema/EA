@@ -230,6 +230,7 @@ nav .user-links .search-mobile {
 		text-align: center;
 		width: 100%;
 		
+		padding: 0;
 		margin: 40px 0;
 	}
 	.App .AuctionDetails .like-auction {
