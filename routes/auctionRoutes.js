@@ -367,8 +367,10 @@ module.exports = app => {
         //     return 0;
         // });
 
-        const liked = await Like.findOne({ _user: req.user._id, _auction: auction._id });
-        auction.liked = Boolean(liked);
+        if (req.user) {
+            const liked = await Like.findOne({ _user: req.user._id, _auction: auction._id });
+            auction.liked = Boolean(liked);
+        }
 
         let bidders_object = {};
         bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
