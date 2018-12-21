@@ -6,7 +6,7 @@ import * as opinionActions from '../actions/opinionActions';
 import './OtherUser.css';
 import Modal from './Modal';
 
-import PriceHelper from '../helpers/PriceHelper';
+import PriceHelper from '../helpers/priceHelper';
 import SinceHelper from '../helpers/sinceHelper';
 import DateHelper from '../helpers/dateHelper';
 
