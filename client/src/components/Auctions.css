@@ -394,7 +394,7 @@
     margin-right: 50px;
 }
 .AuctionDetails .text {
-    margin-left: 50px;
+    margin-left: var(--page-margin);
 }
 .AuctionDetails .photo-big .no-image {
     height: 600px;
@@ -900,4 +900,8 @@
 }
 .AuctionDetails .like-icon {
     margin-left: 0px;
+}
+.AuctionDetails .tab-view .extra-tab .no-result {
+    top: 75%;
+    left: 50%;
 }

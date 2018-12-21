@@ -497,7 +497,7 @@ class AuctionDetails extends Component {
 
         const current_price = auction ? auction.price.current_price || auction.price.start_price : false;
 
-        const extended_view = window.innerWidth > 1579;
+        const extended_view = true || window.innerWidth > 1579;
 
         return (
             <div className="AuctionDetails">
