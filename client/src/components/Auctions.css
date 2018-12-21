@@ -302,7 +302,7 @@
     align-items: center;
 
     box-sizing: border-box;
-    padding-right: var(--page-margin);
+    padding-right: 100px; /* page margin */
 }
 .AuctionDetails .basic-info .text h1, .AuctionDetails .basic-info .text p {
     margin-bottom: 30px;
@@ -394,7 +394,7 @@
     margin-right: 50px;
 }
 .AuctionDetails .text {
-    margin-left: var(--page-margin);
+    margin-left: 100px; /* page margin */
 }
 .AuctionDetails .photo-big .no-image {
     height: 600px;
@@ -517,7 +517,7 @@
 .tab-view .extra-tab {
     flex: 1 1 45%;
     margin-top: 46px;
-    margin-left: var(--page-margin);
+    margin-left: 100px; /* page margin */
     min-height: 454px;
     border: 1px solid #eee;
 }
