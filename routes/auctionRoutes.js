@@ -357,7 +357,7 @@ module.exports = app => {
 
     app.get('/auction/get/:id', async (req, res) => {
         const id = req.params.id;
-        const auction = await Auction.findOne({ _id: ObjectId(id) }).lean();
+        let auction = await Auction.findOne({ _id: ObjectId(id) }).lean();
         const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
         const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
 
@@ -367,10 +367,13 @@ module.exports = app => {
         //     return 0;
         // });
 
+        const liked = await Like.findOne({ _user: req.user._id, _auction: auction._id });
+        auction.liked = Boolean(liked);
+
         let bidders_object = {};
         bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
         auction.bidders = bidders_object;
-
+  
         res.send(auction);
     });
 
@@ -420,7 +423,7 @@ module.exports = app => {
             $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }],
             ended: { $ne: true }
         };
-        const projection = { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } };
+        const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
 
         const count = await Auction.countDocuments(mongo_query);
@@ -485,7 +488,7 @@ module.exports = app => {
             mongo_query['attributes'] = { $elemMatch: { name: 'Stan', value: state } };
         }
 
-        const projection = { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } };
+        const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
         
         if (sort) {

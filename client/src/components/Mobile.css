@@ -55,7 +55,22 @@ nav .user-links .search-mobile {
 		--page-margin: 100px;
 	}
 }
-
+@media screen and (min-width: 1580px) {
+	.AuctionDetails .tab-view a[href="#bids"] {
+		display: none;
+	}
+	.AuctionDetails .OtherUser .auctions {
+		column-count: 4;
+	}
+}
+@media screen and (max-width: 1579px) {
+	.AuctionDetails .tab-view .extra-tab {
+		display: none;
+	}
+	.AuctionDetails .tab-view > div {
+    	flex: 0 0 100%;
+	}
+}
 @media screen and (max-width: 1350px) {
 	.App .registration-panel {
 		flex-wrap: wrap;
@@ -217,6 +232,12 @@ nav .user-links .search-mobile {
 		
 		margin: 40px 0;
 	}
+	.App .AuctionDetails .like-auction {
+		display: block;
+		width: 100%;
+		text-align: center;
+		margin-top: 10px;
+	}
 	.App .AuctionDetails .basic-info .text h1 {
 		max-width: 100%;
 		margin: 0;
@@ -224,6 +245,9 @@ nav .user-links .search-mobile {
 	}
 	.App .AuctionDetails .basic-info .text .content {
 		width: 100%;
+	}
+	.AuctionDetails .end-tag {
+		margin-left: 20%;
 	}
 }
 
@@ -265,7 +289,7 @@ nav .user-links .search-mobile {
 		width: auto;
 	}
 }
-@media screen and (max-width: 751px) {
+@media screen and (max-width: 936px) {
 	.App .AuctionDetails .opinions table td:first-child {
 		border: none;
 		padding-bottom: 5px;
@@ -314,6 +338,11 @@ nav .user-links .search-mobile {
 	}
 	.App .AuctionDetails .tab-view .tab-controls a.active {
 		order: 5;
+	}
+}
+@media screen and (max-width: 950px) {
+	#shipping, #bids, #description {
+	
 	}
 }
 @media screen and (max-width: 853px) {

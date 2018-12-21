@@ -17,6 +17,7 @@ import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 import Modal from './Modal';
 
+import NameHelper from '../helpers/nameHelper';
 import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
@@ -39,6 +40,88 @@ function auctionPath(auction) {
         .replace(/-{2,}/, '-');
         
     return `/aukcje/${title}/${auction._id}`;
+}
+
+class AuctionBids extends Component {
+    render() {
+        const { user, auction, bidders } = this.props;
+        const current_price = auction.price.current_price || auction.price.start_price;
+        return (
+            <div className="auction-bids">
+                {  
+                    auction.bids.length ? (
+                        <div className="all-bids">
+                            <h1><i className="material-icons">gavel</i> Stan licytacji</h1>
+                            <table>
+                            <tbody>
+                                {
+                                    auction.bids.map((bid, index) => {
+                                        if (bidders[bid._user]) {
+                                            return (
+                                                <tr 
+                                                    key={'bid_' + index} 
+                                                    className={`bidder ${bidders[bid._user]._id === user._id ? 'me' : ''}`}
+                                                >
+                                                    <td>{ index + 1 }.</td>
+                                                    <td>{bidders[bid._user]._id === user._id ? NameHelper.name(bidders[bid._user]) : NameHelper.covername(bidders[bid._user])}</td>
+                                                    <td className="price">{ (index === 0 ? current_price : bid.price) }</td>
+                                                </tr>
+                                            );
+                                        } else {
+                                            return (
+                                                <tr key={'bid_' + index}>
+                                                    <td>{ index + 1 }</td>
+                                                    <td>..............</td>
+                                                    <td className="price">{ (index === 0 ? current_price : bid.price) }</td>
+                                                </tr>
+                                            );
+                                        }
+                                        
+                                    })
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="no-result">
+                            <i className="material-icons">gavel</i>
+                            <h1>Nikt nie licytuje</h1>
+                            <p>Podbij stawkę minimalną i bądź pierwszy!</p>
+                        </div>
+                    )
+                }
+            </div>
+        )
+    }
+}
+
+class LikeAuction extends Component {
+    render() {
+        const { user, auction } = this.props;
+        return (
+            <span className="like-auction">
+                { 
+                    user && !auction.ended && (
+                        <i className="material-icons like-icon" 
+                            onClick={ 
+                                (e) => { 
+                                    if (e.target.innerHTML.indexOf('outline') !== -1) {
+                                        e.target.innerHTML = 'favorite';
+                                        this.props.likeAuction(auction._id, true);
+                                    } else {
+                                        e.target.innerHTML = 'favorite_outline';
+                                        this.props.likeAuction(auction._id, false);
+                                    }
+                                }
+                            }
+                        >
+                            { auction.liked ? 'favorite' : 'favorite_outline' }
+                        </i>
+                    )
+                }
+            </span>
+        );
+    }
 }
 
 class BuyCredits extends Component {
@@ -180,6 +263,7 @@ class Pay extends Component {
 class Auction extends Component {
     render() {
         const auction = this.props.auction;
+        const current_price = auction.price.current_price || auction.price.start_price;
 
         if (!auction)
             return null;
@@ -199,7 +283,7 @@ class Auction extends Component {
                         <p>{auction.shortdescription}</p>
                     </div>
                     <div className="price-div">
-                        <span className="price">Cena: <span className="value">{auction.price.current_price || auction.price.start_price}</span></span>
+                        <span className="price">Cena: <span className="value">{ current_price }</span></span>
                     </div>
                 </div>
             </Link>
@@ -361,6 +445,7 @@ class AuctionDetails extends Component {
         event.preventDefault();
 
         const user = this.props.user;
+        const confirmed = user.firstname && user.lastname && user.address && user.address.street && user.address.postal && user.address.city && user.contact.email;
         const auction = this.state.auction;
         const formData = new FormData(this.formBidRef);
         const bid_value = Number(this.bidInputRef.value);
@@ -368,6 +453,10 @@ class AuctionDetails extends Component {
         if (!user) {
             alert('Aby wziąć udział w licytacji musisz się zalogować');
             return;
+        }
+
+        if (!confirmed) {
+            alert('Aby wziąć udział w licytacji, musisz uzupełnić swoje dane w ustawieniach');
         }
 
         if (!bid_value) {
@@ -389,7 +478,7 @@ class AuctionDetails extends Component {
                 const auction_id = this.props.match.params.id;
                 this.props
                     .fetchAuction(auction_id)
-                    .then(() => { this.setState({ auction: this.props.auctions }); });
+                    .then(() => { this.setState({ auction: this.props.auctions }); window.scrollTo(0, 0); });
                 });
     }
 
@@ -406,7 +495,10 @@ class AuctionDetails extends Component {
         const payee = auction ? auction.payees && auction.payees.indexOf(user._id) !== -1 : false;
         const buy_now_payee = auction ? auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1 : false;
 
-        
+        const current_price = auction ? auction.price.current_price || auction.price.start_price : false;
+
+        const extended_view = window.innerWidth > 1579;
+
         return (
             <div className="AuctionDetails">
                 {
@@ -448,7 +540,7 @@ class AuctionDetails extends Component {
                                 <div className="text">
                                     <div className="content">
                                         <h1>{ auction.title }</h1>
-                                        <p>{auction.shortdescription}</p>
+                                        <p>{auction.shortdescription}<LikeAuction user={user} auction={auction} /></p>
                                         <p className="attribute-tags">
                                             <span className="attribute">Ilość<span>{ auction.quantity }</span></span>
                                             {
@@ -458,12 +550,13 @@ class AuctionDetails extends Component {
                                             }
                                         </p> 
                                         <div className={ (auction.ended ? 'transparent' : '') }>
-                                            <div className="price">Aktualna cena: <span className="value">{ auction.price.current_price || auction.price.start_price }</span></div>
+                                            <div className="price">Aktualna cena: <span className="value">{ current_price }</span></div>
                                             { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ auction.price.buy_now_price }</span>!</button></div> : null }
-                                            { min_price ? <div className="min-price">Cena minimalna przedmiotu: <span className="price-value">{ auction.price.min_price }</span><br /><br /><br /></div> : null }
+                                            <div><span className="time-span">do końca { AuctionEndHelper(auction.date) }</span></div>
+                                            { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ auction.price.min_price }</span><br /><br /><br /></div> : null }
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
-                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="1" />
+                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" type="number" lang="pl" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="5" defaultValue={current_price} />
                                                     <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Podbij</button>
                                                 </form>)
                                             }
@@ -472,72 +565,29 @@ class AuctionDetails extends Component {
                                             auction.ended && <div className="end-tag">Aukcja Zakończona</div>
                                         }
                                         {
-                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? auction.price.current_price : auction.price.buy_now_price} zł</button></div>
+                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? current_price : auction.price.buy_now_price} zł</button></div>
                                         }
                                     </div>
                                 </div>
                             </div>
 
                             <div className="tab-view">
+                                <div>
                                 <div className="tab-controls">
-                                    <a className="active"  href="#bids" onClick={this.handleTab}>Stan licytacji</a>
-                                    <a href="#description" onClick={this.handleTab}>Opis przedmiotu</a>
+                                    <a className="active" href="#description" onClick={this.handleTab}>Opis przedmiotu</a>
+                                    <a href="#bids" onClick={this.handleTab}>Stan licytacji</a>
                                     <a href="#seller" onClick={this.handleTab}>Sprzedawca</a>
                                     <a href="#opinions" onClick={this.handleTab}>Opinie</a>
                                     <a href="#shipping" onClick={this.handleTab}>Metody dostawy</a>
                                 </div>
                                 <div className="tab-content-area">
-                                    <div className="active" id="bids">
-                                        {  
-                                            auction.bids.length ? (
-                                                <div className="all-bids">
-                                                    <h1><i className="material-icons">gavel</i> Stan licytacji</h1>
-                                                    <table>
-                                                    <tbody>
-                                                    {
-                                                        auction.bids.map((bid, index) => {
-                                                            if (bidders[bid._user]) {
-                                                                return (
-                                                                    <tr 
-                                                                        key={'bid_' + index} 
-                                                                        className={`bidder bidders[bid._user]._id === user._id ? 'me' : ''}`}
-                                                                    >
-                                                                        <td>{ index + 1 }.</td>
-                                                                        <td>{bidders[bid._user].firstname || ''} {bidders[bid._user].lastname || (!(bidders[bid._user].firstname ? 'Anonim' : ''))}</td>
-                                                                        <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
-                                                                    </tr>
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <tr key={'bid_' + index}>
-                                                                        <td>{ index + 1 }</td>
-                                                                        <td>..............</td>
-                                                                        <td className="price">{ (index === 0 ? auction.price.current_price : bid.price) }</td>
-                                                                    </tr>
-                                                                );
-                                                            }
-                                                            
-                                                        })
-                                                    }
-                                                    </tbody>
-                                                    </table>
-                                                </div>
-                                            ) : (
-                                                <div className="no-result">
-                                                    <i className="material-icons">gavel</i>
-                                                    <h1>Nikt nie licytuje</h1>
-                                                    <p>Podbij stawkę minimalną i bądź pierwszy!</p>
-                                                </div>
-                                            )
-                                        }
-                                        {
-
-                                        }
+                                    <div id="bids">
+                                        <AuctionBids user={user} auction={auction} bidders={bidders} />
                                         <div className="background">
                                             <i className="material-icons">gavel</i>
                                         </div>
                                     </div>
-                                    <div id="description">
+                                    <div className="active" id="description">
                                         { 
                                             auction.description && auction.description.length > 20 ? 
                                             <div className="html-description" dangerouslySetInnerHTML={{ __html: auction.description }}></div> 
@@ -571,9 +621,15 @@ class AuctionDetails extends Component {
                                         </div>
                                     </div>
                                 </div>
+                                </div>
+                                
+                                    {   
+                                        extended_view && (<div className="extra-tab">
+                                             <AuctionBids user={user} auction={auction} bidders={bidders} />
+                                        </div>)
+                                    }
+                                
                             </div>
-
-
                         </div>
                     )
                 }
@@ -992,30 +1048,12 @@ class AuctionList extends Component {
                                     <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
                                     <div className="short-description">{auction.shortdescription}</div>
                                     <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
-
+                                    <div><span className="time-span">do końca { AuctionEndHelper(auction.date) }</span></div>
                                     <div className="actions">
                                         <div>
                                             <Link to={auctionPath(auction)}><button className="standard-button">Zobacz</button></Link>
                                             <button>Licytuj</button>
-                                            { 
-                                                user && (
-                                                    <i className="material-icons like-icon" 
-                                                        onClick={ 
-                                                            (e) => { 
-                                                                if (e.target.innerHTML.indexOf('outline') !== -1) {
-                                                                    e.target.innerHTML = 'favorite';
-                                                                    this.props.likeAuction(auction._id, true);
-                                                                } else {
-                                                                    e.target.innerHTML = 'favorite_outline';
-                                                                    this.props.likeAuction(auction._id, false);
-                                                                }
-                                                            }
-                                                        }
-                                                    >
-                                                        { auction.liked ? 'favorite' : 'favorite_outline' }
-                                                    </i>
-                                                )
-                                            }
+                                            <LikeAuction user={user} auction={auction} />
                                         </div>
                                     </div>
                                 </div>
@@ -1493,6 +1531,7 @@ function mapTechBreakStatesToProps({ tech_break }) {
     return { tech_break };
 }
 
+LikeAuction = connect(null, auctionActions)(LikeAuction);
 BuyCredits = connect(mapTechBreakStatesToProps, przelewy24Actions)(BuyCredits);
 Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actions})(Pay);
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
