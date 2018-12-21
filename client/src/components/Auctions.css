@@ -300,6 +300,9 @@
     display: flex;
     justify-content: start;
     align-items: center;
+
+    box-sizing: border-box;
+    padding-right: var(--page-margin);
 }
 .AuctionDetails .basic-info .text h1, .AuctionDetails .basic-info .text p {
     margin-bottom: 30px;
@@ -899,7 +902,7 @@
     margin-right: 5px;
 }
 .AuctionDetails .like-icon {
-    margin-left: 0px;
+    margin-left: 5px;
 }
 .AuctionDetails .tab-view .extra-tab .no-result {
     top: 75%;
