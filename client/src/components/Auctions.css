@@ -519,6 +519,7 @@
     margin-top: 46px;
     margin-left: var(--page-margin);
     min-height: 454px;
+    border: 1px solid #eee;
 }
 .tab-view > div {
     flex: 0 0 55%;
