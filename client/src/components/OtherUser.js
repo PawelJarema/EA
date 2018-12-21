@@ -6,6 +6,7 @@ import * as opinionActions from '../actions/opinionActions';
 import './OtherUser.css';
 import Modal from './Modal';
 
+import PriceHelper from '../helpers/PriceHelper';
 import SinceHelper from '../helpers/sinceHelper';
 import DateHelper from '../helpers/dateHelper';
 
@@ -127,7 +128,7 @@ class Deliveries extends Component {
 									user.deliveries.map((delivery, index) => (
 										<tr key={'delivery_' + index} className="delivery">
 											<td className="name">{delivery.name}</td>
-											<td className="price">{ delivery.price }</td>
+											<td className="price">{ PriceHelper.write(delivery.price) }</td>
 										</tr>
 									))
 								}
