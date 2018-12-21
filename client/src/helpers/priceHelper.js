@@ -1,8 +1,8 @@
 const PriceHelper = {
-	writePrice: (value) => {
+	write: (value) => {
 		return String(value).replace(/\./, ',');
 	},
-	readPrice: (value) => {
+	read: (value) => {
 		return Number(String(value).replace(/,/, '.'));
 	}
 };

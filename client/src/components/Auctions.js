@@ -18,6 +18,7 @@ import RichTextEditor from 'react-rte';
 import Modal from './Modal';
 
 import NameHelper from '../helpers/nameHelper';
+import PriceHelper from '../helpers/priceHelper';
 import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
@@ -64,7 +65,7 @@ class AuctionBids extends Component {
                                                 >
                                                     <td>{ index + 1 }.</td>
                                                     <td>{bidders[bid._user]._id === user._id ? NameHelper.name(bidders[bid._user]) : NameHelper.covername(bidders[bid._user])}</td>
-                                                    <td className="price">{ (index === 0 ? current_price : bid.price) }</td>
+                                                    <td className="price">{ (index === 0 ? PriceHelper.write(current_price) : PriceHelper.write(bid.price)) }</td>
                                                 </tr>
                                             );
                                         } else {
@@ -72,7 +73,7 @@ class AuctionBids extends Component {
                                                 <tr key={'bid_' + index}>
                                                     <td>{ index + 1 }</td>
                                                     <td>..............</td>
-                                                    <td className="price">{ (index === 0 ? current_price : bid.price) }</td>
+                                                    <td className="price">{ (index === 0 ? PriceHelper.write(current_price) : PriceHelper.write(bid.price)) }</td>
                                                 </tr>
                                             );
                                         }
@@ -283,7 +284,7 @@ class Auction extends Component {
                         <p>{auction.shortdescription}</p>
                     </div>
                     <div className="price-div">
-                        <span className="price">Cena: <span className="value">{ current_price }</span></span>
+                        <span className="price">Cena: <span className="value">{ PriceHelper.write(current_price) }</span></span>
                     </div>
                 </div>
             </Link>
@@ -550,10 +551,10 @@ class AuctionDetails extends Component {
                                             }
                                         </p> 
                                         <div className={ (auction.ended ? 'transparent' : '') }>
-                                            <div className="price">Aktualna cena: <span className="value">{ current_price }</span></div>
-                                            { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ auction.price.buy_now_price }</span>!</button></div> : null }
+                                            <div className="price">Aktualna cena: <span className="value">{ PriceHelper.write(current_price) }</span></div>
+                                            { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ PriceHelper.write(auction.price.buy_now_price) }</span>!</button></div> : null }
                                             <div><span className="time-span">do końca { AuctionEndHelper(auction.date) }</span></div>
-                                            { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ auction.price.min_price }</span><br /><br /><br /></div> : null }
+                                            { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ PriceHelper.write(auction.price.min_price) }</span><br /><br /><br /></div> : null }
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
                                                     <input ref={ (e) => this.bidInputRef = e } name="bid" type="number" lang="pl" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="5" defaultValue={current_price} />
@@ -565,7 +566,7 @@ class AuctionDetails extends Component {
                                             auction.ended && <div className="end-tag">Aukcja Zakończona</div>
                                         }
                                         {
-                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? current_price : auction.price.buy_now_price} zł</button></div>
+                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? PriceHelper.write(current_price) : PriceHelper.write(auction.price.buy_now_price)} zł</button></div>
                                         }
                                     </div>
                                 </div>
@@ -861,7 +862,7 @@ class MyAuctionList extends Component {
                                  <div className="text">
                                     <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
                                     <div className="short-description">{auction.shortdescription}</div>
-                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
+                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ PriceHelper.write(auction.price.current_price || auction.price.start_price) }</span></p>
                                     {
                                        !auction.ended ? (<p className="time-details">
                                             <i className="material-icons">access_alarm</i>
@@ -1047,7 +1048,7 @@ class AuctionList extends Component {
                                 <div className="text">
                                     <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
                                     <div className="short-description">{auction.shortdescription}</div>
-                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ auction.price.current_price || auction.price.start_price }</span></p>
+                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ PriceHelper.write(auction.price.current_price || auction.price.start_price) }</span></p>
                                     <div><span className="time-span">do końca { AuctionEndHelper(auction.date) }</span></div>
                                     <div className="actions">
                                         <div>
