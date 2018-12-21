@@ -518,11 +518,12 @@
     flex: 1 1 45%;
     margin-top: 46px;
     margin-left: 100px; /* page margin */
+    max-width: 526px;
     min-height: 454px;
     border: 1px solid #eee;
 }
 .tab-view > div {
-    flex: 0 0 55%;
+    flex: 1 1 55%;
 }
 .tab-view .extra-tab > div  {
     position: relative;
