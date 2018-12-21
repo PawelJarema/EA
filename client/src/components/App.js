@@ -260,7 +260,7 @@ class Breadcrumbs extends Component {
         return (
             <div className="breadcrumbs">
                 {
-                    current_path.map(
+                    current_path.filter(frag => frag.link.length).map(
                         (frag, index) => (
                             <span key={frag}>
                                 {
