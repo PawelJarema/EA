@@ -42,7 +42,46 @@
     animation: rotate 0.5s linear infinite;
 }
 
+.image-progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateX(-50%) translateY(-50%);
+}
+.image-progress > span:after {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    content: ' ';
+
+    margin: 3px;
+    width: 6px;
+    height: 6px;
+
+    background: var(--orange);
+    border-radius: 50%;
+
+    transform-origin: center;
+    animation: bounce 0.5s ease-in-out infinite;
+}
+.image-progress > span:first-child:after {
+ 
+}
+.image-progress > span:nth-child(1):after {
+    animation-delay: 0.25s;
+}
+.image-progress > span:last-child:after {
+    animation-delay: 0.1s;
+}
+
 @keyframes rotate {
     from { transform: rotate(0deg) }
     to { transform: rotate(359deg) }
+}
+
+@keyframes bounce {
+    from, to { top: 0; }
+    50% { top: 10px; }
 }

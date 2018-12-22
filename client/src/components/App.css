@@ -29,7 +29,7 @@ button {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Chakra Petch', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -205,7 +205,12 @@ nav {
     display: block;
     cursor: pointer;
 }
-.search-auctions .select .main {
+.search-auctions .select .user-search {
+    font-weight: 400;
+    margin: 5px 0;
+    margin-bottom: 10px;
+}
+.search-auctions .select .main, .search-auctions .select .para {
     font-weight: 400;
     margin: 5px 0;
 }
@@ -499,6 +504,7 @@ strong {
     border-bottom: 1px solid #ccc;
     border-right: 1px solid #ccc;
     margin: auto;
+    margin-bottom: 15px;
     background: white;
     cursor: pointer;
 }
@@ -626,7 +632,38 @@ strong {
     opacity: 1;
     height: auto;
 }
+.cookie-message {
+    display: flex;
+    justify-content: stretch;
 
+    border: 1px solid #ddd;
+    background: white;
+    padding: 20px;
+    box-shadow: 1px 1px 1px #ddd;
+}
+.cookie-message > div {
+    flex: 1 1 auto;
+    box-sizing: border-box;
+    padding: 30px;
+}
+.cookie-message > div > img {
+    width: 100%;
+    max-width: 340px;
+    min-width: 240px;
+}
+
+.cookie-message > p {
+    flex: 1 1 65%;
+}
+.cookie-message h3:nth-of-type(2) {
+    margin-top: 20px;
+}
+.cookie-message button {
+    margin: 30px 0;
+    float: right;
+    color: var(--link-blue);
+    border: 1px solid var(--link-blue);
+}
 /*input::-webkit-inner-spin-button {
  
     -webkit-appearance: none;

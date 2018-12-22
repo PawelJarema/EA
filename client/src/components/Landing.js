@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Landing.css';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import * as authActions from '../actions/authActions';
 import Regex from '../helpers/regexHelper';
 
@@ -162,11 +163,11 @@ class RegistrationLanding extends Component {
                 <div className="rodo">
                     <span className="message">{ this.state.messages[3] }</span>
                     <label>
-                        <input name="rodo_1" type="checkbox" value={this.state.rodo_1} onChange={this.handleInput}/>Rodo 1
+                        <input name="rodo_1" type="checkbox" value={this.state.rodo_1} onChange={this.handleInput}/>Rodo 1 <span className="extra-info">- zapoznałem się z informacjami dot. przetwarzania moich danych zawartymi <Link to="/regulamin">w regulaminie</Link></span>
                         <span className="checkbox-value"></span>
                     </label>
                     <label>
-                        <input name="rodo_2" type="checkbox" value={this.state.rodo_2} onChange={this.handleInput}/>Rodo 2
+                        <input name="rodo_2" type="checkbox" value={this.state.rodo_2} onChange={this.handleInput}/>Rodo 2 <span className="extra-info">- wyrażam zgodę ze świadomością, że w każdej chwili mogę zmienić zdanie</span>
                         <span className="checkbox-value"></span>
                     </label>
                 </div>

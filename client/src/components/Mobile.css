@@ -306,6 +306,19 @@ nav .user-links .search-mobile {
 	}
 
 }
+@media screen and (max-width: 1100px) {
+	.cookie-message {
+		flex-direction: column;
+	}
+	.cookie-message > div {
+		flex: 0 0 100%;
+		text-align: center;
+	}
+	.cookie-message > p {
+		max-width: 600px;
+		margin: auto;
+	}
+}
 @media screen and (max-width: 1155px) {
 	.App .OtherUser .auctions {
 		column-count: 4;

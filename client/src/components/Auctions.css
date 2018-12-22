@@ -39,11 +39,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    transition: background-size 2s ease-in !important;
-    -moz-transition: background-size 2s ease-in;
-    -ms-transition: background-size 2s ease-in;
-    -o-transition: background-size 2s ease-in;
-    -webkit-transition: background-size 2s ease-in;
+    background-color: transparent;
 }
 .AuctionDetails .photo-big .div-image-block {
     background-size: contain;
@@ -906,4 +902,8 @@
 .AuctionDetails .tab-view .extra-tab .no-result {
     top: 75%;
     left: 50%;
+}
+.auction .div-image-block {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }

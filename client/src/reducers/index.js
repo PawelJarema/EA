@@ -15,6 +15,7 @@ import adminPanelReducer from './adminPanelReducer';
 import techBreakReducer from './techBreakReducer';
 import adminDocumentReducer from './adminDocumentReducer';
 import importExportReducer from './importExportReducer';
+import cookieReducer from './cookieReducer';
 
 export default combineReducers({
    admin: adminReducer,
@@ -32,5 +33,6 @@ export default combineReducers({
    admin_panel: adminPanelReducer,
    tech_break: techBreakReducer,
    documents: adminDocumentReducer,
-   exported: importExportReducer
+   exported: importExportReducer,
+   cookies: cookieReducer
 });

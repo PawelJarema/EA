@@ -9,6 +9,7 @@ import * as categoryActions from '../actions/categoryActions';
 import * as flashActions from '../actions/flashActions';
 import * as countActions from '../actions/statisticActions';
 import * as techBreakActions from '../actions/techBreakActions';
+import * as cookieActions from '../actions/cookieActions';
 
 import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
@@ -35,7 +36,6 @@ const ProductCategories = {
 
 class Logo extends Component {
     render() {
-        // <Link to="/"><div className="logo"><i className="material-icons">gavel</i>E-Aukcje</div></Link>
         return (
             <Link to="/"><div className="logo"><img src="/assets/logo.png" alt="logo"/></div></Link>
         );
@@ -84,7 +84,7 @@ class SearchField extends Component {
     
     handleCategory(event) {
         const element = event.target;
-        const value = element.innerHTML;
+        const value = element.innerHTML === 'Wszystkie kategorie' ? 'Kategorie' : element.innerHTML;
         
         this.setState({ category: value });
     }
@@ -120,6 +120,7 @@ class SearchField extends Component {
                         <span className="select-value" onClick={ this.openSelect }>{ this.state.category }</span>
                         { 
                             this.state.select && (<div className="select">
+                                <div className="user-search" onClick={this.handleCategory}>Szukaj Sprzedawcy</div>
                                 {
                                     all_categories && all_categories
                                         .map(category => (
@@ -131,6 +132,7 @@ class SearchField extends Component {
 
                                         ))
                                 }
+                                <div className="para" onClick={this.handleCategory}>Wszystkie kategorie</div>
                             </div>)
                         }
                     </span>
@@ -427,21 +429,27 @@ class AdvancedSearch extends Component {
                    
                 </form>
                 <div>
-                    <h3>Inne przedmioty</h3>
-                    <div className="items">
-                        {
-                            stats && (
-                                stats.map((stat, index) => (
-                                    <Link key={stat.name + '_' + stat.count} to={`/aukcje/szukaj/${stat.name}/${'*'}`}>
-                                        <div className="item">
-                                            <div className="name">{ stat.name }</div>
-                                            <div className="count">{ stat.count }</div>
-                                        </div>
-                                    </Link>
-                                ))
-                            )
-                        }
-                    </div>
+                    {
+                        stats && (
+                            <div>
+                                <h3>Inne przedmioty</h3>
+                                <div className="items">
+                                    {
+                                        
+                                        stats.map((stat, index) => (
+                                            <Link key={stat.name + '_' + stat.count} to={`/aukcje/szukaj/${stat.name}/${'*'}`}>
+                                                <div className="item">
+                                                    <div className="name">{ stat.name }</div>
+                                                    <div className="count">{ stat.count }</div>
+                                                </div>
+                                            </Link>
+                                        ))
+                               
+                                    }
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
         );
@@ -494,6 +502,32 @@ class Page404 extends Component {
     }
 }
 
+class CookieMessage extends Component {
+    render() {
+        const { cookies } = this.props;
+
+        if (!cookies) {
+            return (
+                <div className="cookie-message">
+                    <div>
+                        <img src="/assets/cookies.png" />
+                    </div>
+                    <p>
+                        <h3>Ciasteczka</h3>
+                        <p>Serwis używa ciasteczek aby składować istotne informacje dotyczące operacji wykonywanych w serwisie. Włączenie obsługi ciasteczek ułatwia korzystanie z serwisu i jest wymagane. Wszystkie Państwa informacje są zaszyfrowane i gruntownie zabezpieczone.</p>
+                        <h3>Rodo</h3>
+                        <p>25 maja 2018 roku zaczęło obowiązywać Rozporządzenie Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (RODO). Uprzejmie informujemy, że administratorem Państwa danych osobowych jest firma Polmarket. Celem przetwarzania danych jest realizacja prawnych obowiązków administratora.</p>
+                        <button className="standard-button" onClick={this.props.allowCookies}>Rozumiem i wyrażam zgodę</button>
+                    </p>
+                </div>
+            );
+        } else {
+            return null;
+        }
+        
+    }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -518,6 +552,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+      this.props.fetchCookies();
       this.props.fetchTechBreak();
       this.props.fetchCategories();
       this.props.fetchUser();
@@ -526,7 +561,7 @@ class App extends Component {
 
   render() {
     const { socket } = this.state;
-    const { user, flash, tech_break } = this.props;
+    const { user, flash, tech_break, cookies } = this.props;
 
     const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
@@ -545,7 +580,7 @@ class App extends Component {
                     </header>
             
                     <div className="main-container">
-          
+                            <CookieMessage cookies={cookies} />
                             <Route exact path="/" component={ FrontPage } />
                             <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
                             <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
@@ -610,8 +645,8 @@ function mapUserStateToProps({ user }) {
 function mapUserAndFlashStatesToProps({ user, flash }) {
     return { user, flash };
 }
-function mapUserFlashAndTechBreakStatesToProps({ user, flash, tech_break }) {
-    return { user, flash, tech_break };
+function mapUserFlashTechBreakAndCookiesStatesToProps({ user, flash, tech_break, cookies }) {
+    return { user, flash, tech_break, cookies };
 }
 function mapCategoryStateToProps({ categories }) {
     return { categories };
@@ -629,9 +664,10 @@ function mapAuctionCountStateToProps({ auction_count }) {
     return { auction_count };
 }
 
+CookieMessage = connect(null, cookieActions)(CookieMessage);
 SearchField = connect(mapCategoryStateToProps)(SearchField);
 UserLinks = connect(mapUserStateToProps)(UserLinks);
 CategoryLinks = connect(mapCategoryStateToProps)(CategoryLinks);
 AdvancedSearch = connect(mapAuctionCountStateToProps, countActions)(AdvancedSearch);
 
-export default connect(mapUserFlashAndTechBreakStatesToProps, { ...userActions, ...categoryActions, ...flashActions, ...techBreakActions })(App);
+export default connect(mapUserFlashTechBreakAndCookiesStatesToProps, { ...userActions, ...categoryActions, ...flashActions, ...techBreakActions, ...cookieActions })(App);

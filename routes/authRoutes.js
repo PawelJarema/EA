@@ -15,6 +15,16 @@ const Mailer = require('../services/Mailer');
 const Business = require('../services/emailTemplates/business');
 
 module.exports = app => {
+    app.post('/api/allow_cookies', (req, res) => {
+        req.session.allow_cookies = true;
+        req.session.message = 'Wyraziłeś zgodę. Dziękujemy!';
+        res.send(true);
+    });
+
+    app.get('/api/cookies', (req, res) => {
+        res.send(req.session.allow_cookies);
+    });
+
     app.get('/auth/admin/create', (req, res) => {
         const login = 'admin';
         const password = 'admin1234';

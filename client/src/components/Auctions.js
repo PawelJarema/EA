@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { Pagination } from './Pagination';
 import { ProfileLinks } from './Profile';
 import { Seller, Deliveries, Opinions } from './OtherUser';
+import { ImageProgress } from './Progress';
 
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
@@ -23,6 +24,13 @@ import AuctionEndHelper from '../helpers/auctionEndHelper';
 
 import Progress from './Progress';
 import b64toBlob from 'b64-to-blob';
+
+function applyToAuctions(funct) {
+    const auctions = document.querySelectorAll('.AuctionList .auction');
+    for (let i = 0; i < auctions.length; i++) {
+        funct(auctions[i]);
+    }
+}
 
 function auctionPath(auction) {
     const title = 
@@ -263,7 +271,7 @@ class Pay extends Component {
 
 class Auction extends Component {
     render() {
-        const auction = this.props.auction;
+        const { auction } = this.props;
         const current_price = auction.price.current_price || auction.price.start_price;
 
         if (!auction)
@@ -273,8 +281,9 @@ class Auction extends Component {
             <Link to={auctionPath(auction)}>
                 <div className="auction">
                     <div className="photo">
+                        <ImageProgress />
                         {
-                            auction.photos[0] ? <RawImage data={auction.photos[0]} /> : <div className="no-image"></div>
+                            <RawImage link={auction} />
                         }
                     </div>
                     <div className="title">
@@ -284,7 +293,7 @@ class Auction extends Component {
                         <p>{auction.shortdescription}</p>
                     </div>
                     <div className="price-div">
-                        <span className="price">Cena: <span className="value">{ PriceHelper.write(current_price) }</span></span>
+                        <span className="price">Aktualna cena: <span className="value">{ PriceHelper.write(current_price) }</span></span>
                     </div>
                 </div>
             </Link>
@@ -363,10 +372,17 @@ class FrontPage extends Component {
 }
 
 class RawImage extends Component {
+    componentDidMount() {
+        setTimeout(() => this.imgRef.style.opacity = 1, 310);
+    }
+
     render() {
-        const data = this.props.data;
-        //return <img className="absolute-center" src={ 'data:' + (data.type || 'image/jpeg') + ';base64,' + data.data } />;
-        return <div className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})` }}></div>;
+        const { data, link } = this.props;
+        if (data) {
+            return <div ref={(e) => this.imgRef = e} className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(data:${data.type || 'image/jpeg'};base64,${data.data})` }}></div>;
+        } else if (link) {
+            return <div ref={(e) => this.imgRef = e} className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(/auction/${link._id}/photo)` }}></div>;
+        }
     }
 }
 
@@ -730,6 +746,7 @@ class MyAuctionList extends Component {
     componentWillReceiveProps(props) {
         if (props.my_auctions) {
             if (typeof props.my_auctions[props.my_auctions.length - 1] === 'number') {
+                applyToAuctions(auction => auction.style.opacity = 1)
                 this.setState(prev => ({ pages: Math.ceil(props.my_auctions.pop() / prev.per_page) }));
             }
         }
@@ -746,6 +763,7 @@ class MyAuctionList extends Component {
 
     paginate(page, per_page) {
         const { mode } = this.props;
+        applyToAuctions(auction => auction.style.opacity = 0.8);
 
         switch (mode) {
             case 'current_auctions':
@@ -1010,17 +1028,22 @@ class AuctionList extends Component {
 
                 if (count === 0) {
                     this.no_result = true;
+                } else {
+                    applyToAuctions((auction) => auction.style.opacity = 1);
                 }
             }
         }
 
         if (this.getQuery(props)) {
+            applyToAuctions((auction) => auction.style.opacity = 0.8);
+            
             this.props.paginate(this.page || 1, this.auctions_per_page, this.query);
             this.no_result = false;
         }
     }
 
     paginateTo(index) {
+        applyToAuctions((auction) => auction.style.opacity = 0.8);
         this.page = index;
         this.props.paginate(index, this.auctions_per_page, this.query);
     }

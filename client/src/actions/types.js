@@ -17,3 +17,4 @@ export const FETCH_TECH_BREAK = 'fetch_tech_break';
 export const FETCH_DOCUMENTS = 'fetch_documents';
 export const FETCH_INVOICES = 'fetch_invoices';
 export const EXPORTED_AUCTION = 'exported_auction';
+export const FETCH_COOKIES = 'fetch_cookies';

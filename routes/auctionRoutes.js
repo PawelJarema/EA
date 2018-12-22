@@ -36,6 +36,12 @@ const currentUserId = (req) => {
     }
 }
 
+async function findUserByNames(query) {
+    let names = query.split(' ');
+    let name_array = [names[0] ? new RegExp(names[0], 'i') : null, names[1] ? new RegExp(names[1], 'i') : null];
+    return await User.findOne({ $or: [ {firstname: { $in: name_array }}, {lastname: { $in: name_array }} ] }, { _id: 1 });
+}
+
 async function checkIfLiked(auctions, req) {
     if (!req.user) {
         return;
@@ -84,8 +90,26 @@ async function buyNowNotifications(user, owner, auction) {
     res = await mailer.send();
 }
 
-// TODO
 module.exports = app => {
+    app.get('/auction/:id/photo', async (req, res) => {
+        const { id }    = req.params,
+                auction = await Auction.findOne({ _id: ObjectId(id) }, { photos: { $slice: 1 } }),
+                photo   = auction.photos[0],
+                img     = new Buffer(photo.data, 'base64');
+
+        res.writeHead(200, {
+            'Content-Type': photo.type || 'image/jpeg',
+            'Content-Length': img.length
+        });
+        res.end(img);
+    });
+
+    app.get('/auction/:id/photos', async (req, res) => {
+        const { id } = req.params;
+        const auction = await Auction.findOne({ _id: ObjectId(id) }, { photos: 1 });
+        res.send(auction.photos);
+    });
+
     app.post('/auction/rate', requireLogin, async (req, res) => {
         const rate = req.body;
 
@@ -384,12 +408,12 @@ module.exports = app => {
 
         const popular = await Auction.find(
             { _user: { $ne: user_id }, ended: { $ne: true } }, 
-            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, likes: 1 }, 
+            { title: 1, shortdescription: 1, price: 1, likes: 1 }, //photos: { $slice: 1 },
             { limit: 8, sort: { likes: -1 } }
         );
         const newest = await Auction.find(
             { _user: { $ne: user_id }, ended: { $ne: true } },
-            { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 }, date: 1 },
+            { title: 1, shortdescription: 1, price: 1, date: 1 }, // photos: { $slice: 1 },
             { sort: { 'date.start_date': -1 }, limit: 9 }
         );
 
@@ -419,12 +443,25 @@ module.exports = app => {
         const page = parseInt(req.params.page);
         const per_page = parseInt(req.params.per_page);
 
-        const mongo_query = { 
-            _user: { $ne: currentUserId(req) },
-            title: { $regex: query, $options: 'i' }, 
-            $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }],
-            ended: { $ne: true }
-        };
+        let mongo_query;
+        if (category === 'Szukaj Sprzedawcy') {
+            mongo_query = {
+                ended: { $ne: true }
+            };
+            
+            const user = await findUserByNames(query);
+            if (user) {
+                mongo_query._user = user._id;
+            }
+        } else {
+            mongo_query = { 
+                _user: { $ne: currentUserId(req) },
+                title: { $regex: query, $options: 'i' }, 
+                $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }],
+                ended: { $ne: true }
+            };
+        }
+  
         const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
 
@@ -508,28 +545,47 @@ module.exports = app => {
 
     app.get('/auction/count/:category', async (req, res) => {
         const category = req.params.category;
-
+        
         const mains = await Category.find({}).lean();
         const main_names = mains.map(c => c.name);
 
         const is_main = category === 'Kategorie' || main_names.indexOf(category) !== -1;
+        const is_user = category === 'Szukaj Sprzedawcy';
         
-        if (is_main) {
+        if (is_main || is_user) {
             let result = [];
             let items = 0;
 
-            await main_names.map(c => { 
-                Auction
-                    .count({ 'categories.main': c })
-                    .then(count => { 
-                        result.push({ name: c, count }) ;
-                        items++;
-                        if (items === main_names.length) {
-                            res.send(result);
-                        }
-                    }, 
-                    (err) => console.log('error'));
-            });
+            if (is_user) {
+                return([]);
+                await main_names.map(async c => {
+                    const user = await findUserByNames(category);
+                    let query = { 'categories.main': c };
+                    Auction
+                        .count(query)
+                        .then(count => {
+                            result.push({ name: c, count });
+                            items++;
+                            if (items === main_names.length) {
+                                res.send(result);
+                            }
+                        })
+                });
+            } else {
+                await main_names.map(c => { 
+                    Auction
+                        .count({ 'categories.main': c })
+                        .then(count => { 
+                            result.push({ name: c, count });
+                            items++;
+                            if (items === main_names.length) {
+                                res.send(result);
+                                return;
+                            }
+                        }, 
+                        (err) => console.log('error'));
+                });
+            }
 
             
         } else {
