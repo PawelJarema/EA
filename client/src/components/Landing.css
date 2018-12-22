@@ -24,7 +24,6 @@
 }
 .registration-panel.login .column:first-child .container {
     
- 
 }
 
 .registration-panel .column .container {
@@ -48,9 +47,9 @@
     margin: 20px 0;
     padding-left: 25px;
     color: white;
-
+}
+.registration-panel .rodo label {
     font-size: 12px;
-
 }
 .registration-panel a {
     color: #eee;

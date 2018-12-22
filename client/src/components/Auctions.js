@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
 import * as myAuctionActions from '../actions/myAuctionActions';
+import * as photosActions from '../actions/photosActions';
 import * as profileActions from '../actions/profileActions';
 import * as otherUserActions from '../actions/otherUserActions';
 import * as przelewy24Actions from '../actions/przelewy24Actions';
 import * as importExportActions from '../actions/importExportActions';
+
 import './Auctions.css';
 
 import { Link } from 'react-router-dom';
@@ -401,7 +403,9 @@ class AuctionDetails extends Component {
 
         this.props.clearOtherUser();
         this.props.clearAuction();
+        this.props.clearPhotos();
         this.props.fetchAuction(auction_id);
+        this.props.fetchPhotos(auction_id);
     }
 
     componentWillReceiveProps(props) {
@@ -502,10 +506,11 @@ class AuctionDetails extends Component {
     render() {
         const { auction, pay } = this.state;
         const { bidders } = auction || { bidders: {} };
-        const { user, other_user } = this.props;
+        const { user, other_user, photos } = this.props;
 
         const active_photo = this.state.photo;
-        const thumbnails = auction ? auction.photos.slice(0, active_photo).concat(auction.photos.slice(active_photo + 1)) : null;
+        //const thumbnails = auction ? auction.photos.slice(0, active_photo).concat(auction.photos.slice(active_photo + 1)) : null;
+        const thumbnails = photos ? photos.slice(0, active_photo).concat(photos.slice(active_photo + 1)) : null;
 
         const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price && auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
         const min_price = auction ? !auction.ended && auction.price.min_price && !auction.price.hide_min_price : false;
@@ -515,6 +520,8 @@ class AuctionDetails extends Component {
         const current_price = auction ? auction.price.current_price || auction.price.start_price : false;
 
         const extended_view = true || window.innerWidth > 1579;
+
+        console.log(auction);
 
         return (
             <div className="AuctionDetails">
@@ -531,17 +538,17 @@ class AuctionDetails extends Component {
                                     <div className="photo-big">
                                         <div className="image-wrapper">
                                             {
-                                                auction.photos.length 
+                                                photos.length 
                                                 ?
-                                                <RawImage data={auction.photos[this.state.photo]} />
+                                                <RawImage data={photos[active_photo]} />
                                                 :
-                                                <div className='no-image'></div>
+                                                <div><ImageProgress /></div>
                                             }
                                         </div>
                                     </div>
                                     <div className="photos-small">
                                         {
-                                            thumbnails.length 
+                                            thumbnails && thumbnails.length 
                                             ?
                                             thumbnails.map((thumb, index) => (
                                                 <div key={"thumbnail_" + index} className="thumbnail-wrapper" onClick={() => this.seePhoto(index)}>
@@ -1548,8 +1555,8 @@ function mapOtherUserStateToProps({ other_user }) {
 function combineUserAndAuctionsStateToProps({ auctions, user }) {
     return { auctions, user };
 }
-function mapAuctionsUserAndOtherUserStateToProps({ auctions, user, other_user }) {
-    return { auctions, user, other_user };
+function mapAuctionsPhotosUserAndOtherUserStateToProps({ auctions, photos, user, other_user }) {
+    return { auctions, photos, user, other_user };
 }
 function mapTechBreakStatesToProps({ tech_break }) {
     return { tech_break };
@@ -1562,6 +1569,6 @@ FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapAuctionsUserAndCategoryStateToProps, {...profileActions, ...auctionActions})(CreateUpdateAction);
 AuctionList = connect(mapAuctionsAndUserStateToProps, auctionActions)(AuctionList);
 MyAuctionList = connect(mapMyAuctionsUserAndExportedStateToProps, {...auctionActions, ...myAuctionActions, ...importExportActions})(MyAuctionList);
-AuctionDetails = connect(mapAuctionsUserAndOtherUserStateToProps, {...auctionActions, ...otherUserActions})(AuctionDetails);
+AuctionDetails = connect(mapAuctionsPhotosUserAndOtherUserStateToProps, {...auctionActions, ...photosActions, ...otherUserActions})(AuctionDetails);
 
 export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };

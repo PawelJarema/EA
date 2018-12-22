@@ -381,7 +381,11 @@ module.exports = app => {
 
     app.get('/auction/get/:id', async (req, res) => {
         const id = req.params.id;
-        let auction = await Auction.findOne({ _id: ObjectId(id) }).lean();
+        let auction = await Auction.findOne(
+            { _id: ObjectId(id) }, 
+            {},
+            { select: '-photos' }
+        ).lean();
         const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
         const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
 

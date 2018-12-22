@@ -16,6 +16,7 @@ import techBreakReducer from './techBreakReducer';
 import adminDocumentReducer from './adminDocumentReducer';
 import importExportReducer from './importExportReducer';
 import cookieReducer from './cookieReducer';
+import photosReducer from './photosReducer';
 
 export default combineReducers({
    admin: adminReducer,
@@ -34,5 +35,6 @@ export default combineReducers({
    tech_break: techBreakReducer,
    documents: adminDocumentReducer,
    exported: importExportReducer,
-   cookies: cookieReducer
+   cookies: cookieReducer,
+   photos: photosReducer
 });

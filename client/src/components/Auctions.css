@@ -40,6 +40,8 @@
     background-repeat: no-repeat;
     background-position: center;
     background-color: transparent;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 .AuctionDetails .photo-big .div-image-block {
     background-size: contain;
@@ -902,8 +904,4 @@
 .AuctionDetails .tab-view .extra-tab .no-result {
     top: 75%;
     left: 50%;
-}
-.auction .div-image-block {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
 }

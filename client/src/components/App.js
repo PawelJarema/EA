@@ -147,22 +147,21 @@ class SearchField extends Component {
 
 class UserLinks extends Component {
     render() {
-        const { user, open, searchHandler } = this.props;
+        const { user, open, searchHandler, toggleMenu } = this.props;
         const className = "user-links" + (open ? ' open' : '');
 
-        const Search = <span className="link search-mobile" onClick={searchHandler}><i className="material-icons">search</i></span>;
+        const Search = <span className="link search-mobile" onClick={() => {searchHandler(); toggleMenu();}}><i className="material-icons">search</i></span>;
         
         if (user !== false && user !== null) {
             return (
                 <div className={className}>
-                    <Link to="/moje-aukcje">Moje aukcje</Link>
+                    <Link to="/moje-aukcje" onClick={toggleMenu}>Moje aukcje</Link>
                     { Search }
                     <Chat socket={ this.props.socket } id={user._id} />
-                    <span className="link">
+                    <span className="link" onClick={toggleMenu}>
                         <img src="/assets/icons/user.png" />
                         <div className="dropdown">
-                            <Link to="/konto/" className="account">Konto</Link>
-                            <Link to="/konto/ustawienia" className="settings">Ustawienia</Link>
+                            <Link to="/konto/ustawienia" className="account">Konto</Link>
                             <Link to="/konto/aukcje/dodaj" className="add-auction">Dodaj Aukcję</Link>
                             <a href="/api/logout" className="logout">Wyloguj</a>
                         </div>
@@ -171,7 +170,7 @@ class UserLinks extends Component {
             );
         } else if (user !== null) {
             return (
-                <div className={className}>
+                <div className={className} onClick={toggleMenu}>
                     { Search }
                     <Link to="/konto/zaloguj">Zaloguj</Link>
                     <Link to="/konto/zarejestruj">Zarejestruj się</Link>
@@ -221,7 +220,7 @@ class Navi extends Component {
                 <Logo />
                 <SearchField open={search} />
                 <MobileMenu open={mobile} clickHandler={this.clickHandler} />
-                <UserLinks open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} />
+                <UserLinks open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} toggleMenu={this.clickHandler}/>
             </nav>
         );
     }
