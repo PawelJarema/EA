@@ -458,7 +458,7 @@ class Settings extends Component {
                         </p>
                         <p>
                             <label for="invoice_email">E-mail do faktur</label>
-                            <input name="invoice_email" type="text" placeholder="E-mail do faktur" value={state.invoice_email} onChange={handleInput} />
+                            <input name="invoice_email" type="text" value={state.invoice_email} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[8] }</span>
                         </p>
                         <p>
