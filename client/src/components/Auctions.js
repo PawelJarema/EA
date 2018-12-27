@@ -1277,8 +1277,12 @@ class CreateUpdateAction extends Component {
         let input = document.createElement('input');
         input.name = 'attribute_' + name;
         input.type = 'text';
-        input.placeholder = name;
+
+        let label = document.createElement('label');
+        label.for = 'attribute_' + name;
+        label.innerText = name;
         
+        this.attributesRef.appendChild(label);
         this.attributesRef.appendChild(input);
     }
 
@@ -1403,7 +1407,8 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">title</i>Tytuł</legend>
                         <p>
-                            <input name="title" type="string" placeholder="Tytuł aukcji" onInput={this.validate} />
+                            <label for="title" className="required">Tytuł aukcji</label>
+                            <input name="title" type="string" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[0] }</span>
                         </p>
                     </fieldset>
@@ -1429,14 +1434,17 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">monetization_on</i>Cena</legend>
                         <p>
-                            <input name="start_price" type="number" placeholder="Cena wywoławcza" step="0.01"  onInput={this.validate} />
+                            <label for="start_price" className="required">Cena wywoławcza</label>
+                            <input name="start_price" type="number" step="0.01"  onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>
-                            <input name="buy_now_price" type="number" placeholder="Cena kup teraz" step="0.01" />
+                            <label for="buy_now_price">Cena "kup teraz"</label>
+                            <input name="buy_now_price" type="number" step="0.01" />
                         </p>
                         <p>
-                            <input name="min_price" type="number" placeholder="Cena minimalna" step="0.01" />
+                            <label for="min_price">Cena minimalna</label>
+                            <input name="min_price" type="number" step="0.01" />
                         </p>
                         <p className="checkbox">
                             <span>
@@ -1450,7 +1458,8 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">access_time</i>Czas trwania</legend>
                         <p>
-                            <input name="duration" type="number" placeholder="Ilość dni" max="30" min="1" onInput={this.validate} />
+                            <label for="duration" className="required">Ilość dni</label>
+                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[2] }</span>
                         </p>
                     </fieldset>
@@ -1458,14 +1467,15 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">edit_attributes</i>Atrybuty</legend>
                         <p>
-                            <span className="label add-horizontal-margin">Stan przedmiotu:
-                                <input name="attribute_Stan" type="radio" value="nowy" /><span className="label">nowy</span>
+                            <span className="label add-horizontal-margin"><span className="orange">*</span> Stan przedmiotu:
+                                <input name="attribute_Stan" type="radio" value="nowy" defaultChecked /><span className="label">nowy</span>
                         
                                 <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
                             </span>
                         </p>
                         <p>
-                            <input name="quantity" type="number" placeholder="Ilość sztuk" min="1" onInput={this.validate} />
+                            <label for="quantity" className="required">Ilość sztuk</label>
+                            <input name="quantity" type="number" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[3] }</span>
                         </p>
                         <p className="attributes" ref={ e => this.attributesRef = e }></p>
@@ -1498,7 +1508,8 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">description</i>Opis</legend>
                         <p>
-                            <input name="shortdescription" type="text" placeholder="Opis skrócony" onInput={this.validate}/>
+                            <label for="shortdescription" className="required">Opis skrócony</label>
+                            <input name="shortdescription" type="text" onInput={this.validate}/>
                             <span className="validation-message">{ this.state.message[4] }</span>
                         </p>
                         <RichTextEditor

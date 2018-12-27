@@ -422,7 +422,7 @@
 }
 
 .add-horizontal-margin {
-    margin-left: 2px;
+    margin-left: -4px;
 }
 .add-horizontal-margin input {
     cursor: pointer;

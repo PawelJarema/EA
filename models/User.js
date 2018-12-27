@@ -45,11 +45,9 @@ const userSchema = new Schema({
             agreement: Boolean
         }
     },
-    company: {
-        name: String,
-        nip: String,
-        regon: String,
-        address: addressSchema
+    firm: {
+        firm_name: String,
+        nip: String
     }
 });
 

@@ -146,6 +146,6 @@
 	color: black;
 }
 .Deliveries .price:after {
-	content: ' zł';
+	content: '';
 }
 

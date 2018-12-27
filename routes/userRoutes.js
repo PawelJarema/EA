@@ -71,7 +71,7 @@ module.exports = app => {
            lastname = r.lastname,
            street = r.street,
            postal = r.postal,
-           pesel = r.pesel,
+           //pesel = r.pesel,
            city = r.city,
            email = r.email,
            invoice_email = r.invoice_email,
@@ -80,8 +80,13 @@ module.exports = app => {
            account_number = r.account_number,
            corespondence = r.corespondence,
            password = r.password,
-           confirm_password = r.confirm_password;
+           confirm_password = r.confirm_password,
+           firm = r.firm,
+           rodo_1 = r.rodo_1,
+           rodo_2 = r.rodo_2;
         
+        console.log(req.body);
+
         let messages = [],
             error = false;
                
@@ -92,13 +97,25 @@ module.exports = app => {
             req.session.error = 'Awaria bazy danych. Proszę skontaktować się z administratorem';
             res.send(req.user);
         }
- 
+
+        if (firm) {
+            if (!user.firm) {
+                user.firm = {};
+            }
+
+            user.firm.firm_name = r.firm_name || user.firm.firm_name;
+            user.firm.nip = r.nip || user.firm.nip;
+        } else {
+            user.firm = {};
+        }
+
+
         user.firstname = firstname || user.firstname;
         user.lastname = lastname || user.lastname;
         user.birthdate = birthdate ? parseInt(birthdate) : user.birthdate;
         user.joindate = user.joindate || new Date().getTime();
 
-        user.pesel = pesel || user.pesel;
+        //user.pesel = pesel || user.pesel;
         
         if (!user.address) {
             user.address = {};
@@ -142,8 +159,9 @@ module.exports = app => {
         if (!user.agreements) {
             user.agreements = { rodo_1: true, rodo_2: true };
         }
-        
-        user.agreements.corespondence = corespondence === 'on' || user.agreements.corespondence;
+        user.agreements.rodo_1 = rodo_1 === 'on';
+        user.agreements.rodo_2 = rodo_2 === 'on';
+        user.agreements.corespondence = corespondence === 'on';
         
         await user.save()
             .then(() => {

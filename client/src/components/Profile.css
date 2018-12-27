@@ -59,6 +59,7 @@
 .Profile .user-settings fieldset p {
     position: relative;
     display: flex;
+    flex-wrap: wrap;
 }
 .Profile .user-settings fieldset p > span {
     position: relative;
@@ -225,7 +226,7 @@
     position: absolute;
     top: 24px;
     left: calc(80% - 25px);
-    content: ' zł';
+    content: '';
     font-size: 12px;
     color: var(--good);
     opacity: 0.8;
@@ -305,4 +306,31 @@
     border: 1px solid #eee;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+}
+
+.user-settings label ~ input, .user-settings .labels ~ input {
+    margin-top: 5px !important;
+}
+.user-settings .labels {
+    display: block;
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.user-settings p label {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    margin-top: 10px;
+    margin-bottom: 0;
+    flex: 0 0 100%;
+
+
+}
+.user-settings p label.required:before {
+    content: '* ';
+    color: var(--orange);
+}
+.user-settings p .labels label {
+    flex: 0 0 auto;
 }

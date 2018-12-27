@@ -33,8 +33,14 @@ function userToState(user) {
     state.firstname = (user.firstname || '');
     state.lastname = (user.lastname || '');
     state.birthdate = user.birthdate ? moment(user.birthdate) : moment();
-    state.pesel = user.pesel;
+    // state.pesel = user.pesel;
 
+    if (user.firm) {
+        let firm = user.firm;
+        state.firm = 'firm';
+        state.firm_name = firm.firm_name || '';
+        state.nip = firm.nip || '';
+    }
     if (user.address) {
         let address = user.address;
         state.street = address.street || '';
@@ -54,7 +60,10 @@ function userToState(user) {
     }
     
     if (user.agreements) {
-        state.corespondence = user.agreements.corespondence || true;
+        let agree = user.agreements;
+        state.corespondence = agree.corespondence;
+        state.rodo_1 = agree.rodo_1;
+        state.rodo_2 = agree.rodo_2;
     }
     
     return state;
@@ -305,12 +314,25 @@ class Settings extends Component {
             message[8] = 'Nieprawidłowy format E-maila do faktur';
         }
 
-        if (!state.pesel || !RegexHelper.pesel.test(state.pesel)) {
-            message[9] = 'Wymagany pesel: 11 cyfr';
-        }
+        // <p>
+        //     <input name="pesel" type="number" placeholder="Pesel" value={state.pesel} onChange={handleInput} />
+        //     <span className="validation-message">{ this.state.message[9] }</span>
+        // </p>
+        // if (!state.pesel || !RegexHelper.pesel.test(state.pesel)) {
+        //     message[9] = 'Wymagany pesel: 11 cyfr';
+        // }
 
         if (!state.phone || !RegexHelper.phone.test(state.phone)) {
             message[10] = 'Wymagany telefon';
+        }
+
+        if (state.firm) {
+            if(!state.firm_name) {
+                message[11] = 'Wpisz nazwę firmy';
+            }
+            if (!RegexHelper.nip.test(state.nip)) {
+                message[12] = 'Wpisz poprawny NIP';
+            }
         }
 
         this.setState({ message }, () => {
@@ -357,29 +379,56 @@ class Settings extends Component {
                 { this.props.user === null ? <Progress /> : <form ref={ (e) => this.formRef = e } className="user-settings" action="/user/update" method="post">
                     <h1>Ustawienia konta</h1>
                     <fieldset>
+                        <legend><i className="material-icons">business</i>Firma</legend>
+                        <p>
+                            <span className="label add-horizontal-margin" style={{ marginLeft: -10 }}>
+                                <input type="radio" name="firm" value="firm" onChange={handleInput} defaultChecked={state.firm} /><span className="label">Firma</span>
+                                <input type="radio" name="firm" value={null} onChange={handleInput} defaultChecked={!state.firm} /><span className="label">Osoba prywatna</span>
+                            </span>
+                        </p>
+                        {
+                            state.firm && (<span>
+                                <p>
+                                    <label for="firm_name" className="required">Nazwa</label>
+                                    <input name="firm_name" type="text" value={state.firm_name} onChange={handleInput} />
+                                    <span className="validation-message">{ this.state.message[11] }</span>
+                                </p>
+                                <p>
+                                    <label for="nip" className="required">NIP</label>
+                                    <input name="nip" type="text" value={state.nip} onChange={handleInput} />
+                                    <span className="validation-message">{ this.state.message[12] }</span>
+                                </p>
+                            </span>)
+                        }   
+                    </fieldset>
+                    <fieldset>
                         <legend><i className="material-icons">account_circle</i>Dane osobowe</legend>
                         <p>
-                            <input name="firstname" type="text" placeholder="Imię" value={state.firstname} onChange={handleInput} />
+                            <label for="firstname" className="required">Imię</label>
+                            <input name="firstname" type="text" value={state.firstname} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[0] }</span>
                         </p>
                         <p>
-                            <input name="lastname" type="text" placeholder="Nazwisko" value={state.lastname} onChange={handleInput} />
+                            <label for="lastname" className="required">Nazwisko</label>
+                            <input name="lastname" type="text" value={state.lastname} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>
-                            <input name="street" type="text" placeholder="Adres" value={state.street} onChange={handleInput} />
+                            <label for="street" className="required">Adres</label>
+                            <input name="street" type="text" value={state.street} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[2] }</span>
                         </p>
                         <p>
-                            <input name="postal" type="text" placeholder="Kod pocztowy" value={state.postal} onChange={handleInput} />
-                            <input name="city" type="text" placeholder="Miasto" value={state.city} onChange={handleInput} />
+                            <span className="labels">
+                                <label for="postal" className="required">Kod pocztowy</label>
+                                <label for="city" className="required">Miasto</label>
+                            </span>
+                            <input name="postal" type="text" value={state.postal} onChange={handleInput} />
+                            <input name="city" type="text" value={state.city} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[3] }</span>
                             <span className="validation-message city">{ this.state.message[4] }</span>
                         </p>
-                        <p>
-                            <input name="pesel" type="number" placeholder="Pesel" value={state.pesel} onChange={handleInput} />
-                            <span className="validation-message">{ this.state.message[9] }</span>
-                        </p>
+                        
                         <p>
 
                             <span style={{ marginTop: 10 }} >
@@ -393,7 +442,8 @@ class Settings extends Component {
                     <fieldset>
                         <legend><i className="material-icons">account_balance</i>Numer konta</legend>
                         <p>
-                            <input name="account_number" type="text" placeholder="Numer konta bankowego" value={state.account_number} onChange={handleInput} />
+                            <label for="account_number">Numer konta w banku</label>
+                            <input name="account_number" type="text" value={state.account_number} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[6] }</span>
                         </p>
 
@@ -402,15 +452,18 @@ class Settings extends Component {
                     <fieldset>
                         <legend><i className="material-icons">email</i>Dane kontaktowe</legend>
                         <p>
-                            <input name="email" type="text" placeholder="E-mail" value={state.email} onChange={handleInput} />
+                            <label for="email" className="required">E-mail</label>
+                            <input name="email" type="text" value={state.email} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[7] }</span>
                         </p>
                         <p>
+                            <label for="invoice_email">E-mail do faktur</label>
                             <input name="invoice_email" type="text" placeholder="E-mail do faktur" value={state.invoice_email} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[8] }</span>
                         </p>
                         <p>
-                            <input name="phone" type="text" placeholder="Telefon" value={state.phone} onChange={handleInput} />
+                            <label for="phone" className="required">Telefon</label>
+                            <input name="phone" type="text" value={state.phone} onChange={handleInput} />
                             <span className="validation-message">{ this.state.message[10] }</span>
                         </p>
                     </fieldset>
@@ -421,6 +474,24 @@ class Settings extends Component {
                                 <input name="corespondence" type="checkbox" checked={state.corespondence} onChange={handleInput} />
                                 <span className="checkbox-value"></span>
                                 <span className="label">Chcę otrzymywać powiadomienia</span>
+                            </span>
+                        </p>
+                        <button type="submit" onClick={this.submit}>Zapisz</button>
+                    </fieldset>
+                    <fieldset>
+                        <legend><i className="material-icons">attachment</i>Rodo</legend>
+                        <p className="checkbox">
+                            <span>
+                                <input name="rodo_1" type="checkbox" checked={state.rodo_1} onChange={handleInput} />
+                                <span className="checkbox-value"></span>
+                                <span className="label">Zapoznałem się <Link to="/regulamin">z regulaminem</Link> dot. przetwarzania danych osobowych</span>
+                            </span>
+                        </p>
+                        <p className="checkbox">
+                            <span>
+                                <input name="rodo_2" type="checkbox" checked={state.rodo_2} onChange={handleInput} />
+                                <span className="checkbox-value"></span>
+                                <span className="label">Zgadzam się na przetwarzanie moich danych zgodnie z RODO</span>
                             </span>
                         </p>
                         <button type="submit" onClick={this.submit}>Zapisz</button>

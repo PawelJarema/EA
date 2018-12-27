@@ -10,9 +10,6 @@ function invoice_number(millis, title) {
 
 function invoice_data(user) {
 	return (`
-		<div class="pesel">
-			Pesel: ${ user.pesel }
-		</div>
 		<div class="address">
 			<span>${ user.address.street }</span>
 			<span>${ user.address.postal }</span>
@@ -26,7 +23,11 @@ function invoice_data(user) {
 }
 
 function user_name(user) {
-	return `${user.firstname || ''} ${user.lastname || (user.firstname ? '' : 'Anonim') }`;
+  if (user.firm) {
+    return user.firm.firm_name;
+  } else {
+    return `${user.firstname || ''} ${user.lastname || (user.firstname ? '' : 'Anonim') }`;
+  }
 }
 
 
@@ -52,6 +53,7 @@ module.exports = (seller, buyer, transaction, vat) => {
 
                 	<div class="usertype">Wystawca:</div>
                 	<h1>${ user_name(seller) }</h1>
+                  <div class="nip">${ seller.firm ? seller.firm.nip : '' }</div>
                 	<div class="data">
                 		${ invoice_data(seller) }
 

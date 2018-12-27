@@ -18,7 +18,7 @@ module.exports = app => {
 			transaction 		= await Transaction.findOne({ _id: ObjectId(id) }),
 			seller 				= req.user,
 			buyer 				= await User.findOne({ _id: ObjectId(transaction._buyer) }),
-			subject				= `Faktura ${business.name} za ${transaction.title}`,
+			subject				= `Faktura z ${business.name} za ${transaction.title}`,
 			recipients			= [{ email: buyer.contact.invoice_email || buyer.contact.email }, { email: seller.contact.invoice_email || seller.contact.email }],
 			mailer 				= new Mailer({ subject, recipients }, invoiceTemplate(seller, buyer, transaction, vat));
 
