@@ -49,6 +49,7 @@
 
 .thumbnails {
     overflow: hidden;
+    max-height: 100%;
 }
 
 .thumbnails .container {

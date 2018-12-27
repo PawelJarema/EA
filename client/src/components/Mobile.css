@@ -252,17 +252,13 @@ nav .user-links .search-mobile {
 	}
 }
 
-@media screen and (max-width: 1295px) {
-	.App .AuctionListSearch, .App .MyAuctions, .App .Profile {
+@media screen and (max-width: 980px) {
+	.App .Profile {
 		flex-direction: column;
 	}
 	.App .Profile .links {
 		margin: 0;
 		margin-bottom: 60px;
-	}
-	.App .AuctionListSearch .advanced-search {
-		margin: 0;
-		order: 2;
 	}
 	.App .Profile .user-settings {
 		max-width: none;
@@ -278,6 +274,17 @@ nav .user-links .search-mobile {
 	.App .Profile .pagination-wrapper:last-child {
 		margin-bottom: 0;
 	}
+}
+@media screen and (max-width: 1295px) {
+	.App .AuctionListSearch, .App .MyAuctions {
+		flex-direction: column;
+	}
+	
+	.App .AuctionListSearch .advanced-search {
+		margin: 0;
+		order: 2;
+	}
+	
 	.App .OtherUser .auctions {
 		column-count: 5;
 	}
