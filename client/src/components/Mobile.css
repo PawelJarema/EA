@@ -288,6 +288,9 @@ nav .user-links .search-mobile {
 	.App .OtherUser .auctions {
 		column-count: 5;
 	}
+	.AuctionList .file-form {
+		margin-top: 30px;
+	}
 }
 @media screen and (max-width: 1224px) { 
 	.App .AuctionDetails .opinions table {
