@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { ObjectId } = mongoose.Types;
+const { ObjectId } = Schema.Types;
 
 const rateSchema = new Schema({
 	date: Number,

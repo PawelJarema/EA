@@ -1,6 +1,6 @@
 const 	mongoose 		= require('mongoose'),
 		{ Schema }		= mongoose,
-		{ ObjectId }	= mongoose.Types;
+		{ ObjectId }	= Schema.Types;
 
 const creditTransactionSchema = new Schema({
 	date: Number,

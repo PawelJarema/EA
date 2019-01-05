@@ -42,6 +42,10 @@ class LoginLanding extends Component {
     render() {
         return (
             <RegistrationPanel title="Zaloguj się" className="login">
+                <div className="oauth">
+                    <a href="/auth/facebook" className="facebook"><img src="/assets/fb.png" /><span>Facebook</span></a>
+                    <a href="/auth/google" className="google"><img src="/assets/g+.svg" /><span>Google+</span></a>
+                </div>
                 <form action="/auth/login" method="post">
                 <div className="email">
                     <input ref={(e) => this.emailRef = e} name="email" type="email" placeholder="E-mail" />
