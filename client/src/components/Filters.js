@@ -34,6 +34,9 @@ class Filters extends Component {
 	}
 
 	componentDidMount() {
+		if (this.props.match) {
+			this.setState({ title: this.props.match.params.query });
+		}
 		this.filterList();
 	}
 
@@ -50,7 +53,7 @@ class Filters extends Component {
 			}
 		}
 
-		if (props.match && props.categories) {
+ 		if (props.match && props.categories) {
 			const { category, query }   = props.match.params,
 				  { categories } 		= this.props;
 
@@ -63,10 +66,9 @@ class Filters extends Component {
 				check_all = true;
 			} 
 
-			if (category !== this.props.match.params.category) {
+			if (category !== this.props.match.params.category || !this.firstRun) {
 				for (let i = 0; i < categories.length; i++) {
 					const main = categories[i];
-					console.log(main.name);
 
 					if (check_all) {
 						for (let c = 0; c < main.subcategories.length; c++) {
@@ -91,11 +93,16 @@ class Filters extends Component {
 						}
 					}
 				}
+
+				if (!this.firstRun) {
+					this.firstRun = true;
+					this.filterList();
+					return;
+				}
 			}
 
-			if (query !== this.props.match.params.query && query !== this.state.title) {
-				this.setState({ title: query });
-				this.filterList();
+			if (query !== this.props.match.params.query) {
+				this.setState({ title: query }, () => this.filterList());
 			} else if (category !== this.props.match.params.category) {
 				this.filterList();
 			} 
