@@ -424,6 +424,68 @@ module.exports = app => {
         res.send({ popular, newest });
     });
 
+    app.post('/auction/filter', upload.any(), async (req, res) => {
+        let { min, max, sort, title, page, per_page } = req.body;
+
+        let   keys       = Object.keys(req.body),
+              state      = keys.filter(key => key.startsWith('state_')).map(key => key.replace('state_', '')),
+              categories = keys.filter(key => key.startsWith('cat_')).map(key => key.replace('cat_', ''));
+
+        title    = !title || title === '*' ? '.*' : title;
+        min      = Number(min) || 1;
+        max      = Number(max) || 9999999;
+        page     = parseInt(page) || 1;
+        per_page = parseInt(per_page) || 10;
+
+
+        if (state.length === 0) state = /.*/i;
+        if (categories.length === 0) categories = /.*/i;
+
+        if (categories)
+        switch(sort) {
+            case 'alfabetycznie':
+                sort = [ 'title', 1];
+                break;
+            case 'tanie':
+                sort = [ 'price.start_price', 1 ];
+                break;
+            case 'drogie':
+                sort = [ 'price.start_price', -1];
+                break
+            default:
+                sort = null;
+        }
+
+        const mongo_query = {
+            _user: { $ne: currentUserId(req) },
+            title: { 
+                $regex: title, $options: 'i' 
+            }, 
+            'price.start_price': { $lte: max, $gte: min },
+            'categories.sub': { $in: categories }, 
+            ended: { $ne: true }
+        };
+
+        if (state) {
+            mongo_query['attributes'] = { $elemMatch: { name: 'Stan', value: { $in: state } } };
+        }
+
+        const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
+        const options = { skip: (page-1) * per_page, limit: per_page };
+        
+        if (sort) {
+            options.sort = { [sort[0]]: sort[1] };
+        }
+
+        const count = await Auction.countDocuments(mongo_query);
+        const auctions = await Auction.find(mongo_query, projection,options).lean();
+
+        await checkIfLiked(auctions, req);
+        auctions.push(Math.ceil(count / per_page));
+
+        res.send(auctions);
+    });
+
     app.get('/auction/get_all/:page/:per_page', async (req, res) => {
         const page = parseInt(req.params.page);
         const per_page = parseInt(req.params.per_page) || 10;

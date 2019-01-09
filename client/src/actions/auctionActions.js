@@ -33,6 +33,11 @@ export const fetchFrontPageAuctions = () => async dispatch => {
 	dispatch({ type: FETCH_AUCTIONS, payload: res.data });
 }
 
+export const filterAuctions = formData => async dispatch => {
+	const res = await axios.post('/auction/filter', formData);
+	dispatch({ type: FETCH_AUCTIONS, payload: res.data });
+}
+
 export const fetchAuctions = () => async dispatch => {
     const res = await axios.get('/auction/get_all');
     dispatch({ type: FETCH_AUCTIONS, payload: res.data });

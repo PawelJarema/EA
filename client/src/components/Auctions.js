@@ -53,6 +53,77 @@ function auctionPath(auction) {
     return `/aukcje/${title}/${auction._id}`;
 }
 
+class FilteredList extends Component {
+    componentWillReceiveProps(props) {
+        if (props.auctions) {
+            if (typeof props.auctions[props.auctions.length - 1] === 'number') {
+                this.props.setPages(props.auctions.pop());
+                applyToAuctions(auction => auction.style.opacity = 1);
+            }
+        }
+    }
+
+    render() {
+        const { user, page, pages, setPage } = this.props,
+            auctions = this.props.auctions;
+
+        return (
+            <div className="Filtered AuctionList">
+                {
+                    pages > 1 && auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
+                }
+                { 
+                    !auctions
+                    ?
+                    <Progress />
+                    :
+                    auctions.length > 0 
+                    ?
+                    auctions.map((auction, i) => {
+                        return (
+                            <div key={ auction.title + '_' + i } className="auction">
+                                <div className="image-wrapper">
+                                    {
+                                        auction.photos ? <Link to={auctionPath(auction)}><RawImage data={auction.photos[0]} /></Link> : <div className="no-image"></div>
+                                    }
+                                </div>
+                                <div className="text">
+                                    <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
+                                    <div className="short-description">{auction.shortdescription}</div>
+                                    <p><span className="price">Aktualna cena:</span> <span className="value">{ PriceHelper.write(auction.price.current_price || auction.price.start_price) }</span></p>
+                                    <div><span className="time-span">do końca { AuctionEndHelper(auction.date) }</span></div>
+                                    <div className="actions">
+                                        <div>
+                                            <Link to={auctionPath(auction)}><button className="standard-button">Zobacz</button></Link>
+                                            <Link to={auctionPath(auction)}><button>Licytuj</button></Link>
+                                            <LikeAuction user={user} auction={auction} />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        )
+                    })
+                    :
+                    (
+                        <div className="no-result">
+                            <div>
+                                <i className="material-icons">folder_open</i>
+                                <h1>Nic nie znalazłem.</h1>
+                                <p>Skorzystaj z wyszukiwania zaawansowanego<br /> albo spróbuj pnownie za jakiś czas.</p>
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    pages > 1 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
+                }
+            </div>
+        );
+    }
+}
+
+
 class AuctionBids extends Component {
     render() {
         const { user, auction, bidders } = this.props;
@@ -1083,7 +1154,7 @@ class AuctionList extends Component {
                                     <div className="actions">
                                         <div>
                                             <Link to={auctionPath(auction)}><button className="standard-button">Zobacz</button></Link>
-                                            <button>Licytuj</button>
+                                            <Link to={auctionPath(auction)}><button>Licytuj</button></Link>
                                             <LikeAuction user={user} auction={auction} />
                                         </div>
                                     </div>
@@ -1578,8 +1649,9 @@ BuyCredits = connect(mapTechBreakStatesToProps, przelewy24Actions)(BuyCredits);
 Pay = connect(mapOtherUserStateToProps, {...otherUserActions, ...przelewy24Actions})(Pay);
 FrontPage = connect(mapAuctionsStateToProps, auctionActions)(FrontPage);
 CreateUpdateAction = connect(mapAuctionsUserAndCategoryStateToProps, {...profileActions, ...auctionActions})(CreateUpdateAction);
+FilteredList = connect(mapAuctionsAndUserStateToProps, auctionActions)(FilteredList);
 AuctionList = connect(mapAuctionsAndUserStateToProps, auctionActions)(AuctionList);
 MyAuctionList = connect(mapMyAuctionsUserAndExportedStateToProps, {...auctionActions, ...myAuctionActions, ...importExportActions})(MyAuctionList);
 AuctionDetails = connect(mapAuctionsPhotosUserAndOtherUserStateToProps, {...auctionActions, ...photosActions, ...otherUserActions})(AuctionDetails);
 
-export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage };
+export { CreateUpdateAction, AuctionList, MyAuctionList, AuctionDetails, FrontPage, FilteredList, applyToAuctions };

@@ -11,10 +11,11 @@ import * as countActions from '../actions/statisticActions';
 import * as techBreakActions from '../actions/techBreakActions';
 import * as cookieActions from '../actions/cookieActions';
 
-import { AuctionList, MyAuctionList, AuctionDetails, FrontPage } from './Auctions';
+import { AuctionList, MyAuctionList, AuctionDetails, FrontPage, FilteredList } from './Auctions';
 import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery, ProfileLinks, MyOpinions, Invoices } from './Profile';
 import { AdminPanel, TechBreak } from './Admin';
+import Filters from './Filters';
 import Progress from './Progress';
 import Chat from './Chat';
 
@@ -263,7 +264,7 @@ class Breadcrumbs extends Component {
                 {
                     current_path.filter(frag => frag.link.length).map(
                         (frag, index) => (
-                            <span key={frag}>
+                            <span key={"crumb_" + index}>
                                 {
                                     index < current_path.length - 1 ? (
                                         <Link to={ '/' + current_path.slice(1, index + 1).map(p => p.url).join('/') }>
@@ -455,13 +456,35 @@ class AdvancedSearch extends Component {
     }
 }
 
-const Test = () => <div>Test</div>;
+// <AdvancedSearch match={ this.props.match } />
 class AuctionListSearch extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { page: 1, pages: 1, per_page: 10 };
+
+        this.setPage = this.setPage.bind(this);
+        this.setPages = this.setPages.bind(this);
+    }
+
+    setPage(page) {
+        this.setState({ page });
+    }
+
+    setPages(pages) {
+        if (pages >= this.state.page) {
+            this.setState({ pages });
+        } else {
+            this.setState({ page: pages, pages });
+        }
+    }
+
     render() {
+        const { page, pages, per_page } = this.state;
+
         return (
             <div className="AuctionListSearch">
-                <AdvancedSearch match={ this.props.match } />
-                <AuctionList match={ this.props.match } />
+                <Filters match={ this.props.match } page={page} pages={pages} per_page={per_page}/>
+                <FilteredList page={page} pages={pages} setPage={this.setPage} setPages={this.setPages} />
             </div>
         );
     }
@@ -581,7 +604,7 @@ class App extends Component {
                     <div className="main-container">
                             <CookieMessage cookies={cookies} />
                             <Route exact path="/" component={ FrontPage } />
-                            <Route exact path="/aukcje" component={ AuctionListSearchClosed } />
+                            <Route exact path="/aukcje" component={ AuctionListSearch } />
                             <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
                             <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
                             <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
