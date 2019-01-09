@@ -67,9 +67,9 @@ class Filters extends Component {
 				const main = categories[i];
 
 				if (check_all) {
-					main.subcategories.map(sub => { this.check(sub.name); console.log(sub.name) });
+					main.subcategories.map(sub => { this.check(sub.name); console.log(sub.name, true) });
 				} else {
-					main.subcategories.map(sub => { if(this.isChecked(sub.name)) this.check(sub.name); });
+					main.subcategories.map(sub => { if(this.isChecked(sub.name)) this.check(sub.name, true); });
 					const checked_subcat = main.subcategories.filter(sub => sub.name === category);
 
 					if (main.name === category || checked_subcat.length) {
