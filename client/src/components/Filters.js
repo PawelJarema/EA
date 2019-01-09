@@ -66,18 +66,22 @@ class Filters extends Component {
 			if (category !== this.props.match.params.category) {
 				for (let i = 0; i < categories.length; i++) {
 					const main = categories[i];
+					console.log(main.name);
 
 					if (check_all) {
-						main.subcategories.map(sub => { if (!this.isChecked(sub.name)) this.check(sub.name, true) });
+						for (let c = 0; c < main.subcategories.length; c++) {
+							const name = main.subcategories[c].name;
+							if (this.state.checked.indexOf(name) === -1)
+								this.setState(prev => ({ checked: prev.checked.concat([name])}));
+						}
 						if (this.isHidden(main.name)) this.hide(main.name);
 					} else {
-						main.subcategories.map(sub => { if (this.isChecked(sub.name)) this.check(sub.name, true) });
 						const checked_subcat = main.subcategories.filter(sub => sub.name === category);
 
 						if (main.name === category || checked_subcat.length) {
 							if (checked_subcat.length) {
 								const name = checked_subcat[0].name;
-								this.check(name, true);
+								this.setState({ checked: [name] });
 							}
 
 							if (this.isHidden(main.name))
