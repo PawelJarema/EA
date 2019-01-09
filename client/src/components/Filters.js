@@ -27,7 +27,7 @@ class Filters extends Component {
 			} else {
 				return { checked: prev.checked.concat([name]) }
 			}
-		}, () => if (update) this.filterList());
+		}, () => { if (update) this.filterList() });
 
 		this.handleInput = this.handleInput.bind(this);
 		this.filterList = this.filterList.bind(this);
