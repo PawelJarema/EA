@@ -1,0 +1,44 @@
+.filters .main-category {
+	margin-bottom: 5px; margin-top: 10px;
+	cursor: pointer;
+}
+.filters .subcategory {
+	font-weight: 100;
+}
+.filters input[type="checkbox"] {
+	display: inline;
+	width: auto !important;
+	vertical-align: middle;
+	margin-left: 9px; margin-right: 5px !important; margin-top: -3px;
+}
+
+.filters i.category {
+	margin-top: -5px;
+	margin-left: -5px;
+	opacity: 0.5;
+}
+
+.filters input:checked {
+	opacity: .8;
+}
+.filters .form-subsection div {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.filters .form-subsection > div {
+	padding: 10px !important;
+}
+.filters .form-subsection div:not(:first-child) .main-category {
+	margin-top: 10px !important;
+	padding-top: 0 !important;
+}
+.filters .form-subsection .main-category {
+	margin-bottom: 7px !important;
+}
+.filters .form-subsection .subcategory {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+.filters h3 {
+	margin-bottom: 10px !important;
+}
