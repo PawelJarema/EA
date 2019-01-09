@@ -69,6 +69,7 @@ class Filters extends Component {
 				if (check_all) {
 					main.subcategories.map(sub => { this.check(sub.name); console.log(sub.name) });
 				} else {
+					main.subcategories.map(sub => { if(this.isChecked(sub.name)) this.check(sub.name); });
 					const checked_subcat = main.subcategories.filter(sub => sub.name === category);
 
 					if (main.name === category || checked_subcat.length) {
@@ -91,6 +92,8 @@ class Filters extends Component {
 				this.setState({ title: query });
 				this.filterList();
 			} else if (category && category !== this.props.match.params.category) {
+				this.filterList();
+			} else if (check_all) {
 				this.filterList();
 			}
 		}
