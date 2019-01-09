@@ -79,7 +79,10 @@ class Filters extends Component {
 					const checked_subcat = main.subcategories.filter(sub => sub.name === category);
 
 					if (main.name === category || checked_subcat.length) {
-						this.check(checked_subcat[0].name);
+						
+						if (checked_subcat.length) 
+							this.check(checked_subcat[0].name);
+						
 						if (this.isHidden(main.name)) {
 							this.hide(main.name);
 						}
