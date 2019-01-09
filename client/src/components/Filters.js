@@ -93,8 +93,6 @@ class Filters extends Component {
 				this.filterList();
 			} else if (category && category !== this.props.match.params.category) {
 				this.filterList();
-			} else if (check_all) {
-				this.filterList();
 			}
 		}
 	}
