@@ -72,13 +72,15 @@ class Filters extends Component {
 					const checked_subcat = main.subcategories.filter(sub => sub.name === category);
 
 					if (main.name === category || checked_subcat.length) {
-						
-						if (checked_subcat.length) 
-							this.check(checked_subcat[0].name, true);
+						if (checked_subcat.length) {
+							const sub = checked_subcat[0].name;
 
-						if (this.isHidden(main.name)) {
-							this.hide(main.name);
+							if (!this.isChecked(sub))
+								this.check(checked_subcat[0].name, true);
 						}
+
+						if (this.isHidden(main.name))
+							this.hide(main.name);
 					} else {
 						this.hide(main.name);
 					}
@@ -89,7 +91,7 @@ class Filters extends Component {
 				this.setState({ title: query });
 				this.filterList();
 			} else if (category && category !== this.props.match.params.category) {
-				
+				this.filterList();
 			}
 		}
 	}
