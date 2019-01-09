@@ -56,14 +56,12 @@ class Filters extends Component {
 
 			let check_all 	 			= false;
 
-			if (query && query !== this.props.match.params.query) {
+			if (query && (query !== this.props.match.params.query || query !== this.state.title)) {
 				this.setState({ title: query });
 				this.filterList();
 			} else if (category && category !== this.props.match.params.category) {
 				this.filterList();
 			}
-
-			
 
 			if (!categories)
 				return;
@@ -71,7 +69,6 @@ class Filters extends Component {
 			if (category === 'Kategorie' || category === 'Szukaj Sprzedawcy') {
 				check_all = true;
 			}
-
 
 			for (let i = 0; i < categories.length; i++) {
 				const main = categories[i];
