@@ -61,39 +61,40 @@ class Filters extends Component {
 
 			if (category === 'Kategorie' || category === 'Szukaj Sprzedawcy') {
 				check_all = true;
-			}
+			} 
 
-			for (let i = 0; i < categories.length; i++) {
-				const main = categories[i];
+			if (category !== this.props.match.params.category) {
+				for (let i = 0; i < categories.length; i++) {
+					const main = categories[i];
 
-				if (check_all) {
-					main.subcategories.map(sub => { this.check(sub.name, true) });
-				} else {
-					main.subcategories.map(sub => { if(this.isChecked(sub.name)) this.check(sub.name, true); });
-					const checked_subcat = main.subcategories.filter(sub => sub.name === category);
-
-					if (main.name === category || checked_subcat.length) {
-						if (checked_subcat.length) {
-							const sub = checked_subcat[0].name;
-
-							if (!this.isChecked(sub))
-								this.check(checked_subcat[0].name, true);
-						}
-
-						if (this.isHidden(main.name))
-							this.hide(main.name);
+					if (check_all) {
+						main.subcategories.map(sub => { if (!this.isChecked(sub.name)) this.check(sub.name, true) });
+						if (this.isHidden(main.name)) this.hide(main.name);
 					} else {
-						this.hide(main.name);
+						main.subcategories.map(sub => { if (this.isChecked(sub.name)) this.check(sub.name, true) });
+						const checked_subcat = main.subcategories.filter(sub => sub.name === category);
+
+						if (main.name === category || checked_subcat.length) {
+							if (checked_subcat.length) {
+								const name = checked_subcat[0].name;
+								this.check(name, true);
+							}
+
+							if (this.isHidden(main.name))
+								this.hide(main.name);
+						} else {
+							if (!this.isHidden(main.name)) this.hide(main.name);
+						}
 					}
 				}
 			}
 
-			if (query && (query !== this.props.match.params.query || query !== this.state.title)) {
+			if (query !== this.props.match.params.query && query !== this.state.title) {
 				this.setState({ title: query });
 				this.filterList();
-			} else if (category && category !== this.props.match.params.category) {
+			} else if (category !== this.props.match.params.category) {
 				this.filterList();
-			}
+			} 
 		}
 	}
 
