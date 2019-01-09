@@ -59,8 +59,6 @@ class Filters extends Component {
 			if (query && (query !== this.props.match.params.query || query !== this.state.title)) {
 				this.setState({ title: query });
 				this.filterList();
-			} else if (category && category !== this.props.match.params.category) {
-				this.filterList();
 			}
 
 			if (!categories)
@@ -82,7 +80,7 @@ class Filters extends Component {
 						
 						if (checked_subcat.length) 
 							this.check(checked_subcat[0].name);
-						
+
 						if (this.isHidden(main.name)) {
 							this.hide(main.name);
 						}
