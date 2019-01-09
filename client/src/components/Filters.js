@@ -20,14 +20,14 @@ class Filters extends Component {
 				return { hidden: prev.hidden.concat([name]) }
 			}
 		});
-		this.check = name => this.setState(prev => {
+		this.check = (name, update) => this.setState(prev => {
 			if (this.isChecked(name)) {
 				const i = prev.checked.indexOf(name);
 				return { checked: prev.checked.slice(0, i).concat(prev.checked.slice(i + 1)) }
 			} else {
 				return { checked: prev.checked.concat([name]) }
 			}
-		}, () => this.filterList());
+		}, () => if (update) this.filterList());
 
 		this.handleInput = this.handleInput.bind(this);
 		this.filterList = this.filterList.bind(this);
@@ -59,6 +59,8 @@ class Filters extends Component {
 			if (query && (query !== this.props.match.params.query || query !== this.state.title)) {
 				this.setState({ title: query });
 				this.filterList();
+			} else if (category && category !== this.props.match.params.category) {
+				this.filterList();
 			}
 
 			if (!categories)
@@ -79,7 +81,7 @@ class Filters extends Component {
 					if (main.name === category || checked_subcat.length) {
 						
 						if (checked_subcat.length) 
-							this.check(checked_subcat[0].name);
+							this.check(checked_subcat[0].name, false);
 
 						if (this.isHidden(main.name)) {
 							this.hide(main.name);
