@@ -1454,14 +1454,14 @@ class CreateUpdateAction extends Component {
        const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
        const deliveries = user.deliveries && user.deliveries.length;
 
-       // if (!update && !user.balance.credits) {
-       //      return (
-       //          <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
-       //              <ProfileLinks active="addauction" />
-       //              <BuyCredits user={user} />
-       //          </div>
-       //      );
-       // }
+       if (!update && !user.balance.credits) {
+            return (
+                <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
+                    <ProfileLinks active="addauction" />
+                    <BuyCredits user={user} />
+                </div>
+            );
+       }
 
        return (
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
