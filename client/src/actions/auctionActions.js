@@ -48,6 +48,10 @@ export const fetchAuction = (id) => async dispatch => {
 	dispatch({ type: FETCH_AUCTION, payload: res.data });
 }
 
+export const clearAuctions = () => async dispatch => {
+	dispatch({ type: FETCH_AUCTIONS, payload: null });
+}
+
 export const clearAuction = () => async dispatch => {
 	dispatch({ type: FETCH_AUCTIONS, payload: false });
 	dispatch({ type: FETCH_AUCTION, payload: false });

@@ -73,12 +73,22 @@ class FilteredList extends Component {
                     pages > 1 && auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
                 }
                 { 
-                    !auctions
+                    (auctions === null || auctions && !auctions.map)
                     ?
                     <Progress />
                     :
-                    auctions.length > 0 
+                    (auctions === false || auctions.length === 0)
                     ?
+                    (
+                        <div className="no-result">
+                            <div>
+                                <i className="material-icons">folder_open</i>
+                                <h1>Nic nie znalazłem.</h1>
+                                <p>Skorzystaj z wyszukiwania zaawansowanego<br /> albo spróbuj pnownie za jakiś czas.</p>
+                            </div>
+                        </div>
+                    )
+                    :
                     auctions.map((auction, i) => {
                         return (
                             <div key={ auction.title + '_' + i } className="auction">
@@ -104,16 +114,6 @@ class FilteredList extends Component {
                             </div>
                         )
                     })
-                    :
-                    (
-                        <div className="no-result">
-                            <div>
-                                <i className="material-icons">folder_open</i>
-                                <h1>Nic nie znalazłem.</h1>
-                                <p>Skorzystaj z wyszukiwania zaawansowanego<br /> albo spróbuj pnownie za jakiś czas.</p>
-                            </div>
-                        </div>
-                    )
                 }
                 {
                     pages > 1 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
