@@ -164,11 +164,13 @@ class AuctionBids extends Component {
                                 </tbody>
                             </table>
                         </div>
-                    ) : (
+                    ) 
+                    : 
+                    (
                         <div className="no-result">
                             <i className="material-icons">gavel</i>
-                            <h1>Nikt nie licytuje</h1>
-                            <p>Podbij stawkę minimalną i bądź pierwszy!</p>
+                            <h1>{ (auction.ended ? 'Nikt nie zalicytował' : 'Nikt nie licytuje') }</h1>
+                            <p>{ (auction.ended ? '' : 'Podbij stawkę minimalną i bądź pierwszy!') }</p> 
                         </div>
                     )
                 }
@@ -446,7 +448,7 @@ class FrontPage extends Component {
 
 class RawImage extends Component {
     componentDidMount() {
-        setTimeout(() => this.imgRef.style.opacity = 1, 310);
+        setTimeout(() => { if (this.imgRef) this.imgRef.style.opacity = 1; } , 310);
     }
 
     render() {
@@ -1239,7 +1241,7 @@ class CreateUpdateAction extends Component {
        const { id } = this.props.match.params;
 
        if (update) {
-            this.props.fetchAuction(id);
+            this.props.editAuction(id);
        }
    }
 
@@ -1248,8 +1250,6 @@ class CreateUpdateAction extends Component {
                 return;
 
         if (props.auctions) {
-            
-
             const auction = props.auctions;
             const queryInput = query => document.querySelector('input' + query);
             const querySelect = query => document.querySelector('select' + query);
@@ -1454,14 +1454,14 @@ class CreateUpdateAction extends Component {
        const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
        const deliveries = user.deliveries && user.deliveries.length;
 
-       if (!user.balance.credits) {
-            return (
-                <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
-                    <ProfileLinks active="addauction" />
-                    <BuyCredits user={user} />
-                </div>
-            );
-       }
+       // if (!update && !user.balance.credits) {
+       //      return (
+       //          <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
+       //              <ProfileLinks active="addauction" />
+       //              <BuyCredits user={user} />
+       //          </div>
+       //      );
+       // }
 
        return (
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
@@ -1478,7 +1478,7 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">title</i>Tytuł</legend>
                         <p>
-                            <label for="title" className="required">Tytuł aukcji</label>
+                            <label htmlFor="title" className="required">Tytuł aukcji</label>
                             <input name="title" type="string" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[0] }</span>
                         </p>
@@ -1503,18 +1503,18 @@ class CreateUpdateAction extends Component {
                     </fieldset>
        
                     <fieldset>
-                        <legend><i className="material-icons">monetization_on</i>Cena</legend>
+                        <legend><span className="lettr-icon">PLN</span>Cena</legend>
                         <p>
-                            <label for="start_price" className="required">Cena wywoławcza</label>
+                            <label htmlFor="start_price" className="required">Cena wywoławcza</label>
                             <input name="start_price" type="number" step="0.01"  onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>
-                            <label for="buy_now_price">Cena "kup teraz"</label>
+                            <label htmlFor="buy_now_price">Cena "kup teraz"</label>
                             <input name="buy_now_price" type="number" step="0.01" />
                         </p>
                         <p>
-                            <label for="min_price">Cena minimalna</label>
+                            <label htmlFor="min_price">Cena minimalna</label>
                             <input name="min_price" type="number" step="0.01" />
                         </p>
                         <p className="checkbox">
@@ -1529,7 +1529,7 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">access_time</i>Czas trwania</legend>
                         <p>
-                            <label for="duration" className="required">Ilość dni</label>
+                            <label htmlFor="duration" className="required">Ilość dni</label>
                             <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[2] }</span>
                         </p>
@@ -1545,7 +1545,7 @@ class CreateUpdateAction extends Component {
                             </span>
                         </p>
                         <p>
-                            <label for="quantity" className="required">Ilość sztuk</label>
+                            <label htmlFor="quantity" className="required">Ilość sztuk</label>
                             <input name="quantity" type="number" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[3] }</span>
                         </p>
@@ -1558,6 +1558,7 @@ class CreateUpdateAction extends Component {
 
                     <fieldset>
                         <legend><i className="material-icons">photo</i>Zdjęcia</legend>
+                        <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie</label></p>
                         <Dropzone className="drag-and-drop-images" 
                             onDrop={ this.onDrop }
                             accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
@@ -1579,7 +1580,7 @@ class CreateUpdateAction extends Component {
                     <fieldset>
                         <legend><i className="material-icons">description</i>Opis</legend>
                         <p>
-                            <label for="shortdescription" className="required">Opis skrócony</label>
+                            <label htmlFor="shortdescription" className="required">Opis skrócony</label>
                             <input name="shortdescription" type="text" onInput={this.validate}/>
                             <span className="validation-message">{ this.state.message[4] }</span>
                         </p>

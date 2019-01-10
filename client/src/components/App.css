@@ -346,9 +346,19 @@ nav {
 footer {
     width: 100%; 
     margin-top: 30px;
+}
+.footer-links {
+    line-height: 40px;
+    display: flex;
+    justify-content: center;
+}
+.footer-links a {
+    padding: 0 10px;
+}
+.footer-links a:hover {
+    background: #eee;
 
 }
-
 .category-links {
     
 }

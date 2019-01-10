@@ -155,12 +155,40 @@ module.exports = app => {
     });
 
     app.post('/auction/my_bids/:page/:per_page', requireLogin, async (req, res) => {
-        const { page, per_page } = req.params;
-        const mode = req.body.mode;
+        const { page, per_page } = req.params,
+                mode             = req.body.mode,
+                user_id          = req.user._id;
 
-        const query = { bids: { $elemMatch: { _user: ObjectId(req.user._id) }}, ended: (mode === 'ended' ? true : ({ $ne: true })) };
+
+        let query;
+        if (mode === 'ended') {
+            query = { 
+                $or: [
+                    {
+                        $and: [
+                            { bids: { $elemMatch: { _user: user_id }}},
+                            { ended: (mode === 'ended' ? true : ({ $ne: true })) }
+                        ]
+                    },
+                    { 
+                        $or: [
+                            { buynowpayees: user_id },
+                            { payees: user_id }
+                        ] 
+                    }
+                ],
+                
+            };
+        } else {
+            query = { 
+                bids: { $elemMatch: { _user: user_id }}, 
+                ended: (mode === 'ended' ? true : ({ $ne: true }))
+            };
+        }
         const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
+
+        console.log(query);
 
         const auctions = await Auction.find(
             query, 
@@ -377,6 +405,27 @@ module.exports = app => {
         }
      
         await auction.save();
+    });
+
+    app.get('/auction/edit/:id', requireLogin, async (req, res) => {
+        const id = req.params.id;
+        let auction = await Auction.findOne(
+            { _id: ObjectId(id) }, 
+            {}
+        ).lean();
+        const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
+        const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
+
+        if (req.user) {
+            const liked = await Like.findOne({ _user: req.user._id, _auction: auction._id });
+            auction.liked = Boolean(liked);
+        }
+
+        let bidders_object = {};
+        bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+        auction.bidders = bidders_object;
+  
+        res.send(auction);
     });
 
     app.get('/auction/get/:id', async (req, res) => {
@@ -746,7 +795,17 @@ module.exports = app => {
             await auction
                 .save()
                 .then(
-                    doc => { req.session.message = 'Pomyślnie dodano aukcję'; auction = doc; res.send({}); },
+                    async doc => { 
+                        req.session.message = 'Pomyślnie dodano aukcję'; 
+                        auction = doc; 
+
+                        const user = req.user;
+                        const { credits } = user.balance;
+                        user.balance.credits = credits ? (+credits - 1) : 4;
+                        await user.save();
+               
+                        res.send({}); 
+                    },
                     (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
                 );
         }
@@ -759,7 +818,7 @@ module.exports = app => {
 
         let progress = 0;
 
-        await promises.map(promise => {
+        promises.map(promise => {
             const type = promise.type;
             promise.data.then(buffer => {
                 Imagemin.buffer(buffer, {
@@ -779,12 +838,5 @@ module.exports = app => {
                 });
             });
         });
-
-        if (!update) {
-            const user = await User.findOne({ _id: ObjectId(req.user._id) });
-            const { credits } = user.balance;
-            user.balance.credits = credits ? (+credits - 1) : 4;
-            await user.save();
-        }
     });
 };

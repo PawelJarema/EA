@@ -111,7 +111,7 @@ module.exports = app => {
             res.redirect('/konto/zaloguj');
         }
 
-        const temp_password = randomPass(30);
+        const temp_password = randomPass(10);
         await bcrypt.hash(temp_password, saltRounds, async (err, hash) => {
             if (err) {
                 req.session.error = 'Nastąpił nieoczekiwany błąd. Spróbuj później';

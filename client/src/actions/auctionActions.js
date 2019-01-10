@@ -43,6 +43,11 @@ export const fetchAuctions = () => async dispatch => {
     dispatch({ type: FETCH_AUCTIONS, payload: res.data });
 }
 
+export const editAuction = (id) => async dispatch => {
+	const res = await axios.get('/auction/edit/' + id);
+	dispatch({ type: FETCH_AUCTION, payload: res.data });
+}
+
 export const fetchAuction = (id) => async dispatch => {
 	const res = await axios.get('/auction/get/' + id);
 	dispatch({ type: FETCH_AUCTION, payload: res.data });

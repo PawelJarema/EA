@@ -338,6 +338,17 @@ class CategoryLinks extends Component {
     }
 }
 
+class FooterLinks extends Component {
+    render() {
+        return (
+            <div className="footer-links">
+                <Link to="/regulamin">Regulamin</Link>
+                <Link to="/kontakt">Kontakt</Link>
+            </div>
+        );
+    }
+}
+
 class FooterBar extends Component {
     render() {
         return (
@@ -633,6 +644,7 @@ class App extends Component {
 
                     <footer>
                         <CategoryLinks />
+                        <FooterLinks />
                         <FooterBar />
                     </footer>
 

@@ -198,6 +198,23 @@ nav .user-links .search-mobile {
 		margin-bottom: 20px;
 	}
 
+	nav .user-links.open > .link:last-child img {
+		display: none;
+	}
+	nav .user-links.open .dropdown {
+		opacity: 1;
+		width: 169px; top: 0px; right: -85px;
+		pointer-events: auto;
+		text-align: center;	
+	}
+	nav .user-links.open .dropdown a {
+		padding-left: 5px;
+		text-align: left;
+	}
+	nav .user-links.open .dropdown a:after {
+		float: left;
+		margin-right: 9px;
+	}
 	nav .search-auctions {
 		position: fixed;
 		top: var(--nav-h);

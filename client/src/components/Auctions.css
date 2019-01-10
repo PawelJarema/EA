@@ -368,6 +368,14 @@
 
     transform: translateY(-50%);
 }*/
+.AuctionDetails blockquote {
+    border-left: 5px solid #eee;
+    color: #666;
+    font-family: 'Hoefler Text','Georgia',serif;
+    font-style: italic;
+    margin: 16px 0;
+    padding: 10px 20px;
+}
 .AuctionDetails .html-description img {
     height: auto;
 }
@@ -905,4 +913,11 @@
 .AuctionDetails .tab-view .extra-tab .no-result {
     top: 75%;
     left: 50%;
+}
+.lettr-icon {
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 5px;
+
 }

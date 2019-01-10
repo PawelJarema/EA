@@ -148,7 +148,6 @@ module.exports = app => {
 						res.send(false);
 						return;
 					}
-
 			});
 		} else {
 			req.session.error = 'Błąd pliku. Spróbuj ponownie';

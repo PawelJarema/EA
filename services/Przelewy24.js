@@ -19,7 +19,7 @@ const 	shopID 		= keys.przelewy24Id,
 		};
 
 module.exports = function(mode) {
-	mode = mode || process.env.NODE_ENV;
+	mode = 'development' || mode || process.env.NODE_ENV;
 	switch (mode) {
 		case 'development':
 			break;
