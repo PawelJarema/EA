@@ -642,6 +642,21 @@ class App extends Component {
                             }
                     </div>
 
+                    <section className="advertising">
+                        <div className="four-column">
+                            <div className="column">
+                            </div>
+                            <div className="column">
+                            </div>
+                            <div className="column">
+                            </div>
+                            <div className="column">
+                            </div>
+                            <div className="column">
+                            </div>
+                        </div>
+                    </section>
+
                     <footer>
                         <CategoryLinks />
                         <FooterLinks />

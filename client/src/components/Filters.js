@@ -71,11 +71,11 @@ class Filters extends Component {
 					const main = categories[i];
 
 					if (check_all) {
-						for (let c = 0; c < main.subcategories.length; c++) {
-							const name = main.subcategories[c].name;
-							if (this.state.checked.indexOf(name) === -1)
-								this.setState(prev => ({ checked: prev.checked.concat([name])}));
-						}
+						// for (let c = 0; c < main.subcategories.length; c++) {
+						// 	const name = main.subcategories[c].name;
+						// 	if (this.state.checked.indexOf(name) === -1)
+						// 		this.setState(prev => ({ checked: prev.checked.concat([name])}));
+						// }
 						if (this.isHidden(main.name)) this.hide(main.name);
 					} else {
 						const checked_subcat = main.subcategories.filter(sub => sub.name === category);

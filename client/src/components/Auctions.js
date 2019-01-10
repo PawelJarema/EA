@@ -27,6 +27,10 @@ import AuctionEndHelper from '../helpers/auctionEndHelper';
 import Progress from './Progress';
 import b64toBlob from 'b64-to-blob';
 
+function userName(user) {
+    return `${user.firstname} ${user.lastname}`.trim() || 'Anonim';
+}
+
 function applyToAuctions(funct) {
     const auctions = document.querySelectorAll('.AuctionList .auction');
     for (let i = 0; i < auctions.length; i++) {
@@ -333,7 +337,15 @@ class Pay extends Component {
 
                         <h1>Do zapłaty: { price + delivery_price } zł</h1>
                         {
-                            paySimple && <p><br/>Wykonaj teraz przelew na konto Sprzedawcy: <b>{ other_user.balance.account_number }</b> <br/> Następnie oznacz aukcję jako opłaconą.</p>
+                            paySimple && (<p>
+                                <br/>Wykonaj teraz przelew na konto Sprzedawcy: 
+                                <br/><br/>
+                                <b>{ userName(other_user) } { other_user.firm ? other_user.firm.firm_name : '' }</b>
+                                <br/>
+                                <b>{ other_user.balance.account_number }</b>
+                                <br/><br/>
+                                Następnie oznacz aukcję jako opłaconą.
+                            </p>)
                         }
                     </Modal>
                 </div>
