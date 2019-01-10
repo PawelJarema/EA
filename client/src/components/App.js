@@ -87,6 +87,7 @@ class SearchField extends Component {
         const element = event.target;
         const value = element.innerHTML === 'Wszystkie kategorie' ? 'Kategorie' : element.innerHTML;
         
+        this.props.setCategory(value);
         this.setState({ category: value });
     }
     
@@ -94,6 +95,7 @@ class SearchField extends Component {
         const input = event.target;
         const query = input.value;
 
+        this.props.setQuery(query);
         this.setState({ query });
     }
 
@@ -219,7 +221,7 @@ class Navi extends Component {
         return (
             <nav>
                 <Logo />
-                <SearchField open={search} />
+                <SearchField open={search} setQuery={this.props.setQuery} setCategory={this.props.setCategory}/>
                 <MobileMenu open={mobile} clickHandler={this.clickHandler} />
                 <UserLinks open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} toggleMenu={this.clickHandler}/>
             </nav>
@@ -491,10 +493,11 @@ class AuctionListSearch extends Component {
 
     render() {
         const { page, pages, per_page } = this.state;
+        const { user, categories, query, category } = this.props;
 
         return (
             <div className="AuctionListSearch">
-                <Filters match={ this.props.match } page={page} pages={pages} per_page={per_page}/>
+                <Filters match={ this.props.match } page={page} pages={pages} per_page={per_page} query={query} category={category} user={user} categories={categories}/>
                 <FilteredList page={page} pages={pages} setPage={this.setPage} setPages={this.setPages} />
             </div>
         );
@@ -564,12 +567,25 @@ class CookieMessage extends Component {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
+        search_query: '',
+        search_category: '',
         endpoint: process.env.REACT_APP_CHAT_URL, 
         socket: null 
     };
+
+    this.setQuery = this.setQuery.bind(this);
+    this.setCategory = this.setCategory.bind(this);
   }
   
+  setQuery(search_query) {
+    this.setState({ search_query })
+  }
+
+  setCategory(search_category) {
+    this.setState({ search_category });
+  }
+
   componentWillReceiveProps(props) {
     if (props.flash) {
         setTimeout(this.props.clearMessage, 5000);
@@ -594,7 +610,9 @@ class App extends Component {
 
   render() {
     const { socket } = this.state;
-    const { user, flash, tech_break, cookies } = this.props;
+    const { user, flash, tech_break, cookies, categories } = this.props;
+
+    const { search_query, search_category } = this.state;
 
     const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
@@ -608,7 +626,7 @@ class App extends Component {
             <BrowserRouter>
                 <div>
                     <header className="App-header" style={{ marginBottom: 30 }}>
-                        <Navi socket={ socket } />
+                        <Navi socket={ socket } setQuery={this.setQuery} setCategory={this.setCategory}/>
                         <Breadcrumbs />
                     </header>
             
@@ -616,8 +634,8 @@ class App extends Component {
                             <CookieMessage cookies={cookies} />
                             <Route exact path="/" component={ FrontPage } />
                             <Route exact path="/aukcje" component={ AuctionListSearch } />
-                            <Route exact path="/aukcje/szukaj/:category/:query" component={ AuctionListSearch } />
-                            <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" component={ AuctionListSearch } />
+                            <Route exact path="/aukcje/szukaj/:category/:query" render={props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} categories={categories} /> } />
+                            <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" render={props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} /> } categories={categories} />
                             <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route exact path="/aukcje/:title/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
@@ -694,8 +712,8 @@ function mapUserStateToProps({ user }) {
 function mapUserAndFlashStatesToProps({ user, flash }) {
     return { user, flash };
 }
-function mapUserFlashTechBreakAndCookiesStatesToProps({ user, flash, tech_break, cookies }) {
-    return { user, flash, tech_break, cookies };
+function mapUserFlashTechBreakAndCookiesStatesToProps({ user, flash, tech_break, cookies, categories }) {
+    return { user, flash, tech_break, cookies, categories };
 }
 function mapCategoryStateToProps({ categories }) {
     return { categories };

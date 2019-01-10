@@ -474,18 +474,19 @@ module.exports = app => {
     });
 
     app.post('/auction/filter', upload.any(), async (req, res) => {
-        let { min, max, sort, title, page, per_page } = req.body;
+        let { seller, title, min, max, sort, page, per_page } = req.body;
 
         let   keys       = Object.keys(req.body),
               state      = keys.filter(key => key.startsWith('state_')).map(key => key.replace('state_', '')),
               categories = keys.filter(key => key.startsWith('cat_')).map(key => key.replace('cat_', ''));
+
+        let user = seller ? await findUserByNames(seller) : null;
 
         title    = !title || title === '*' ? '.*' : title;
         min      = Number(min) || 1;
         max      = Number(max) || 9999999;
         page     = parseInt(page) || 1;
         per_page = parseInt(per_page) || 10;
-
 
         if (state.length === 0) state = /.*/i;
         if (categories.length === 0) categories = /.*/i;
@@ -506,7 +507,7 @@ module.exports = app => {
         }
 
         const mongo_query = {
-            _user: { $ne: currentUserId(req) },
+            _user: ( user ? user._id : ({ $ne: currentUserId(req) })),
             title: { 
                 $regex: title, $options: 'i' 
             }, 
@@ -514,6 +515,8 @@ module.exports = app => {
             'categories.sub': { $in: categories }, 
             ended: { $ne: true }
         };
+
+        
 
         if (state) {
             mongo_query['attributes'] = { $elemMatch: { name: 'Stan', value: { $in: state } } };

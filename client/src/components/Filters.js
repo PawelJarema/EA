@@ -31,18 +31,68 @@ class Filters extends Component {
 
 		this.handleInput = this.handleInput.bind(this);
 		this.filterList = this.filterList.bind(this);
+		this.applyCategoryFilters = this.applyCategoryFilters.bind(this);
 	}
 
 	componentDidMount() {
-		if (this.props.match) {
-			this.setState({ title: this.props.match.params.query });
+		const { query, category, categories } = this.props;
+
+		if (category) {
+			this.applyCategoryFilters(category, categories);
 		}
-		this.filterList();
+
+		if (category !== 'Szukaj Sprzedawcy') {
+			this.setState({ title: query }, () => {
+				this.filterList();
+			});
+		} else {
+			this.filterList();
+		}
 	}
 
 	componentWillUnmount() {
 		if (this.filterListTimeout) {
 			clearTimeout(this.filterListTimeout);
+		}
+	}
+
+	applyCategoryFilters(category, categories) {
+		let check_all = false;
+
+		if (category === 'Szukaj Sprzedawcy') {
+			this.setState({ seller: this.props.query || '' });
+			return;
+		}
+
+		if (category === 'Kategorie') {
+			check_all = true;
+		} 
+
+		for (let i = 0; i < categories.length; i++) {
+			const main = categories[i];
+
+			if (check_all) {
+				// for (let c = 0; c < main.subcategories.length; c++) {
+				// 	const name = main.subcategories[c].name;
+				// 	if (this.state.checked.indexOf(name) === -1)
+				// 		this.setState(prev => ({ checked: prev.checked.concat([name])}));
+				// }
+				if (this.isHidden(main.name)) this.hide(main.name);
+			} else {
+				const checked_subcat = main.subcategories.filter(sub => sub.name === category);
+
+				if (main.name === category || checked_subcat.length) {
+					if (checked_subcat.length) {
+						const name = checked_subcat[0].name;
+						this.setState({ checked: [name] });
+					}
+
+					if (this.isHidden(main.name))
+						this.hide(main.name);
+				} else {
+					if (!this.isHidden(main.name)) this.hide(main.name);
+				}
+			}
 		}
 	}
 
@@ -57,52 +107,28 @@ class Filters extends Component {
 			const { category, query }   = props.match.params,
 				  { categories } 		= this.props;
 
-			let check_all 	 			= false;
-
 			if (!categories)
 				return;
 
-			if (category === 'Kategorie' || category === 'Szukaj Sprzedawcy') {
-				check_all = true;
-			} 
+			if (category !== this.props.match.params.category) {
+				this.applyCategoryFilters(category, categories);
+			}
 
-			if (category !== this.props.match.params.category || !this.firstRun) {
-				for (let i = 0; i < categories.length; i++) {
-					const main = categories[i];
-
-					if (check_all) {
-						// for (let c = 0; c < main.subcategories.length; c++) {
-						// 	const name = main.subcategories[c].name;
-						// 	if (this.state.checked.indexOf(name) === -1)
-						// 		this.setState(prev => ({ checked: prev.checked.concat([name])}));
-						// }
-						if (this.isHidden(main.name)) this.hide(main.name);
-					} else {
-						const checked_subcat = main.subcategories.filter(sub => sub.name === category);
-
-						if (main.name === category || checked_subcat.length) {
-							if (checked_subcat.length) {
-								const name = checked_subcat[0].name;
-								this.setState({ checked: [name] });
-							}
-
-							if (this.isHidden(main.name))
-								this.hide(main.name);
-						} else {
-							if (!this.isHidden(main.name)) this.hide(main.name);
-						}
-					}
-				}
-
-				if (!this.firstRun) {
-					this.firstRun = true;
-					this.filterList();
-					return;
+			if (query !== this.props.match.params.query || category !== this.props.match.params.category) {
+				if(category !== 'Szukaj Sprzedawcy') {
+					this.setState({ title: query }, () => this.filterList());
+				} else {
+					this.setState({ seller: query }, () => this.filterList());
 				}
 			}
 
 			if (query !== this.props.match.params.query) {
-				this.setState({ title: query }, () => this.filterList());
+				// if (this.props.category !== 'Szukaj Sprzedawcy') {
+				// 	this.setState({ title: query }, () => this.filterList());
+				// } else {
+				// 	this.setState({ seller: query }, () => this.filterList());
+				// }
+				
 			} else if (category !== this.props.match.params.category) {
 				this.filterList();
 			} 
@@ -144,13 +170,25 @@ class Filters extends Component {
             <div className="advanced-search filters">
                 <h3>Filtry</h3>
                 <form ref={(e) => this.formRef = e}>
+                	<div>
+                        <div className="label"><i className="material-icons">perm_identity</i>Sprzedawca</div>
+                        <p>
+                            <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="seller" type="text" value={this.state.seller} onChange={this.handleInput}/>
+                        </p>
+                    </div>
                     <div>
-                        <div className="label"><i className="material-icons">attach_money</i>Cena</div>
+                        <div className="label"><i className="material-icons">title</i>Tytuł</div>
+                        <p>
+                            <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="title" type="text" value={this.state.title} onChange={this.handleInput}/>
+                        </p>
+                    </div>
+                    <div>
+                        <div className="label"><span className="lettr-icon">PLN</span>Cena</div>
                         <p>
                             <input name="min" type="number" min="1" step="0.01" placeholder="od" value={this.state.min} onChange={this.handleInput}/>
                             <input name="max" type="number" min="1" step="0.02" placeholder="do" value={this.state.max} onChange={this.handleInput}/>
                         </p>
-                    </div>
+                    </div>    
                     <div>
                         <div className="label"><i className="material-icons">search</i>Stan</div>
                         <p>
@@ -172,12 +210,7 @@ class Filters extends Component {
                             <input name="sort" type="radio" value="alfabetycznie" checked={this.state.sort === 'alfabetycznie'} onChange={this.handleInput}/><span className="label">alfabetycznie</span>
                         </p>
                     </div>
-                    <div>
-                        <div className="label"><i className="material-icons">title</i>Tytuł</div>
-                        <p>
-                            <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="title" type="text" value={this.state.title} onChange={this.handleInput}/>
-                        </p>
-                    </div>        
+                            
                 
 	                <div className="form-subsection">
 	                	<div className="items">
@@ -225,9 +258,9 @@ class Filters extends Component {
 	}
 }
 
-function mapUserCategoriesAndAuctionsToProps({ user, categories, auctions }) {
-	return { user, categories, auctions };
+function mapAuctionsToProps({ auctions }) {
+	return { auctions };
 };
 
-Filters = connect(mapUserCategoriesAndAuctionsToProps, auctionActions)(Filters);
+Filters = connect(mapAuctionsToProps, auctionActions)(Filters);
 export default Filters;
