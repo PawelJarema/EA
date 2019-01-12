@@ -73,7 +73,8 @@ class AuctionList extends Component {
 			const { documents } = props;
 
 			if (typeof documents.count === 'number') {
-				this.setState({ pages: documents.count })
+				applyToTable((e) => e.style.opacity = 1);
+				this.setState({ pages: documents.count });
 			}
 		}
 	}
@@ -87,6 +88,7 @@ class AuctionList extends Component {
 		const { pages, per_page } = this.state;
 
 		if (admin) {
+			applyToTable((e) => e.style.opacity = 0.8);
 			this.setState({ page }, () => this.props.paginateDocuments({ admin_id: admin._id, doctype: 'auction', page, per_page }));
 		}
 	}
@@ -214,6 +216,7 @@ class UserList extends Component {
 
 			if (typeof documents.count === 'number') {
 				this.setState({ pages: documents.count });
+				applyToTable((e) => e.style.opacity = 1);
 			}
 		}
 	}
@@ -258,6 +261,7 @@ class UserList extends Component {
 		const { per_page } = this.state;
 
 		if (admin) {
+			applyToTable((e) => e.style.opacity = 0.8);
 			this.props.paginateDocuments({ admin_id: admin._id, doctype: 'user', page, per_page });
 			this.setState({ page });
 		}
@@ -486,6 +490,11 @@ class AdminPanel extends Component {
 			</div>
 		);
 	}
+}
+
+function applyToTable(func) {
+	const e = document.querySelector('table');
+	if (e) func(e);
 }
 
 function mapAdminStateToProps({ admin }) {

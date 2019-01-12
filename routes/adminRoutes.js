@@ -34,7 +34,12 @@ async function paginateAuctions(page, per_page) {
 		{},{},
 		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
 	).lean();
-	const pages = Math.ceil(await Auction.countDocuments() / +per_page);
+	const 	count = await Auction.countDocuments(),
+			pages = Math.ceil(count / +per_page);
+
+	console.log(count, per_page);
+	console.log('a ', pages);
+
 	for (let i = 0, l = auctions.length; i < l; i++) {
 		const doc = auctions[i];
 		const user = await User.findOne({ _id: doc._user }, { firstname: 1, lastname: 1, contact: 1 });
