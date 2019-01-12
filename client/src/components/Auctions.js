@@ -359,10 +359,10 @@ class Pay extends Component {
 class Auction extends Component {
     render() {
         const { auction } = this.props;
-        const current_price = auction.price.current_price || auction.price.start_price;
-
         if (!auction)
             return null;
+
+        const current_price = auction.price.current_price || auction.price.start_price;
 
         return (
             <Link to={auctionPath(auction)}>

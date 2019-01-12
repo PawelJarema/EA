@@ -21,7 +21,6 @@ import Chat from './Chat';
 
 import socketIOClient from 'socket.io-client';
 
-
 const ProductCategories = {
     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
     'Moda': ['Obuwie', 'Odzież', 'Biżuteria', 'Zegarki'],
@@ -141,7 +140,7 @@ class SearchField extends Component {
                     </span>
                 </div>
                 <div>
-                    <Link to={`/aukcje/szukaj/${this.state.category}/${this.state.query || '*'}`}><button className="search-button">Szukaj</button></Link>
+                    <Link onClick={this.props.searchHandler} to={`/aukcje/szukaj/${this.state.category}/${this.state.query || '*'}`}><button className="search-button">Szukaj</button></Link>
                 </div>
             </div>
         )
@@ -150,7 +149,7 @@ class SearchField extends Component {
 
 class UserLinks extends Component {
     render() {
-        const { user, open, searchHandler, toggleMenu } = this.props;
+        const { user, open, searchHandler, toggleMenu, callback } = this.props;
         const className = "user-links" + (open ? ' open' : '');
 
         const Search = <span className="link search-mobile" onClick={() => {searchHandler(); toggleMenu();}}><i className="material-icons">search</i></span>;
@@ -160,7 +159,7 @@ class UserLinks extends Component {
                 <div className={className}>
                     <Link to="/moje-aukcje" onClick={toggleMenu}>Moje aukcje</Link>
                     { Search }
-                    <Chat socket={ this.props.socket } id={user._id} />
+                    <Chat socket={ this.props.socket } id={user._id} callback={callback} onClick={toggleMenu} />
                     <span className="link" onClick={toggleMenu}>
                         <img src="/assets/icons/user.png" />
                         <div className="dropdown">
@@ -173,10 +172,10 @@ class UserLinks extends Component {
             );
         } else if (user !== null) {
             return (
-                <div className={className} onClick={toggleMenu}>
+                <div className={className}>
                     { Search }
-                    <Link to="/konto/zaloguj">Zaloguj</Link>
-                    <Link to="/konto/zarejestruj">Zarejestruj się</Link>
+                    <Link to="/konto/zaloguj" onClick={toggleMenu}>Zaloguj</Link>
+                    <Link to="/konto/zarejestruj" onClick={toggleMenu}>Zarejestruj się</Link>
                 </div>
             );
         } else {
@@ -202,7 +201,7 @@ class MobileMenu extends Component {
 class Navi extends Component {
     constructor(props) {
         super(props);
-        this.state = { mobile: false, search: false };
+        this.state = { mobile: false, search: false, chatBox: null };
         this.clickHandler = this.clickHandler.bind(this);
         this.searchHandler = this.searchHandler.bind(this);
     }
@@ -217,13 +216,15 @@ class Navi extends Component {
 
     render() {
         const { mobile, search } = this.state;
+        const { callback } = this.props;
 
         return (
             <nav>
                 <Logo />
-                <SearchField open={search} setQuery={this.props.setQuery} setCategory={this.props.setCategory}/>
+                <SearchField open={search} setQuery={this.props.setQuery} setCategory={this.props.setCategory} searchHandler={this.searchHandler}/>
                 <MobileMenu open={mobile} clickHandler={this.clickHandler} />
-                <UserLinks open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} toggleMenu={this.clickHandler}/>
+                <UserLinks callback={callback} open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} toggleMenu={this.clickHandler}/>
+                
             </nav>
         );
     }
@@ -571,11 +572,13 @@ class App extends Component {
         search_query: '',
         search_category: '',
         endpoint: process.env.REACT_APP_CHAT_URL, 
-        socket: null 
+        socket: null,
+        chatBox: null
     };
 
     this.setQuery = this.setQuery.bind(this);
     this.setCategory = this.setCategory.bind(this);
+    this.callback = this.callback.bind(this);
   }
   
   setQuery(search_query) {
@@ -608,8 +611,12 @@ class App extends Component {
       this.props.fetchMessage();
   }
 
+  callback(chatBox) {
+    this.setState({ chatBox });
+  }
+
   render() {
-    const { socket } = this.state;
+    const { socket, chatBox } = this.state;
     const { user, flash, tech_break, cookies, categories } = this.props;
 
     const { search_query, search_category } = this.state;
@@ -622,11 +629,10 @@ class App extends Component {
             { 
                 message
             }
-            
             <BrowserRouter>
                 <div>
                     <header className="App-header" style={{ marginBottom: 30 }}>
-                        <Navi socket={ socket } setQuery={this.setQuery} setCategory={this.setCategory}/>
+                        <Navi socket={ socket } callback={this.callback} setQuery={this.setQuery} setCategory={this.setCategory}/>
                         <Breadcrumbs />
                     </header>
             
@@ -659,6 +665,8 @@ class App extends Component {
                                 </div>
                             }
                     </div>
+
+                    <div className="Chat">{ chatBox }</div>
 
                     <section className="advertising">
                         <div className="four-column">

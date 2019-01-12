@@ -53,7 +53,6 @@ class Chat extends Component {
 	}
 
 	openChatBox() {
-
 		this.setState(prev => ({ chatBoxOpen: !prev.chatBoxOpen }));
 	}
 
@@ -113,6 +112,8 @@ class Chat extends Component {
 
 	render() {
 		const { chatBoxMode, chats, chat, messages, user_id, title, unseen } = this.state;
+		const { callback, onClick } = this.props;
+
 		const chatBox = (
 			<div ref={ (e) => this.chatboxRef = e } className="chat-box">
 				<div className="close-chat-box" onClick={this.openChatBox}><i className="material-icons">close</i></div>
@@ -156,10 +157,12 @@ class Chat extends Component {
 			</div>
 		);
 
+		callback(this.state.chatBoxOpen ? chatBox : null);
+
+		// { this.state.chatBoxOpen ? chatBox : null }
 		return (
 			<span className="Chat">
-				<span className="wrapper"><i className="material-icons" onClick={this.openChatBox}>mail_outline</i>{ unseen ? <span className="unseen-messages">{unseen}</span> : null}</span>
-				{ this.state.chatBoxOpen ? chatBox : null }
+				<span className="wrapper"><i className="material-icons" onClick={() => { this.openChatBox(); onClick(); }}>mail_outline</i>{ unseen ? <span className="unseen-messages">{unseen}</span> : null}</span>
 			</span>
 		);
 	}
