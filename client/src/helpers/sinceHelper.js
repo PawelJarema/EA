@@ -28,5 +28,5 @@ export default function SinceHelper(millis) {
 	const isHours = parseInt((since - isYears * year - isMonths * month - isDays * day) / hour);
 
 	const string = `${format(isYears, years)} ${format(isMonths, months)} ${format(isDays, days)} ${format(isHours, hours)}`;
-	return !string.trim() ? 'mniej niż 1h' : string;
+	return !string.trim() ? (millis < 0 ? 'zakończona' : 'mniej niż 1h') : string;
 };
