@@ -34,17 +34,20 @@ async function paginateAuctions(page, per_page) {
 		{},{},
 		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
 	).lean();
+	
 	const 	count = await Auction.countDocuments(),
 			pages = Math.ceil(count / +per_page);
-
-	console.log(count, per_page);
-	console.log('a ', pages);
 
 	for (let i = 0, l = auctions.length; i < l; i++) {
 		const doc = auctions[i];
 		const user = await User.findOne({ _id: doc._user }, { firstname: 1, lastname: 1, contact: 1 });
-		doc.owner = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
-		doc.email = user.contact.email;
+		if (user) {
+			doc.owner = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
+			doc.email = user.contact.email;
+		} else {
+			doc.owner = 'null';
+			doc.email = 'null';
+		}
 	}
 
 	return ({ 'auction': auctions, count: pages });
@@ -75,20 +78,20 @@ module.exports = app => {
 			res.send(await paginateAuctions(page, per_page));
 		}
 
-		const auction = await User.findOne({ _id: ObjectId(auction_id) });
-		const mailer = new Mailer(
-			{ 
-				subject: 'Wiadomość administracyjna z portalu ' + business.name, 
-				recipients: [{ email }]
-			}, 
-			auctionDeletedTemplate(title, reason)
-		);
-
-		await mailer.send();
 		Auction.remove({ _id: ObjectId(auction_id) })
 			.then(
 				async doc => {
 					req.session.message = 'Usunięto aukcję i przesłano wiadomość'; 
+					const mailer = new Mailer(
+						{ 
+							subject: 'Wiadomość administracyjna z portalu ' + business.name, 
+							recipients: [{ email }]
+						}, 
+						auctionDeletedTemplate(title, reason)
+					);
+
+					await mailer.send();
+
 					res.send(await paginateAuctions(page, per_page)); 
 				},
 				async err => { 
@@ -159,10 +162,10 @@ module.exports = app => {
 		);
 
 		await mailer.send();
-		User.remove({ _id: ObjectId(user_id) })
+		User.deleteOne({ _id: ObjectId(user_id) })
 			.then(
 				async doc => { 
-					await Auction.remove({ _user: ObjectId(user_id) });
+					await Auction.deleteMany({ _user: ObjectId(user_id) });
 					
 					req.session.message = 'Usunięto konto użytkownika i przesłano wiadomość'; 
 					res.send(await paginateUsers(page, per_page)); 
