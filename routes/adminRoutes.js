@@ -207,7 +207,7 @@ module.exports = app => {
 		admin
 			.save()
 			.then(
-				doc => { req.session.message = 'Zapisano wysokość prowizji'; res.send(admin); },
+				doc => { req.session.message = 'Zapisano wysokość prowizji'; req.session.admin = doc; res.send(doc); },
 				err => { console.log(err); req.error.message = 'Nastąpił błąd. Spróbuj później'; res.send(admin); }
 			);
 	});
