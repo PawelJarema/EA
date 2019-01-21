@@ -954,3 +954,12 @@
     margin-right: 6px;
 
 }
+span.block {
+    display: inline-block;
+    width: calc(100% - 38px);
+}
+
+.warn i {
+    vertical-align: top;
+    margin-top: 1px;
+}

@@ -666,7 +666,7 @@ class AuctionDetails extends Component {
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
                                                     <input ref={ (e) => this.bidInputRef = e } name="bid" type="number" lang="pl" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="5" defaultValue={current_price} />
-                                                    <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Podbij</button>
+                                                    <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Licytuj</button>
                                                 </form>)
                                             }
                                         </div>
@@ -1480,10 +1480,10 @@ class CreateUpdateAction extends Component {
                 <ProfileLinks active="addauction" />
                 <form ref={ e => this.formRef = e } className="user-settings" action="/auction/create_or_update" method="post" encType="multipart/form-data">
                     {
-                        !userDataComplete && <p className="warn"><i className="material-icons">warning</i> Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</p>
+                        !userDataComplete && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</span></p>
                     }
                     {
-                        !deliveries && <p className="warn"><i className="material-icons">warning</i> Zanim dodasz aukcję, dodaj metody dostawy "<Link to="/konto/aukcje/dostawa">Metody dostawy towaru</Link>" !</p>
+                        !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
                     }
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
