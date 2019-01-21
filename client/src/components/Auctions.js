@@ -563,13 +563,14 @@ class AuctionDetails extends Component {
 
         if (!confirmed) {
             alert('Aby wziąć udział w licytacji, musisz uzupełnić swoje dane w ustawieniach');
+            return;
         }
 
         if (!bid_value) {
             alert('Podaj stawkę licytacji');
             return;
         } 
-        if (bid_value <= auction.price.current_price || bid_value <= auction.price.start_price) {
+        if (bid_value <= auction.price.current_price || bid_value < auction.price.start_price) {
             alert('Musisz przebić obecną stawkę');
             return;
         }
@@ -1465,6 +1466,7 @@ class CreateUpdateAction extends Component {
        const { user, update, categories, auctions } = this.props;
        const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
        const deliveries = user.deliveries && user.deliveries.length;
+       const bids = auctions && auctions.bids && auctions.bids.length > 0;
 
        if (!update && !user.balance.credits) {
             return (
@@ -1518,7 +1520,7 @@ class CreateUpdateAction extends Component {
                         <legend><span className="lettr-icon">PLN</span>Cena</legend>
                         <p>
                             <label htmlFor="start_price" className="required">Cena wywoławcza</label>
-                            <input name="start_price" type="number" step="0.01"  onInput={this.validate} />
+                            <input name="start_price" type="number" step="0.01" onInput={this.validate} disabled={update && bids} />
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>

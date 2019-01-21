@@ -2,6 +2,10 @@
     width: 600px;
 }
 
+input:disabled {
+    opacity: 0.5;
+}
+
 .rich-text-editor {
     min-height: 300px;
     margin-top: 10px;
