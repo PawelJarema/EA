@@ -624,6 +624,8 @@ class App extends Component {
 
     const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
 
+    const w_width = window.innerWidth;
+
     if (tech_break && tech_break.techbreak === false) {
         return (
           <div className="App">
@@ -675,18 +677,29 @@ class App extends Component {
                                 <Ads />
                             </div>
 
-                            <div className="column">
-                                <Ads />
-                            </div>
+                            {
+                                w_width > 1000 && (
+                                    <div className="column">
+                                        <Ads />
+                                    </div>
+                                )
+                            }
 
-                            <div className="column">
-                                <Ads />
-                            </div>
+                            {
+                                w_width > 1250 && (
+                                    <div className="column">
+                                        <Ads />
+                                    </div>
+                                )
+                            }
 
-                            <div className="column">
-                                <Ads />
-                            </div>
-
+                            {
+                                w_width > 1500 && (
+                                    <div className="column">
+                                        <Ads />
+                                    </div>
+                                )
+                            }
                         </div>
                     </section>
 
