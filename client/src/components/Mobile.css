@@ -607,25 +607,19 @@ nav .user-links .search-mobile {
 
 
 /* ads */
-@media screen and (max-width: 1550px) {
-	.App .four-column .column:nth-child(5) {
-		display: none;
-	}
-}
-
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 1500px) {
 	.App .four-column .column:nth-child(4) {
 		display: none;
 	}
 }
 
-@media screen and (max-width: 1050px) {
+@media screen and (max-width: 1250px) {
 	.App .four-column .column:nth-child(3) {
 		display: none;
 	}
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1000px) {
 	.App .four-column .column:nth-child(2) {
 		display: none;
 	}
