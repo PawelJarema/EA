@@ -564,7 +564,7 @@ class Delivery extends Component {
         const data = this.state.data;
         const methodsChosen = data.map(d => d.name);
 
-        const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska'].filter(hint => (new RegExp(value, 'i')).test(hint) && methodsChosen.indexOf(hint) === -1);
+        const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska', 'odbiór osobisty'];
 
         if (!data[index]) {
             data.push({ [type]: value });

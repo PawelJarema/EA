@@ -94,8 +94,14 @@ module.exports = app => {
     app.get('/auction/:id/photo', async (req, res) => {
         const { id }    = req.params,
                 auction = await Auction.findOne({ _id: ObjectId(id) }, { photos: { $slice: 1 } }),
-                photo   = auction.photos[0],
-                img     = new Buffer(photo.data, 'base64');
+                photo   = auction.photos[0];
+
+        if (!photo) {
+            res.send(false);
+            return;
+        }
+                
+        const img       = new Buffer(photo.data, 'base64');
 
         res.writeHead(200, {
             'Content-Type': photo.type || 'image/jpeg',
@@ -360,7 +366,7 @@ module.exports = app => {
             subject: 'Wziąłeś udział w licytacji przedmiotu ' + auction.title,
             recipients: [{ email: req.user.contact.email }]
         }, bidTemplate(auction._id, auction.title, bidMessage));
-        await mailer.send();
+        mailer.send();
 
         await auction
             .save()
@@ -771,14 +777,21 @@ module.exports = app => {
         });
 
         if (update) {
+            console.log(data.auction_id);
+
             auction._id             = ObjectId(data.auction_id);
             auction.date.start_date = data.start_date || new Date().getTime();
 
-            const oldAuction        = await Auction.findOne({ _id: auction._id });
+            const oldAuction        = await Auction.findOne({ _id: ObjectId(data.auction_id) });
+
+            auction.price.start_price   = oldAuction.price.start_price || 1;
+            auction.price.current_price = oldAuction.price.current_price;
             auction.bids            = oldAuction.bids;
             auction.payees          = oldAuction.payees;
             auction.buynowpayees    = oldAuction.buynowpayees;
             auction.raters          = oldAuction.raters;
+
+            delete auction._id;
 
             await Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
                 if (err) {
@@ -791,6 +804,7 @@ module.exports = app => {
                 if (doc) {
                     req.session.message = 'Pomyślnie dokonano edycji aukcji'; 
                     auction = doc;
+                    savePhotos(doc, req.files);
                     res.send({});
                 }
             });
@@ -805,8 +819,9 @@ module.exports = app => {
                         const user = req.user;
                         const { credits } = user.balance;
                         user.balance.credits = credits ? (+credits - 1) : 4;
-                        await user.save();
+                        user.save();
                
+                        savePhotos(doc, req.files);
                         res.send({}); 
                     },
                     (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
@@ -814,32 +829,35 @@ module.exports = app => {
         }
 
         // map image files. resize, return promise buffers
-        const promises = await req.files.map(file => ({
-            type: file.mimetype,
-            data: Sharp(file.buffer).resize(800).toBuffer()
-        }));
+    });
+};
 
-        let progress = 0;
+async function savePhotos(auction, files) {
+    const promises = await files.map(file => ({
+        type: file.mimetype,
+        data: Sharp(file.buffer).resize(800).toBuffer()
+    }));
 
-        promises.map(promise => {
-            const type = promise.type;
-            promise.data.then(buffer => {
-                Imagemin.buffer(buffer, {
-                    plugins: [
-                        imageminMozjpeg({ quality: 50 }),
-                        imageminPngquant({ quality: 50 }),
-                        imageminSvgo(),
-                        imageminGifsicle()
-                    ]
-                }).then(optimisedBuffer => {
-                    progress++;
+    let progress = 0;
 
-                    auction.photos.push({ type: type, data: optimisedBuffer.toString('base64') });
-                    if (progress === req.files.length) {
-                        auction.save();
-                    }
-                });
+    promises.map(promise => {
+        const type = promise.type;
+        promise.data.then(buffer => {
+            Imagemin.buffer(buffer, {
+                plugins: [
+                    imageminMozjpeg({ quality: 50 }),
+                    imageminPngquant({ quality: 50 }),
+                    imageminSvgo(),
+                    imageminGifsicle()
+                ]
+            }).then(optimisedBuffer => {
+                progress++;
+
+                auction.photos.push({ type: type, data: optimisedBuffer.toString('base64') });
+                if (progress === files.length) {
+                    auction.save();
+                }
             });
         });
     });
-};
+}

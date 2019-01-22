@@ -626,6 +626,10 @@ input:disabled {
     margin: auto;
 }
 
+i.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
 /*.five-column > .column:after {
     position: absolute;
     top: 50%; left: 50%;

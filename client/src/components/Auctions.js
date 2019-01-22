@@ -574,7 +574,7 @@ class AuctionDetails extends Component {
             alert('Musisz przebić obecną stawkę');
             return;
         }
-        if (bid_value > auction.price.current_price + 10 && auction.bids[0]._user === String(this.props.user._id)) {
+        if (bid_value > auction.price.current_price + 10 && auction.bids && auction.bids.length && auction.bids[0]._user === String(this.props.user._id)) {
             const reply = window.confirm('Już prowadzisz w licytacji. Napewno chcesz podbić cenę ?');
             if (!reply) return;
         }

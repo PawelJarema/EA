@@ -161,7 +161,7 @@ module.exports = app => {
 				auction.raters = [ObjectId(buyer._id)];
 			}
 
-			await auction.save();
+			auction.save();
 
 			const transaction = new Transaction({
 				date: new Date().getTime(),
@@ -175,14 +175,14 @@ module.exports = app => {
 				delivery_method: shipping_method,
 				confirmed: true
 			});
-			await transaction.save();
+			transaction.save();
 
 			const name = `${buyer.firstname || ''} ${buyer.lastname || (buyer.firstname ? '' : 'Anonim')}`;
 			const mailer = new Mailer(
 				{ subject: 'Kupujący oznaczył aukcję jako opłaconą', recipients: [{ email: owner.contact.email }] },
 				paySimpleTemplate(name, buyer.contact.phone, buyer.contact.email, buyer.address, title, (+price + +shipping_price), shipping_method, auction_id)
 			);
-			await mailer.send();
+			mailer.send();
 
 			req.session.message = 'Sprzedawca został powiadomiony o wpłacie i poproszony o sprawdzenie stanu konta';
 			res.send(true);
