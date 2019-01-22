@@ -608,25 +608,25 @@ nav .user-links .search-mobile {
 
 /* ads */
 @media screen and (max-width: 1550px) {
-	.App .five-column .column:nth-child(5) {
+	.App .four-column .column:nth-child(5) {
 		display: none;
 	}
 }
 
 @media screen and (max-width: 1300px) {
-	.App .five-column .column:nth-child(4) {
+	.App .four-column .column:nth-child(4) {
 		display: none;
 	}
 }
 
 @media screen and (max-width: 1050px) {
-	.App .five-column .column:nth-child(3) {
+	.App .four-column .column:nth-child(3) {
 		display: none;
 	}
 }
 
 @media screen and (max-width: 800px) {
-	.App .five-column .column:nth-child(2) {
+	.App .four-column .column:nth-child(2) {
 		display: none;
 	}
 }

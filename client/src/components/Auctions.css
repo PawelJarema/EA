@@ -606,6 +606,7 @@ input:disabled {
 }
 .four-column {
     display: flex;
+    justify-content: center;
     margin-top: 60px;
     margin-bottom: 60px;
 }
@@ -617,9 +618,7 @@ input:disabled {
     box-sizing: border-box;
     --temp-width: calc(25% - 25px);
     flex: 0 0 var(--temp-width);
-    background: #eee;
     min-height: 225px;
-    border: 1px solid #eee;
 }
 /*.five-column > .column:after {
     position: absolute;
