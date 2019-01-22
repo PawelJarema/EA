@@ -670,7 +670,7 @@ class App extends Component {
                     <div className="Chat">{ chatBox }</div>
 
                     <section className="advertising">
-                        <div className="five-column">
+                        <div className="four-column">
                             <div className="column">
                                 <Ads />
                             </div>
@@ -687,9 +687,6 @@ class App extends Component {
                                 <Ads />
                             </div>
 
-                            <div className="column">
-                                <Ads />
-                            </div>
                         </div>
                     </section>
 
