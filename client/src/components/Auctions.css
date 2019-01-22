@@ -618,10 +618,14 @@ input:disabled {
     box-sizing: border-box;
     --temp-width: calc(25% - 25px);
     flex: 1 1 var(--temp-width);
-    background: #f0f0f0;
     min-height: 250px;
     min-width: 250px;
 }
+
+.four-column > .column .ins {
+    margin: auto;
+}
+
 /*.five-column > .column:after {
     position: absolute;
     top: 50%; left: 50%;
