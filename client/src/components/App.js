@@ -18,6 +18,7 @@ import { AdminPanel, TechBreak } from './Admin';
 import Filters from './Filters';
 import Progress from './Progress';
 import Chat from './Chat';
+import Ads from './Ads';
 
 import socketIOClient from 'socket.io-client';
 
@@ -669,16 +670,25 @@ class App extends Component {
                     <div className="Chat">{ chatBox }</div>
 
                     <section className="advertising">
-                        <div className="four-column">
+                        <div className="five-column">
                             <div className="column">
+                                <Ads />
                             </div>
+
                             <div className="column">
+                                <Ads />
                             </div>
+
                             <div className="column">
+                                <Ads />
                             </div>
+
                             <div className="column">
+                                <Ads />
                             </div>
+
                             <div className="column">
+                                <Ads />
                             </div>
                         </div>
                     </section>

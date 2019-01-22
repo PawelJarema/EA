@@ -604,3 +604,29 @@ nav .user-links .search-mobile {
 		min-width: 180px;
 	}
 }
+
+
+/* ads */
+@media screen and (max-width: 1500px) {
+	.App .five-column .column:nth-child(5) {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1250px) {
+	.App .five-column .column:nth-child(4) {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 1000px) {
+	.App .five-column .column:nth-child(3) {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.App .five-column .column:nth-child(2) {
+		display: none;
+	}
+}
