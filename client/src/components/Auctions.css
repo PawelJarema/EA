@@ -606,7 +606,7 @@ input:disabled {
 }
 .four-column {
     display: flex;
-    justify-content: stretch;
+    justify-content: center;
     margin-top: 60px;
     margin-bottom: 60px;
 }
