@@ -120,7 +120,7 @@ const endAuction = async (auction_id) => {
 					auction.title, 
 					i === 0 ? auction.price.current_price : auction.bids[i].price
 				));
-				await winMailer.send();
+				winMailer.send();
 				console.log('winner notification sent to ' + emails[i]);
 			}
 
@@ -133,14 +133,14 @@ const endAuction = async (auction_id) => {
 				{ subject, recipients }, 
 				itemNotSoldTemplate(auction._id, auction.title)
 			);
-			await ownerMailer.send();
+			ownerMailer.send();
 		}
 
 		if (losers.length) {
 			const subject = `Nie udało się wylicytować przedmiotu ${auction.title}`;
 			const recipients = losers.map(loser => ({ email: loser.contact.email }))
 			const bulkLoseMailer = new Mailer({ subject, recipients }, lostTemplate(auction.title));
-			await bulkLoseMailer.send();
+			bulkLoseMailer.send();
 			console.log('loser notification sent to ' + recipients);
 		}
 

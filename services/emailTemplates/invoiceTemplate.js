@@ -23,7 +23,7 @@ function invoice_data(user) {
 }
 
 function user_name(user) {
-  if (user.firm) {
+  if (user.firm && user.firm.firm_name) {
     return user.firm.firm_name;
   } else {
     return `${user.firstname || ''} ${user.lastname || (user.firstname ? '' : 'Anonim') }`;
