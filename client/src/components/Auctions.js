@@ -1541,11 +1541,11 @@ class CreateUpdateAction extends Component {
                         </p>
                         <p>
                             <label htmlFor="buy_now_price">Cena "kup teraz"</label>
-                            <input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') }  />
+                            <input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } />
                         </p>
                         <p>
                             <label htmlFor="min_price">Cena minimalna</label>
-                            <input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') }  />
+                            <input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } />
                         </p>
                         <p className="checkbox">
                             <span>
@@ -1560,7 +1560,7 @@ class CreateUpdateAction extends Component {
                         <legend><i className="material-icons">access_time</i>Czas trwania</legend>
                         <p>
                             <label htmlFor="duration" className="required">Ilość dni</label>
-                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
+                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} className={ (update ? 'disabled' : '') } />
                             <span className="validation-message">{ this.state.message[2] }</span>
                         </p>
                     </fieldset>

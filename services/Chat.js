@@ -37,7 +37,7 @@ module.exports = app => {
 	io.on('connection', socket => {
 		let session_id = String(socket.id), 
 			user_id = null;
-		console.log('New client connected. session_id: ' + session_id); 
+		// console.log('New client connected. session_id: ' + session_id); 
 		
 		socket.emit('handshake');
 
@@ -45,7 +45,7 @@ module.exports = app => {
 			user_id = String(data);
 			auctionClientsOnline[session_id] = user_id;
 
-			console.log('clients online: ', auctionClientsOnline);
+			//console.log('clients online: ', auctionClientsOnline);
 		});
 
 		socket.on('message_user', user_id => {
@@ -54,7 +54,7 @@ module.exports = app => {
 
 		socket.on('disconnect', () => {
 			delete auctionClientsOnline[session_id];
-			console.log('Client disconnected. session_id: ' + session_id);
+			//console.log('Client disconnected. session_id: ' + session_id);
 		});
 	});
 
