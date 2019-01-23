@@ -1536,16 +1536,16 @@ class CreateUpdateAction extends Component {
                         <legend><span className="lettr-icon">PLN</span>Cena</legend>
                         <p>
                             <label htmlFor="start_price" className="required">Cena wywoławcza</label>
-                            <input name="start_price" type="number" step="0.01" onInput={this.validate} disabled={update && bids} />
+                            <input name="start_price" type="number" step="0.01" onInput={this.validate} className={ (update ? 'disabled' : '') } />
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>
                             <label htmlFor="buy_now_price">Cena "kup teraz"</label>
-                            <input name="buy_now_price" type="number" step="0.01" />
+                            <input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') }  />
                         </p>
                         <p>
                             <label htmlFor="min_price">Cena minimalna</label>
-                            <input name="min_price" type="number" step="0.01" />
+                            <input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') }  />
                         </p>
                         <p className="checkbox">
                             <span>

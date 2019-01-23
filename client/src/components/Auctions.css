@@ -6,6 +6,11 @@ input:disabled {
     opacity: 0.5;
 }
 
+input.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .rich-text-editor {
     min-height: 300px;
     margin-top: 10px;
