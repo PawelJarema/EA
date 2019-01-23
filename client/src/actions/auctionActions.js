@@ -1,5 +1,10 @@
 import axios from 'axios';
+import React from 'react';
 import { FETCH_AUCTIONS, FETCH_AUCTION, FETCH_MESSAGE } from './types';
+
+export const showSpinner = () => async dispatch => {
+	dispatch({ type: FETCH_MESSAGE, payload: ({ type: 'ok', message: <i className="material-icons spinning">autorenew</i>  }) });
+}
 
 export const postPhotos = (formData) => async dispatch => {
     await axios.post('/auction/post_photos', formData);

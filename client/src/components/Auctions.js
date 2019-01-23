@@ -579,13 +579,15 @@ class AuctionDetails extends Component {
             if (!reply) return;
         }
 
+        window.scrollTo(0, 0);
+        this.props.showSpinner();
         this.props
             .postBid(auction._id, formData)
             .then(() => { 
                 const auction_id = this.props.match.params.id;
                 this.props
                     .fetchAuction(auction_id)
-                    .then(() => { this.setState({ auction: this.props.auctions }); window.scrollTo(0, 0); });
+                    .then(() => { this.setState({ auction: this.props.auctions }); });
                 });
     }
 
@@ -1459,11 +1461,13 @@ class CreateUpdateAction extends Component {
         if (allValid) {
             if (this.props.update) {
                 formData.append('auction_id', this.props.auctions._id);
+                this.props.showSpinner();
                 this.props.updateAuction(formData)
                     .then(
                         () => this.props.postPhotos(photoData)
                     );
             } else {
+                this.props.showSpinner();
                 this.props.newAuction(formData)
                     .then(
                         () => this.props.postPhotos(photoData)
