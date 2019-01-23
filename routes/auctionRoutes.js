@@ -851,7 +851,7 @@ module.exports = app => {
 async function savePhotos(auction, files) {
     const promises = await files.map(file => ({
         type: file.mimetype,
-        data: Sharp(file.buffer).resize(800).toBuffer()
+        data: Sharp(file.buffer).resize(1024).toBuffer()
     }));
 
     let progress = 0;
@@ -861,8 +861,8 @@ async function savePhotos(auction, files) {
         promise.data.then(buffer => {
             Imagemin.buffer(buffer, {
                 plugins: [
-                    imageminMozjpeg({ quality: 50 }),
-                    imageminPngquant({ quality: 50 }),
+                    imageminMozjpeg({ quality: 80 }),
+                    imageminPngquant({ quality: 80 }),
                     imageminSvgo(),
                     imageminGifsicle()
                 ]
