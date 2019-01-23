@@ -53,7 +53,7 @@ module.exports = (seller, buyer, transaction, vat) => {
 
                 	<div class="usertype">Wystawca:</div>
                 	<h1>${ user_name(seller) }</h1>
-                  <div class="nip">${ seller.firm ? seller.firm.nip : '' }</div>
+                  <div class="nip">${ seller.firm && seller.firm.nip ? seller.firm.nip : '' }</div>
                 	<div class="data">
                 		${ invoice_data(seller) }
 
