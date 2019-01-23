@@ -976,3 +976,12 @@ span.block {
     vertical-align: top;
     margin-top: 1px;
 }
+
+.warn a {
+    color: var(--link-blue);
+}
+
+form.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}

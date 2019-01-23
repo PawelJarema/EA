@@ -1464,7 +1464,7 @@ class CreateUpdateAction extends Component {
     
    render() {
        const { user, update, categories, auctions } = this.props;
-       const userDataComplete = user && user.firstname && user.lastname && user.balance && user.balance.account_number && user.address;
+       const userDataComplete = user && user.firstname && user.lastname && user.address;
        const deliveries = user.deliveries && user.deliveries.length;
        const bids = auctions && auctions.bids && auctions.bids.length > 0;
 
@@ -1480,13 +1480,14 @@ class CreateUpdateAction extends Component {
        return (
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
                 <ProfileLinks active="addauction" />
-                <form ref={ e => this.formRef = e } className="user-settings" action="/auction/create_or_update" method="post" encType="multipart/form-data">
+                <div>
                     {
                         !userDataComplete && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</span></p>
                     }
                     {
                         !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
                     }
+                <form ref={ e => this.formRef = e } className={"user-settings" + (!userDataComplete || !deliveries ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
                     <fieldset>
@@ -1611,6 +1612,8 @@ class CreateUpdateAction extends Component {
                     <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />
                     
                 </form>
+
+                </div>
             </div>
        );
    }

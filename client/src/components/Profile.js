@@ -526,6 +526,7 @@ class Delivery extends Component {
 
         this.state = { deliveries: 1, data: [], hints: [], focus: null };
         this.addDelivery = this.addDelivery.bind(this);
+        this.focus = this.focus.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.submit = this.submit.bind(this);
 
@@ -554,6 +555,10 @@ class Delivery extends Component {
         this.setState(prev => ({ deliveries: prev.deliveries + 1 }));
     }
 
+    focus(index) {
+        this.setState({ focus: index });
+    }
+
     handleInput(event) {
         const input = event.target;
         const value = input.value;
@@ -566,13 +571,16 @@ class Delivery extends Component {
 
         const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska', 'odbiór osobisty'];
 
-        if (!data[index]) {
-            data.push({ [type]: value });
-        } else {
-            data[index][type] = value;
-        }
+        this.setState(prev => {
+            let data = prev.data;
+            if (!data[index]) {
+                data.push({ [type]: value });
+            } else {
+                data[index][type] = value;
+            } 
 
-        this.setState({ data, hints, focus: index });
+            return ({ data, hints });
+        });
     }
 
     submit(event) {
@@ -610,7 +618,7 @@ class Delivery extends Component {
                                 {
                                     Array.from({ length: this.state.deliveries}, (v, k) => k + 1).map(index => (
                                         <div className="hint-wrapper" key={'deliveries_' + index}>
-                                            <input className="hinted" name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput} onClick={this.handleInput}/>
+                                            <input className="hinted" name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput} onFocus={() => this.focus(index - 1)} />
                                             <input name={'price_' + (index)} type="number" placeholder="Cena dostawy" min="0" step="0.01" value={ this.state.data[index - 1] ? this.state.data[index - 1].price : null } onChange={this.handleInput}/>
                                             <i className="material-icons remove" onClick={this.removeFunc}>remove_circle_outline</i>
                                             {
@@ -618,14 +626,17 @@ class Delivery extends Component {
                                                     <ul className="hint-list">{ 
                                                         hints.map((hint, hint_index) => ( 
                                                             <li key={"hint_" + hint_index} onClick={
-                                                                () =>  {
-                                                                    const data = this.state.data || [];
-                                                                    if (!data[index - 1]) {
-                                                                        data.push({ name: hint });
-                                                                    } else {
-                                                                        data[index - 1]['name'] = hint;
-                                                                    }
-                                                                    this.setState({ data, hints: [] });
+                                                                () =>  {                             
+                                                                    this.setState(prev => {
+                                                                        let data = prev.data || [];
+                                                                        if (!data[index - 1]) {
+                                                                            data.push({ name: hint });
+                                                                        } else {
+                                                                            data[index - 1]['name'] = hint;
+                                                                        }
+
+                                                                        return ({ data, hints: [], focus: -1 });
+                                                                    });
 
                                                                 }
                                                             }>{hint}</li> 

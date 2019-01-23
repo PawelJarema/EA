@@ -52,17 +52,17 @@ module.exports = app => {
             req.session.error = 'Nastąpił błąd. Spróbuj ponownie później';
         }
 
-        user.deliveries = deliveries.filter(d => d.name && d.price);
+        user.deliveries = deliveries.filter(d => d.name && d.price >= 0);
 
         console.log(user.deliveries);
 
-        await user.save().then(() => {
+        user.save().then(() => {
             req.session.message = 'Pomyślnie zapisano metody dostawy';
+            res.send(user);
         }, (err) => {
             req.session.error = 'Zapis nie powiódł się. Spróbuj ponownie później';
+            res.send(user);
         });
-
-        res.send(user);
     });
 
     app.post('/user/update', [requireLogin, upload.any()], async (req, res) => {     
