@@ -264,6 +264,7 @@ schedule.scheduleJob('59 23 * * *', async () => {
 	// unread messages
 	await notifyAboutPendingChatMessages();
 });
+schedulePendingAuctions();
 console.log('CRON JOB SCHEDULED');
 
 module.exports = app => {
