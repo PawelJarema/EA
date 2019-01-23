@@ -1431,9 +1431,14 @@ class CreateUpdateAction extends Component {
 
         const images = this.state.images;
         const formData = new FormData(this.formRef);
+        
+        const photoData = new FormData();
+        if (this.props.auctions) {
+            photoData.append('_id', this.props.auctions._id || null);
+        }
         if (images.length > 0) {
             images.forEach(image => {
-                formData.append('images', image.file, image.file.name);
+                photoData.append('images', image.file, image.file.name);
             });
         }
 
@@ -1454,9 +1459,15 @@ class CreateUpdateAction extends Component {
         if (allValid) {
             if (this.props.update) {
                 formData.append('auction_id', this.props.auctions._id);
-                this.props.updateAuction(formData);
+                this.props.updateAuction(formData)
+                    .then(
+                        () => this.props.postPhotos(photoData)
+                    );
             } else {
-                this.props.newAuction(formData);
+                this.props.newAuction(formData)
+                    .then(
+                        () => this.props.postPhotos(photoData)
+                    );
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }

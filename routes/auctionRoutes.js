@@ -777,8 +777,6 @@ module.exports = app => {
         });
 
         if (update) {
-            console.log(data.auction_id);
-
             auction._id             = ObjectId(data.auction_id);
             auction.date.start_date = data.start_date || new Date().getTime();
 
@@ -793,7 +791,7 @@ module.exports = app => {
 
             delete auction._id;
 
-            await Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
+            Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
                 if (err) {
                     console.log('error', err); 
                     req.session.error = 'Edycja aukcji nie powiodła się';
@@ -804,7 +802,7 @@ module.exports = app => {
                 if (doc) {
                     req.session.message = 'Pomyślnie dokonano edycji aukcji'; 
                     auction = doc;
-                    savePhotos(doc, req.files);
+
                     res.send({});
                 }
             });
@@ -821,7 +819,6 @@ module.exports = app => {
                         user.balance.credits = credits ? (+credits - 1) : 4;
                         user.save();
                
-                        savePhotos(doc, req.files);
                         res.send({}); 
                     },
                     (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
@@ -829,6 +826,25 @@ module.exports = app => {
         }
 
         // map image files. resize, return promise buffers
+    });
+
+    app.post('/auction/post_photos', [requireLogin, upload.any()], async (req, res) => {
+        const _id   = req.body._id || null,
+              files = req.files;
+
+        const auction = (
+            _id 
+            ? 
+            await Auction.findOne({ _id: ObjectId(_id) })
+            :
+            await Auction.findOne({ _user: req.user._id }, null, { sort: { 'date.start_date' : -1 } })
+        );
+
+        if (auction) {
+            savePhotos(auction, files);
+        }
+
+        res.send(true);
     });
 };
 

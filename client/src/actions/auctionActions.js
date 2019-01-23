@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { FETCH_AUCTIONS, FETCH_AUCTION, FETCH_MESSAGE } from './types';
 
+export const postPhotos = (formData) => async dispatch => {
+    await axios.post('/auction/post_photos', formData);
+}
+
 export const updateAuction = (formData) => async dispatch => {
     const res = await axios.post('/auction/create_or_update', formData);
     const message_res = await axios.get('/api/flash_message');
