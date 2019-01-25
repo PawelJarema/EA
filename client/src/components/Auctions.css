@@ -609,6 +609,13 @@ input.disabled {
 .advertising {
     padding: 0 var(--page-margin);
 }
+.advertising .column {
+    opacity: 0.5;
+}
+.advertising .column:hover {
+    opacity: 1;
+}
+
 .four-column {
     display: flex;
     justify-content: stretch;
