@@ -49,7 +49,7 @@ module.exports = app => {
             return;
         }
                 
-        const img       = new Buffer(photo.data, 'base64');
+        const img       = Buffer.from(photo.data, 'base64');
 
         res.writeHead(200, {
             'Content-Type': photo.type || 'image/jpeg',
@@ -313,7 +313,7 @@ module.exports = app => {
         const mailer = new Mailer({
             subject: 'Wziąłeś udział w licytacji przedmiotu ' + auction.title,
             recipients: [{ email: req.user.contact.email }]
-        }, bidTemplate(auction._id, auction.title, bidMessage));
+        }, bidTemplate(auction._id, auction.title, bidMessage, price));
         mailer.send();
 
         await auction
