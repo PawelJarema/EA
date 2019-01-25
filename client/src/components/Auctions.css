@@ -610,7 +610,7 @@ input.disabled {
     padding: 0 var(--page-margin);
 }
 .advertising .column {
-    opacity: 0.7;
+    opacity: 0.85;
 }
 .advertising .column:hover {
     opacity: 1;
