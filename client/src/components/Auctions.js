@@ -666,7 +666,7 @@ class AuctionDetails extends Component {
                                             { min_price ? <div className="min-price">Cena minimalna: <span className="price-value">{ PriceHelper.write(auction.price.min_price) }</span><br /><br /><br /></div> : null }
                                             {
                                                 auction._user !== user._id && (<form ref={ (e) => this.formBidRef = e } action="/auction/bid" method="post">
-                                                    <input ref={ (e) => this.bidInputRef = e } name="bid" type="number" lang="pl" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="5" defaultValue={current_price} />
+                                                    <span className="price-input-wrapper"><input ref={ (e) => this.bidInputRef = e } name="bid" type="number" lang="pl" placeholder="Kwota licytacji" min={auction.price.current_price + 1} step="5" defaultValue={current_price} /></span>
                                                     <button type="submit" onClick={this.submit} disabled={auction.ended === true}><i className="material-icons">gavel</i>Licytuj</button>
                                                 </form>)
                                             }
@@ -1534,16 +1534,16 @@ class CreateUpdateAction extends Component {
                         <legend><span className="lettr-icon">PLN</span>Cena</legend>
                         <p>
                             <label htmlFor="start_price" className="required">Cena wywoławcza</label>
-                            <input name="start_price" type="number" step="0.01" onInput={this.validate} className={ (update ? 'disabled' : '') } />
+                            <span className="price-input-wrapper"><input name="start_price" type="number" step="0.01" onInput={this.validate} className={ (update ? 'disabled' : '') } /></span>
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
                         <p>
                             <label htmlFor="buy_now_price">Cena "kup teraz"</label>
-                            <input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } />
+                            <span className="price-input-wrapper"><input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } /></span>
                         </p>
                         <p>
                             <label htmlFor="min_price">Cena minimalna</label>
-                            <input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } />
+                            <span className="price-input-wrapper"><input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } /></span>
                         </p>
                         <p className="checkbox">
                             <span>

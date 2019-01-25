@@ -38,11 +38,9 @@ nav .user-links .search-mobile {
 	display: none;
 }
 
-
-
-@media screen and (max-width: 2000px) { 
+@media screen and (max-width: 6000px) { 
 	:root {
-		--page-margin: 250px;
+		--page-margin: calc((100vw - 1400px) / 2);
 	}
 }
 @media screen and (max-width: 1800px) { 
@@ -142,6 +140,7 @@ nav .user-links .search-mobile {
 		width: auto;
 	}
 }
+
 @media screen and (max-width: 1024px) {
 	body {
 		padding-top: calc(var(--nav-h));

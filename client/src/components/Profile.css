@@ -197,11 +197,18 @@
     opacity: .8;
 }
 .Profile.Delivery form input[type='text'] {
-    width: 58%;
+    width: 50%;
+    display: inline;
+}
+.Profile.Delivery .price-input-wrapper {
+    vertical-align: baseline;
 }
 .Profile.Delivery form input[type='number'] {
+    box-sizing: border-box;
+    
     border-left: none;
-    width: 22%;
+    padding-right: 28px;
+    width: 38%;
 }
 .Profile.Delivery form .remove {
     cursor: pointer;
@@ -222,14 +229,8 @@
     position: relative;
     width: 100%;
 }
-.Profile.Delivery .deliveries > div:after {
-    position: absolute;
-    top: 24px;
-    left: calc(80% - 25px);
-    content: '';
-    font-size: 12px;
-    color: var(--good);
-    opacity: 0.8;
+.Profile.Delivery .deliveries .hint-wrapper input[type="number"] {
+    
 }
 
 .CreateAuction .Modal .content {

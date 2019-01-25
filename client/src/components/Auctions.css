@@ -585,12 +585,12 @@ input.disabled {
     margin-bottom: 10px;
 }
 .two-third-column > .column:first-child {
-    --temp-width: calc(66% - var(--page-margin) - 20px);
+    --temp-width: calc(60% - 20px);
     flex: 0 0 var(--temp-width);
     margin-right: 20px;
 }
 .two-third-column > .column:last-child {
-    --temp-width: calc(33% + var(--page-margin) - 2px);
+    --temp-width: calc(40% - 2px);
     flex: 0 0 var(--temp-width);
 }
 
@@ -998,4 +998,16 @@ i.material-icons.spinning {
 form.disabled {
     opacity: 0.5;
     pointer-events: none;
+}
+
+.Auction .user-settings .price-input-wrapper {
+    width: 100%;
+}
+
+.Auction .user-settings .price-input-wrapper:after {
+    top: 23px;
+}
+.Auction .user-settings .price-input-wrapper input {
+    width: 100%;
+    padding-right: 28px;
 }

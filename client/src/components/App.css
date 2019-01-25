@@ -694,3 +694,15 @@ margin-bottom: 10px;
 #user-agent a {
     color: var(--link-blue);
 }
+
+.price-input-wrapper {
+    position: relative;
+    vertical-align: baseline;
+}
+.price-input-wrapper:after {
+    position: absolute;
+    top: calc(var(--input-h) / 2 - 12px); right: 14px;
+    font-size: 10px;
+
+    content: 'zł';
+}

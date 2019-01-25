@@ -619,7 +619,7 @@ class Delivery extends Component {
                                     Array.from({ length: this.state.deliveries}, (v, k) => k + 1).map(index => (
                                         <div className="hint-wrapper" key={'deliveries_' + index}>
                                             <input className="hinted" name={'delivery_' + (index)} type="text" placeholder="Nazwa przewoźnika" value={ this.state.data[index - 1] ? this.state.data[index - 1].name : '' } onChange={this.handleInput} onFocus={() => this.focus(index - 1)} />
-                                            <input name={'price_' + (index)} type="number" placeholder="Cena dostawy" min="0" step="0.01" value={ this.state.data[index - 1] ? this.state.data[index - 1].price : null } onChange={this.handleInput}/>
+                                            <span className="price-input-wrapper"><input name={'price_' + (index)} type="number" placeholder="Cena dostawy" min="0" step="0.01" value={ this.state.data[index - 1] ? this.state.data[index - 1].price : null } onChange={this.handleInput}/></span>
                                             <i className="material-icons remove" onClick={this.removeFunc}>remove_circle_outline</i>
                                             {
                                                 hints.length > 0 && focus === (index - 1) && (
