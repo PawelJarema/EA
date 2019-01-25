@@ -110,7 +110,7 @@ nav .user-links .search-mobile {
 }
 
 @media screen and (max-width: 1300px) {
-	body {
+	/*body {
 		padding-top: calc(var(--nav-h) + 74px);
 	}
 
@@ -137,6 +137,9 @@ nav .user-links .search-mobile {
 	nav .search-auctions button:hover {
 		background: var(--hot-orange);
 		color: white;
+	}*/
+	nav .search-auctions .inputs .item {
+		width: auto;
 	}
 }
 @media screen and (max-width: 1024px) {

@@ -609,8 +609,6 @@ class AuctionDetails extends Component {
 
         const extended_view = true || window.innerWidth > 1579;
 
-        console.log(auction);
-
         return (
             <div className="AuctionDetails">
                 {
