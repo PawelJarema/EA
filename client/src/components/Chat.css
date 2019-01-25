@@ -157,7 +157,8 @@
 	margin: 2px;
 	border-radius: 7px;
 	line-height: 1.5;
-}
+	white-space: pre-line;
+} 
 .Chat .chat-box .message.mine, .Chat .chat-box .message.his {
 	
 	

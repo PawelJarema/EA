@@ -25,6 +25,8 @@ const prepayTemplate = require('./emailTemplates/prepayTemplate');
 const rateTemplate = require('./emailTemplates/rateTemplate');
 const pendingMessagesTemplate = require('./emailTemplates/pendingMessagesTemplate');
 
+const helpers = require('./helpers/otherHelpers');
+
 const notifyAboutPendingChatMessages = async () => {
 	const recentlyUpdatedChats = await Chat.find({ messages: { $elemMatch: { seen: { $ne: true }}}});
 	let user_ids = new Set();
@@ -122,6 +124,8 @@ const endAuction = async (auction_id) => {
 				));
 				winMailer.send();
 				console.log('winner notification sent to ' + emails[i]);
+
+				helpers.sendChatMessagesOnAuctionEnd(winners[i]._id, owner._id, auction, auction.bids[i].price);
 			}
 
 			await notifyOwnerAboutAuctionEnd(auction, owner, names);
@@ -299,4 +303,3 @@ module.exports = app => {
 		res.send(true);
 	});
 }
-

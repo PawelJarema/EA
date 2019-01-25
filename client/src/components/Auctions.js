@@ -1620,7 +1620,7 @@ class CreateUpdateAction extends Component {
                         />
                         <input name="description" type="hidden" value={this.state.description} />
                         <br />
-                        <button type="submit" onClick={this.submit}>'Zapisz'</button>
+                        <button type="submit" onClick={this.submit}>Zapisz</button>
                     </fieldset>
                     <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />
                     

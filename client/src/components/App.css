@@ -617,7 +617,7 @@ strong {
     top: calc(var(--input-h) + 10px);
     left: 0;
     box-sizing: border-box;
-    width: 58%;
+    width: 50%;
     list-style: none;
     background: white;
     padding: 10px;

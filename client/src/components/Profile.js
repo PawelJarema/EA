@@ -569,7 +569,7 @@ class Delivery extends Component {
         const data = this.state.data;
         const methodsChosen = data.map(d => d.name);
 
-        const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska', 'odbiór osobisty'];
+        const hints = ['DPD', 'DHL', 'GLS', 'InPost', 'UPS', 'FedEx', 'Poczta Polska', 'odbiór osobisty'].filter(hint => new RegExp(value, 'i').test(hint));
 
         this.setState(prev => {
             let data = prev.data;

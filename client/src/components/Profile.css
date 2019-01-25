@@ -229,9 +229,6 @@
     position: relative;
     width: 100%;
 }
-.Profile.Delivery .deliveries .hint-wrapper input[type="number"] {
-    
-}
 
 .CreateAuction .Modal .content {
     text-align: center;

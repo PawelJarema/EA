@@ -28,66 +28,14 @@ const buyNowItemSoldTemplate    = require('../services/emailTemplates/buyNowItem
 const bidTemplate               = require('../services/emailTemplates/bidTemplate');
 const Mailer                    = require('../services/Mailer');
 
+const helpers = require('../services/helpers/otherHelpers');
+
 const currentUserId = (req) => {
     if (req.user) {
         return ObjectId(req.user._id);
     } else {
         return null;
     }
-}
-
-async function findUserByNames(query) {
-    let names = query.split(' ');
-    let name_array = [names[0] ? new RegExp(names[0], 'i') : null, names[1] ? new RegExp(names[1], 'i') : null];
-    return await User.findOne({ $or: [ {firstname: { $in: name_array }}, {lastname: { $in: name_array }} ] }, { _id: 1 });
-}
-
-async function checkIfLiked(auctions, req) {
-    if (!req.user) {
-        return;
-    }
-
-    let 
-        ids         = await Like
-            .find({ _user: ObjectId(req.user._id) })
-            .lean(); 
-        ids         = ids.map(like => String(like._auction));
-
-    if (ids && ids.length) {
-        return auctions.map(auction => {
-            if (ids.indexOf(String(auction._id)) !== -1) 
-                auction.liked = true;
-            return auction;
-        });
-    }
-}
-
-async function addBidders(auction) {
-    let auction_object = auction.toObject(),
-        bidders_object = {};
-    const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
-    const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
-    bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
-    auction_object.bidders = bidders_object;
-    return auction_object;
-}
-
-async function buyNowNotifications(user, owner, auction) {
-    let subject, recipients, mailer;
-    let res;
-
-    const price = auction.price.buy_now_price;
-    const username = `${user.firstname || ''} ${user.lastname || !user.firstname ? 'Anonim' : ''}`;
-    
-    subject = 'Kupiłeś przedmiot ' + auction.title;
-    recipients = [{ email: user.contact.email }];
-    mailer = new Mailer({ subject, recipients }, buyNowWonTemplate(auction._id, auction.title, price));
-    res = await mailer.send();
-
-    subject = `${username} kupi od Ciebie ${auction.title} w opcji Kup Teraz`;
-    recipients = [{ email: owner.contact.email }];
-    mailer = new Mailer({ subject, recipients }, buyNowItemSoldTemplate(auction._id, auction.title, username, price));
-    res = await mailer.send();
 }
 
 module.exports = app => {
@@ -289,7 +237,7 @@ module.exports = app => {
                 req.session.message = 'Kupiłeś ' + auction.title;
                 res.send(await addBidders(doc));
 
-                await buyNowNotifications(user, owner, doc);
+                buyNowNotifications(user, owner, doc);
             },
             async err => {
                 console.log(err);
@@ -876,4 +824,60 @@ async function savePhotos(auction, files) {
             });
         });
     });
+}
+
+async function findUserByNames(query) {
+    let names = query.split(' ');
+    let name_array = [names[0] ? new RegExp(names[0], 'i') : null, names[1] ? new RegExp(names[1], 'i') : null];
+    return await User.findOne({ $or: [ {firstname: { $in: name_array }}, {lastname: { $in: name_array }} ] }, { _id: 1 });
+}
+
+async function checkIfLiked(auctions, req) {
+    if (!req.user) {
+        return;
+    }
+
+    let 
+        ids         = await Like
+            .find({ _user: ObjectId(req.user._id) })
+            .lean(); 
+        ids         = ids.map(like => String(like._auction));
+
+    if (ids && ids.length) {
+        return auctions.map(auction => {
+            if (ids.indexOf(String(auction._id)) !== -1) 
+                auction.liked = true;
+            return auction;
+        });
+    }
+}
+
+async function addBidders(auction) {
+    let auction_object = auction.toObject(),
+        bidders_object = {};
+    const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
+    const bidders = await User.find({ _id: { $in: bidder_ids }}, { firstname: 1, lastname: 1 }).lean();
+    bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
+    auction_object.bidders = bidders_object;
+    return auction_object;
+}
+
+async function buyNowNotifications(user, owner, auction) {
+    let subject, recipients, mailer;
+    let res;
+
+    const price = auction.price.buy_now_price;
+    const username = `${user.firstname || ''} ${user.lastname || !user.firstname ? 'Anonim' : ''}`;
+    
+    subject = 'Kupiłeś przedmiot ' + auction.title;
+    recipients = [{ email: user.contact.email }];
+    mailer = new Mailer({ subject, recipients }, buyNowWonTemplate(auction._id, auction.title, price));
+    res = await mailer.send();
+
+    subject = `${username} kupi od Ciebie ${auction.title} w opcji Kup Teraz`;
+    recipients = [{ email: owner.contact.email }];
+    mailer = new Mailer({ subject, recipients }, buyNowItemSoldTemplate(auction._id, auction.title, username, price));
+    res = await mailer.send();
+
+    helpers.sendChatMessagesOnAuctionEnd(user._id, owner._id, auction, price);
 }
