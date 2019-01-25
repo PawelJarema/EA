@@ -680,3 +680,17 @@ strong {
     margin: 0; 
 }
 */
+
+#user-agent {
+width: 100%;
+text-align: center;
+}
+
+#user-agent h1 {
+color: red;
+margin-bottom: 10px;
+}
+
+#user-agent a {
+    color: var(--link-blue);
+}
