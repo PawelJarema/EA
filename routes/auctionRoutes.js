@@ -762,10 +762,10 @@ module.exports = app => {
                         req.session.message = 'Pomyślnie dodano aukcję'; 
                         auction = doc; 
 
-                        const user = req.user;
-                        const { credits } = user.balance;
-                        user.balance.credits = credits ? (+credits - 1) : 4;
-                        user.save();
+                        // const user = req.user;
+                        // const { credits } = user.balance;
+                        // user.balance.credits = credits ? (+credits - 1) : 4;
+                        // user.save();
                
                         res.send({}); 
                     },
