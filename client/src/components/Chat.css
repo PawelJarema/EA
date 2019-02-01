@@ -207,7 +207,6 @@
 	display: flex;
 	justify-content: space-between;
 
-	width: 100%;
 	flex: 0 0 45px;
 	box-sizing: border-box;
 	align-self: flex-end;

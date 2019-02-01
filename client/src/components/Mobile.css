@@ -40,12 +40,19 @@ nav .user-links .search-mobile {
 
 @media screen and (max-width: 6000px) { 
 	:root {
-		--page-margin: calc((100vw - 1400px) / 2);
+		--page-margin: 300px;
 	}
 }
-@media screen and (max-width: 1800px) { 
+
+@media screen and (max-width: 2200px) { 
 	:root {
-		--page-margin: 180px;
+		--page-margin: 200px;
+	}
+}
+
+@media screen and (max-width: 2000px) { 
+	:root {
+		--page-margin: 150px;
 	}
 }
 @media screen and (max-width: 1700px) {

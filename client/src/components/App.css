@@ -648,7 +648,7 @@ strong {
 
     border: 1px solid #ddd;
     background: white;
-    padding: 20px;
+    padding: 20px; margin-bottom: 20px;
     box-shadow: 1px 1px 1px #ddd;
 }
 .cookie-message > div {

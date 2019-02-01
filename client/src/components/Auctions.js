@@ -470,6 +470,8 @@ class RawImage extends Component {
         } else if (link) {
             return <div ref={(e) => this.imgRef = e} className="absolute-center div-image-block" style={{ borderStyle: 'none', backgroundImage: `url(/auction/${link._id}/photo)` }}></div>;
         }
+
+        return null;
     }
 }
 
