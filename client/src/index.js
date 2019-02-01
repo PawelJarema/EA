@@ -1,3 +1,4 @@
+import 'react-app-polyfill/ie11';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
@@ -12,7 +13,7 @@ var ie = ua.indexOf('MSIE ') > 0;
 var ie_new = ua.indexOf('Trident/') > 0;
 var edge = ua.indexOf('Edge/') > 0;
 
-if (ie || ie_new || edge) {
+if (ie || ie_new) {
 	var info = document.getElementById('user-agent');
 
 	var h1 = document.createElement('h1')
