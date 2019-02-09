@@ -306,6 +306,9 @@ nav .user-links .search-mobile {
 		flex-direction: column;
 	}
 	
+	.App .AuctionListSearch .CategoryFilters {
+		order: 2;
+	}
 	.App .AuctionListSearch .advanced-search {
 		margin: 0;
 		order: 2;
@@ -499,6 +502,19 @@ nav .user-links .search-mobile {
 		margin-bottom: 30px;
 	}
 }
+
+@media screen and (max-width: 920px) {
+	.CategoryFilters .Properties .input-singular, 
+	.CategoryFilters .Properties .input-multiple, 
+	.CategoryFilters .Properties .input-range {
+		flex: 0 0 25% !important;
+	}
+
+	.CategoryFilters .CategoryTree a {
+		flex: 0 0 33% !important;
+	}
+}
+
 @media screen and (max-width: 855px) {
 	.App .AuctionList .auction {
 		flex-direction: column;
@@ -518,6 +534,19 @@ nav .user-links .search-mobile {
 		width: 100%;
 	}
 }
+
+@media screen and (max-width: 720px) {
+	.CategoryFilters .Properties .input-singular, 
+	.CategoryFilters .Properties .input-multiple, 
+	.CategoryFilters .Properties .input-range {
+		flex: 0 0 33% !important;
+	}
+
+	.CategoryFilters .CategoryTree a {
+		flex: 0 0 50% !important;
+	}
+}
+
 @media screen and (max-width: 700px) {
 	.App .FrontPage .six-column .column {
 		flex: 0 0 calc(50% - 2px);
@@ -548,6 +577,10 @@ nav .user-links .search-mobile {
 	}
 	.App .FrontPage .auction {
 		box-shadow: none;
+	}
+
+	.App .AuctionListSearch .CategoryFilters {
+		padding-left: 20px;
 	}
 	footer .footer-bar {
 		padding: 7px 0px;
@@ -597,6 +630,19 @@ nav .user-links .search-mobile {
 		margin: 0 auto;
 	}
 }
+
+@media screen and (max-width: 405px) {
+	.CategoryFilters .Properties .input-singular, 
+	.CategoryFilters .Properties .input-multiple, 
+	.CategoryFilters .Properties .input-range {
+		flex: 0 0 50% !important;
+	}
+
+	.CategoryFilters .CategoryTree a {
+		flex: 0 0 100% !important;
+	}
+}
+
 
 @media screen and (max-width: 340px) {
 	:root {

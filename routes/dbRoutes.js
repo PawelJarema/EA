@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
+const util = require('util');
 
 require('../models/Category');
 require('../models/Auction');
@@ -7,40 +8,90 @@ require('../models/User');
 const Category = mongoose.model('category');
 const Auction = mongoose.model('auction');
 const User = mongoose.model('user');
-
-mongoose.model('subcategory', require('../models/Subcategory'));
 const Subcategory = mongoose.model('subcategory');
+const SubSubCategory = mongoose.model('sub_subcategory');
+const Property = mongoose.model('property');
 
+const categoryTree = require('../client/src/categories/categories');
 
-const seedData = {
-    'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
-    'Moda': ['Obuwie', 'Odzież', 'Biżuteria', 'Zegarki'],
-    'Dom i ogród': ['Ogród', 'Kwiaty', 'Meble', 'Wyposażenie wnętrz', 'Zwierzęta'],
-    'Dziecko': ['Zabawki', 'Ubranka', 'Żywność', 'Artykuły szkolne'],
-    'Rozrywka i gry': ['Gry', 'Książka', 'Komiks', 'Muzyka', 'Film', 'Warhammer, gry bitewne', 'Gry planszowe'],
-    'Sport': ['Rower', 'Turystyka', 'Boks', 'Bieganie', 'Sztuki walki'],
-    'Motoryzacja': ['Samochód', 'Motocykl', 'Quad', 'Opony', 'Części samochodowe'],
-    'Sztuka': ['Malarstwo', 'Rysunek', 'Antyki', 'Rękodzieło', 'Wyroby WTZu', 'Artykuły kreatywne'],
-    'Firma': ['Oprogramowanie', 'Księgowość', 'Akcesoria przemysłowe', 'Nieruchomości', 'Akcesoria BHP'],
-    'Zdrowie': ['Zioła', 'Ubezpieczenie', 'Poradniki', 'Suplementy'],
-    'Uroda': ['Makijaż', 'Włosy', 'Kosmetyki', 'Twarz i ciało']
-};
+// kategoria, tytuł i cena, atrybuty, opis
 
 const random = function(min, max) {
     return parseInt(Math.random() * (max - min) + min);
 }
 
-const titles = ['OptiShot 2 symulator golfowy', 'Arccos 360 system analizy gry', 'Game Golf LIVE GPS i system analizy gry w jednym', 'Zepp 2 analizator swingu', 'TomTom Golfer 2 zegarek golfowy z GPS', 'Bushnell NEO iON GPS golfowy', 'Bushnell Tour V4 JOLT dalmierz laserowy', 'Bushnell Tour V4 Ryder Cup Edition dalmierz laserowy', 'Voice Caddie SC200 Launch Monitor dopplerowski radar', 'Telewizor SONY KD-49XF7005', 'Telewizor SAMSUNG UE55NU7442U', 'Telewizor LG 55SK8100PLA', 'Laptop HP Pavilion x360 14-ba016nw i5-7200U/8GB/1TB/INT/Win10 Srebrny', 'Laptop/Tablet 2w1 ACER One 10 S1003-133N Z8350/2GB/64GB eMMC/Win10', 'Laptop LENOVO Yoga 520-14IKBR 81C800J1PB i3-8130U/4GB/256GB SSD/INT/Win10H Onyx Black'];
-const attributes = ['Stan', 'Kolor', 'Rozmiar'];
-const values = {
-    'Stan': ['nowy', 'używany', 'uszkodzony', 'działający', 'dobry', 'jak nowy'],
-    'Kolor': ['czerwony', 'niebieski', 'żółty', 'biały', 'szary', 'kremowy', 'zieleń', 'pomarańczowy', 'czarny'],
-    'Rozmiar': ['XXL', 'XL', 'L', 'M', 'S', 'XS']
-};
-
-// kategoria, tytuł i cena, atrybuty, opis
+const isArray = function(object) {
+    return Object.prototype.toString.call(object) === '[object Array]';
+}
 
 module.exports = app => {
+    app.get('/api/reconstruct-categories', async (req, res) => {
+        await Category.deleteMany({});
+        await Subcategory.deleteMany({});
+        await SubSubCategory.deleteMany({});
+        await Property.deleteMany({});
+
+        for (let key in categoryTree) {
+            const
+                category = new Category({
+                    name: key,
+                    subcategories: []
+                }),
+                subcategoryObject  = categoryTree[key];
+            
+
+            for (let subKey in subcategoryObject) {
+                const
+                    subcategory = new Subcategory({
+                        name: subKey,
+                    }),
+                    subSubCategoryObject = subcategoryObject[subKey];
+
+                if (isArray(subSubCategoryObject)) {
+                    // create subcategory with props
+                    subcategory.properties = [];
+
+                    for (let i = 0; i < subSubCategoryObject.length; i++) {
+                        const prop = new Property(subSubCategoryObject[i]);
+                        subcategory.properties.push(prop);
+                    }
+
+                    subcategory.markModified('properties');
+                } else {
+                    // iterate third level
+                    subcategory.sub_subcategories = [];
+                    for (let subSubKey in subSubCategoryObject) {
+                        const
+                            properties      = subSubCategoryObject[subSubKey],
+                            sub_subcategory = new SubSubCategory({
+                                name: subSubKey,
+                                properties: []
+                            });
+
+                        if (properties !== null) {
+                            for (let i = 0; i < properties.length; i++) {
+                                const prop = new Property(properties[i]);
+                                sub_subcategory.properties.push(prop);
+                            }
+                        }
+
+                        sub_subcategory.markModified('properties');
+                        await sub_subcategory.save();
+                        subcategory.sub_subcategories.push(sub_subcategory);
+                        subcategory.markModified('sub_subcategories');
+                    }
+                }
+
+                await subcategory.save();
+                category.subcategories.push(subcategory);
+            }
+
+            await category.save();
+        }
+
+        res.send(true);
+    });
+
     app.get('/api/seedauctions', async (req, res) => {
         const howMany = 200;
 

@@ -4,6 +4,7 @@ const { ObjectId } = Schema.Types;
 
 const photoSchema = require('./Photo');
 const attributeSchema = require('./Attribute');
+const intAttributeSchema = require('./AttributeInt');
 const bidSchema = require('./Bid');
 
 const auctionSchema = new Schema({
@@ -28,7 +29,8 @@ const auctionSchema = new Schema({
     attributes: [attributeSchema],
     categories: {
         main: String,
-        sub: String
+        sub: String,
+        subsub: String
     },
     bids: [bidSchema],
     verified: Boolean,
@@ -38,7 +40,9 @@ const auctionSchema = new Schema({
     payees: [ObjectId],
     buynowpayees: [ObjectId],
     raters: [ObjectId],
-    rated: Boolean
+    rated: Boolean,
+    properties: [attributeSchema],
+    int_properties: [intAttributeSchema]
 });
 
 mongoose.model('auction', auctionSchema);

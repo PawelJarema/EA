@@ -8,46 +8,25 @@ import { applyToAuctions } from './Auctions.js';
 class Filters extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { hidden: [], checked: [] };
-
-		this.isHidden = name => this.state.hidden.indexOf(name) !== -1;
-		this.isChecked = name => this.state.checked.indexOf(name) !== -1;
-		this.hide = name => this.setState(prev => {
-			if (this.isHidden(name)) {
-				const i = prev.hidden.indexOf(name);
-				return { hidden: prev.hidden.slice(0, i).concat(prev.hidden.slice(i + 1)) }
-			} else {
-				return { hidden: prev.hidden.concat([name]) }
-			}
-		});
-		this.check = (name, noupdate) => this.setState(prev => {
-			if (this.isChecked(name)) {
-				const i = prev.checked.indexOf(name);
-				return { checked: prev.checked.slice(0, i).concat(prev.checked.slice(i + 1)) }
-			} else {
-				return { checked: prev.checked.concat([name]) }
-			}
-		}, () => { if (noupdate) {} else { this.filterList() } });
+		this.state = {};
 
 		this.handleInput = this.handleInput.bind(this);
 		this.filterList = this.filterList.bind(this);
-		this.applyCategoryFilters = this.applyCategoryFilters.bind(this);
 	}
 
 	componentDidMount() {
 		const { query, category, categories } = this.props;
 
 		if (category) {
-			this.applyCategoryFilters(category, categories);
+			if (category !== 'Szukaj Sprzedawcy' && category !== 'Kategorie')
+				this.props.categoryCallback({ category: category });
 		}
 
 		if (category !== 'Szukaj Sprzedawcy') {
-			this.setState({ title: query }, () => {
-				this.filterList();
-			});
-		} else {
-			this.filterList();
-		}
+			this.setState({ title: query });
+		} 
+
+		setTimeout(this.filterList, 150);
 	}
 
 	componentWillUnmount() {
@@ -56,52 +35,15 @@ class Filters extends Component {
 		}
 	}
 
-	applyCategoryFilters(category, categories) {
-		let check_all = false;
-
-		if (category === 'Szukaj Sprzedawcy') {
-			this.setState({ seller: this.props.query || '' });
-			return;
-		}
-
-		if (category === 'Kategorie') {
-			check_all = true;
-		} 
-
-		for (let i = 0; i < categories.length; i++) {
-			const main = categories[i];
-
-			if (check_all) {
-				// for (let c = 0; c < main.subcategories.length; c++) {
-				// 	const name = main.subcategories[c].name;
-				// 	if (this.state.checked.indexOf(name) === -1)
-				// 		this.setState(prev => ({ checked: prev.checked.concat([name])}));
-				// }
-				if (this.isHidden(main.name)) this.hide(main.name);
-			} else {
-				const checked_subcat = main.subcategories.filter(sub => sub.name === category);
-
-				if (main.name === category || checked_subcat.length) {
-					if (checked_subcat.length) {
-						const name = checked_subcat[0].name;
-						this.setState({ checked: [name] });
-					}
-
-					if (this.isHidden(main.name))
-						this.hide(main.name);
-				} else {
-					if (!this.isHidden(main.name)) this.hide(main.name);
-				}
-			}
-		}
-	}
-
 	componentWillReceiveProps(props) {
 		if (props.page) {
 			if (props.page !== this.props.page) {
 				this.filterList();
+				return;
 			}
 		}
+
+		let change = false;
 
  		if (props.match && props.categories) {
 			const { category, query }   = props.match.params,
@@ -111,31 +53,45 @@ class Filters extends Component {
 				return;
 
 			if (category !== this.props.match.params.category) {
-				this.applyCategoryFilters(category, categories);
+				change = true;
 			}
 
 			if (query !== this.props.match.params.query || category !== this.props.match.params.category) {
 				if(category !== 'Szukaj Sprzedawcy') {
-					this.setState({ title: query }, () => this.filterList());
+					this.setState({ title: query });
 				} else {
-					this.setState({ seller: query }, () => this.filterList());
+					this.setState({ seller: query });
 				}
+				change = true;
 			}
 
 			if (query !== this.props.match.params.query) {
-				// if (this.props.category !== 'Szukaj Sprzedawcy') {
-				// 	this.setState({ title: query }, () => this.filterList());
-				// } else {
-				// 	this.setState({ seller: query }, () => this.filterList());
-				// }
 				
 			} else if (category !== this.props.match.params.category) {
-				this.filterList();
-			} 
+				change = true;
+			}
+
+			if (change) {
+				if (category !== 'Szukaj Sprzedawcy' && category !== 'Kategorie')
+					this.props.categoryCallback({ category });
+				else 
+					this.props.categoryCallback({});
+			}
+		}
+
+		if (props.categoryData && this.lastCatPropsUpdate !== props.categoryData.time) {
+			this.lastCatPropsUpdate = props.categoryData.time;
+			change = true;
+		}
+
+		if (change) {
+			setTimeout(this.filterList, 50);
 		}
 	}
 
-	filterList() {
+	filterList(props) {
+		const { categoryData } = (props || this.props);
+
 		if (this.filterListTimeout) {
 			clearTimeout(this.filterListTimeout);
 		}
@@ -146,6 +102,26 @@ class Filters extends Component {
 
 			formData.append('page', page);
 			formData.append('per_page', per_page);
+
+			const categoryInfo = ['category', 'subcategory', 'subsubcategory'];
+			if (categoryData) {
+				for (let key in categoryData) {
+					const value = categoryData[key];
+
+					if (typeof value === 'string') {
+						formData.append((categoryInfo.indexOf(key) !== -1 ? key : '_' + key), value);
+					} else 
+					if (typeof value === 'object') {
+						for (let vKey in value) {
+							const 
+								k = '_' + key + '[' + vKey.split('_')[1] + ']',
+								v = value[vKey];
+
+							formData.append(k, v);
+						}
+					}
+				}
+			}
 
 			this.props.filterAuctions(formData);
 			applyToAuctions((a) => a.style.opacity = 0.8);
@@ -170,65 +146,18 @@ class Filters extends Component {
             <div className="advanced-search filters">
                 <h3>Filtry</h3>
                 <form ref={(e) => this.formRef = e}>
-                	<div>
-                        <div className="label"><i className="material-icons">perm_identity</i>Sprzedawca</div>
-                        <p>
-                            <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="seller" type="text" value={this.state.seller} onChange={this.handleInput}/>
-                        </p>
-                    </div>
                     <div>
-                        <div className="label"><i className="material-icons">title</i>Tytuł</div>
+                        <div className="label"><i className="material-icons">title</i>Tytuł aukcji</div>
                         <p>
                             <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="title" type="text" value={this.state.title} onChange={this.handleInput}/>
                         </p>
                     </div>
                     <div>
-                        <div className="label"><span className="lettr-icon">PLN</span>Cena</div>
+                        <div className="label"><i className="material-icons">perm_identity</i>Sprzedawca</div>
                         <p>
-                            <input name="min" type="number" min="1" step="0.01" placeholder="od" value={this.state.min} onChange={this.handleInput}/>
-                            <input name="max" type="number" min="1" step="0.02" placeholder="do" value={this.state.max} onChange={this.handleInput}/>
-                        </p>
-                    </div>    
-                    <div>
-                        <div className="label"><i className="material-icons">search</i>Stan</div>
-                        <p>
-                            <input name="state_nowy" type="checkbox" checked={state.state_nowe} onChange={this.handleInput}/><span className="label">Nowy</span>
-                        </p>
-                        <p>
-                            <input name="state_używany" type="checkbox" checked={state.state_uzywane} onChange={this.handleInput}/><span className="label">Używany</span>
+                            <input style={{width: 'calc(100% - 22px)', fontSize: '16px'}} name="seller" type="text" value={this.state.seller} onChange={this.handleInput}/>
                         </p>
                     </div>
-                    <div>
-                        <div className="label"><i className="material-icons">sort_by_alpha</i>Sortuj</div>
-                        <p>
-                            <input name="sort" type="radio" value="tanie" checked={this.state.sort === 'tanie'} onChange={this.handleInput}/><span className="label">od najtańszych</span>
-                        </p>
-                        <p>
-                            <input name="sort" type="radio" value="drogie" checked={this.state.sort === 'drogie'} onChange={this.handleInput}/><span className="label">od najdroższych</span>
-                        </p>
-                        <p>
-                            <input name="sort" type="radio" value="alfabetycznie" checked={this.state.sort === 'alfabetycznie'} onChange={this.handleInput}/><span className="label">alfabetycznie</span>
-                        </p>
-                    </div>
-                            
-                
-	                <div className="form-subsection">
-	                	<div className="items">
-	                		{
-	                			categories && categories.map((main, i) => (
-	                				<div key={"main_" + i}>
-	                					<div className="main-category label" onClick={() => this.hide(main.name)}>{ main.name } <i className="material-icons category">arrow_drop_down</i></div>
-	                					{
-	                						!this.isHidden(main.name) && main.subcategories.map((sub, i) => (
-	                							<div className="subcategory" key={"subcategory_" + i}><input name={"cat_" + sub.name} type="checkbox" onChange={() => this.check(sub.name)} checked={this.isChecked(sub.name)} className={this.isChecked(sub.name) ? 'checked' : ''}/>{ sub.name }</div>
-	                						))
-	                					}
-	                				</div>
-	                			))
-	                		}
-	                	</div>
-	                </div>
-
                 </form>
                 <div>
                     {

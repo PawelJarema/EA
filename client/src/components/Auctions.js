@@ -16,6 +16,9 @@ import { ProfileLinks } from './Profile';
 import { Seller, Deliveries, Opinions } from './OtherUser';
 import { ImageProgress } from './Progress';
 
+import CategoryPicker from './CategoryPicker';
+import CategoryFilters from './CategoryFilters';
+
 import Dropzone from 'react-dropzone';
 import RichTextEditor from 'react-rte';
 import Modal from './Modal';
@@ -400,11 +403,10 @@ class FrontPage extends Component {
     }
 
     render() {
+        const { categories, categoryCallback } = this.props;
+
         return (
             <div className="FrontPage">
-                <div className="introduction">
-                    
-                </div>
                 {
                     (!this.props.auctions || !this.props.auctions.popular) && <Progress />
                 }
@@ -616,11 +618,9 @@ class AuctionDetails extends Component {
                 {
                     !auction ? <Progress /> : (
                         <div className="auction-view">
-
                             {
                                 pay && <Pay user={ user } auction={ auction } callback={ this.payCallback } />
                             }
-
                             <div className="basic-info">
                                 <div className="photos">
                                     <div className="photo-big">
@@ -628,7 +628,7 @@ class AuctionDetails extends Component {
                                             {
                                                 photos.length 
                                                 ?
-                                                <RawImage data={photos[active_photo]} />
+                                                <RawImage data={ photos[active_photo] } />
                                                 :
                                                 <div><ImageProgress /></div>
                                             }
@@ -1207,7 +1207,6 @@ class CreateUpdateAction extends Component {
        let emptyValue = RichTextEditor.createEmptyValue();
        this.state = { subcategories: [], images: [], richText: emptyValue, description: emptyValue.toString('html'), message: [] };
        
-       this.handleCategory = this.handleCategory.bind(this);
        this.addAttribute = this.addAttribute.bind(this);
        this.onDrop = this.onDrop.bind(this);
        this.removeImage = this.removeImage.bind(this);
@@ -1226,13 +1225,6 @@ class CreateUpdateAction extends Component {
        if (props.categories) {
            this.setState({ subcategories: props.categories[0].subcategories });
        }
-   }
-    
-   handleCategory(event) {
-       const select = event.target;
-       const value = select.value;
-       
-       this.setState({ subcategories: this.props.categories.filter(cat => cat.name === value)[0].subcategories});
    }
     
    handleRichText(text) {
@@ -1492,6 +1484,19 @@ class CreateUpdateAction extends Component {
        //      );
        // }
 
+
+        // <p>
+        //     <span className="label add-horizontal-margin"><span className="orange">*</span> Stan przedmiotu:
+        //         <input name="attribute_Stan" type="radio" value="nowy" defaultChecked /><span className="label">nowy</span>
+        
+        //         <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
+        //     </span>
+        // </p>
+        // <p className="attributes" ref={ e => this.attributesRef = e }></p>
+        // <p>
+        //     <span className="label add" onClick={this.addAttribute}><i className="material-icons">add_circle_outline</i>Dodaj atrybut</span>
+        // </p>
+
        return (
             <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
                 <ProfileLinks active="addauction" />
@@ -1515,21 +1520,8 @@ class CreateUpdateAction extends Component {
                     </fieldset>
        
                     <fieldset>
-                        <legend><i className="material-icons">category</i>Kategorie</legend>
-                        <p>
-                            <select name="main" onChange={ this.handleCategory }>
-                                {
-                                    categories !== null && categories.map(category => <option key={ category.name } >{category.name}</option>)
-                                }
-                            </select><span className="label">Kategoria główna</span>
-                        </p>
-                        <p>
-                            <select name="sub">
-                                {
-                                    this.state.subcategories.map(subcategory => <option key={ subcategory.name }>{subcategory.name}</option>)
-                                }
-                            </select><span className="label">podkategoria</span>
-                        </p>
+                        <legend><i className="material-icons">category</i>Kategorie i Cechy</legend>
+                        <CategoryPicker categories={categories} />
                     </fieldset>
        
                     <fieldset>
@@ -1566,24 +1558,12 @@ class CreateUpdateAction extends Component {
                     </fieldset>
 
                     <fieldset>
-                        <legend><i className="material-icons">edit_attributes</i>Atrybuty</legend>
-                        <p>
-                            <span className="label add-horizontal-margin"><span className="orange">*</span> Stan przedmiotu:
-                                <input name="attribute_Stan" type="radio" value="nowy" defaultChecked /><span className="label">nowy</span>
-                        
-                                <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
-                            </span>
-                        </p>
+                        <legend><i className="material-icons">exposure_plus_1</i>Ilość sztuk</legend>
                         <p>
                             <label htmlFor="quantity" className="required">Ilość sztuk</label>
                             <input name="quantity" type="number" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[3] }</span>
                         </p>
-                        <p className="attributes" ref={ e => this.attributesRef = e }></p>
-                        <p>
-                            <span className="label add" onClick={this.addAttribute}><i className="material-icons">add_circle_outline</i>Dodaj atrybut</span>
-                        </p>
-                        
                     </fieldset>
 
                     <fieldset>

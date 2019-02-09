@@ -1,0 +1,53 @@
+.Properties {
+	display: flex;
+	flex-wrap: wrap;
+
+	margin-top: 15px;
+	margin-left: -3px;
+}
+.Properties .property {
+	margin: 2px 4px;
+}
+.Properties .property label {
+	display: block;
+	margin-bottom: -8px;
+	font-size: 12px; font-weight: bold;
+}
+
+.Properties .unit-span {
+	position: relative;
+}
+
+.Properties .input-input {
+	max-width: 177px;
+}
+
+.Properties .input-input input {
+	padding-right: 30px;
+}
+
+.Properties .input-input .unit {
+	position: absolute; top: 5px; right: 7px;
+	font-size: 11px;
+}
+
+.Properties .input-input .input-hints {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 177px;
+
+	margin-top: -10px; margin-left: -19px; margin-bottom: 10px;
+	padding: 0; padding-bottom: 5px;
+	list-style: none;
+	background: white;
+	border: 1px solid #ddd; border-top: none;
+	
+}
+
+.Properties .input-input .input-hints li {
+	box-sizing: border-box;
+	font-size: 13px;
+	padding: 1px 5px;
+	cursor: pointer;
+
+}

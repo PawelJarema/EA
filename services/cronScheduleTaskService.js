@@ -258,7 +258,7 @@ schedule.scheduleJob('59 23 * * *', async () => {
 	await schedulePendingAuctions();
 	
 	// not prepaid
-	await remindToPrepayEndedAuctions();
+	//await remindToPrepayEndedAuctions();
 
 	// not paid TODO
 

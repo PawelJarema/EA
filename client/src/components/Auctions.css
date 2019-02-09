@@ -103,14 +103,14 @@ input.disabled {
     display: block;
 }
 
-.user-settings fieldset > p > select {
+.user-settings fieldset > div > p > select {
     height: var(--input-h);
     border: 1px solid #ddd;
     width: 50%;
     margin-bottom: 15px;
     cursor: pointer;
 }
-.user-settings fieldset > p > select + .label {
+.user-settings fieldset > div > p > select + .label {
     line-height: var(--input-h);
     padding-left: 10px;
 }

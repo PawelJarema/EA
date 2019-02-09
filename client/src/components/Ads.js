@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 
 class Ads extends Component {
  	componentDidMount() {
+        if (process.env.NODE_ENV !== 'production') return;
+        
  		(window.adsbygoogle = window.adsbygoogle || []).push({});
  	}
 
 	render() {
+        if (process.env.NODE_ENV !== 'production') return null;
+
 		return (
             <ins className="adsbygoogle"
                  style={{ display:'block' }}

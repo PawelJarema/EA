@@ -15,6 +15,7 @@ import { AuctionList, MyAuctionList, AuctionDetails, FrontPage, FilteredList } f
 import { RegistrationLanding, LoginLanding } from './Landing';
 import { Settings, CreateUpdateAction, Delivery, ProfileLinks, MyOpinions, Invoices } from './Profile';
 import { AdminPanel, TechBreak } from './Admin';
+import CategoryFilters from './CategoryFilters';
 import Filters from './Filters';
 import Progress from './Progress';
 import Chat from './Chat';
@@ -222,9 +223,9 @@ class Navi extends Component {
         return (
             <nav>
                 <Logo />
-                <SearchField open={search} setQuery={this.props.setQuery} setCategory={this.props.setCategory} searchHandler={this.searchHandler}/>
-                <MobileMenu open={mobile} clickHandler={this.clickHandler} />
-                <UserLinks callback={callback} open={mobile} socket={ this.props.socket } searchHandler={this.searchHandler} toggleMenu={this.clickHandler}/>
+                <SearchField open={ search } setQuery={ this.props.setQuery } setCategory={ this.props.setCategory } searchHandler={ this.searchHandler }/>
+                <MobileMenu open={ mobile } clickHandler={ this.clickHandler } />
+                <UserLinks callback={ callback } open={ mobile } socket={ this.props.socket } searchHandler={ this.searchHandler } toggleMenu={ this.clickHandler }/>
                 
             </nav>
         );
@@ -310,7 +311,7 @@ class CategoryLinks extends Component {
         
         if (categories === null || categories === false)
             return null;
- 
+
         const top = categories.slice(0, 6);
         const bottom = categories.slice(6);
         
@@ -471,7 +472,6 @@ class AdvancedSearch extends Component {
     }
 }
 
-// <AdvancedSearch match={ this.props.match } />
 class AuctionListSearch extends Component {
     constructor(props) {
         super(props);
@@ -495,12 +495,15 @@ class AuctionListSearch extends Component {
 
     render() {
         const { page, pages, per_page } = this.state;
-        const { user, categories, query, category } = this.props;
+        const { user, categories, query, category, categoryData, categoryCallback } = this.props;
 
         return (
             <div className="AuctionListSearch">
-                <Filters match={ this.props.match } page={page} pages={pages} per_page={per_page} query={query} category={category} user={user} categories={categories}/>
-                <FilteredList page={page} pages={pages} setPage={this.setPage} setPages={this.setPages} />
+                <Filters match={ this.props.match } page={ page } pages={ pages } per_page={ per_page } query={ query } category={ category } user={ user } categories={ categories } categoryData={ categoryData } categoryCallback={ categoryCallback } />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <CategoryFilters categories={ categories } categoryCallback={ categoryCallback } category={ category } />
+                    <FilteredList page={ page } pages={ pages } setPage={ this.setPage } setPages={ this.setPages } />
+                </div>
             </div>
         );
     }
@@ -572,6 +575,7 @@ class App extends Component {
     this.state = {
         search_query: '',
         search_category: '',
+        category_filter_data: {},
         endpoint: process.env.REACT_APP_CHAT_URL, 
         socket: null,
         chatBox: null
@@ -580,6 +584,7 @@ class App extends Component {
     this.setQuery = this.setQuery.bind(this);
     this.setCategory = this.setCategory.bind(this);
     this.callback = this.callback.bind(this);
+    this.categoryFilterCallback = this.categoryFilterCallback.bind(this);
   }
   
   setQuery(search_query) {
@@ -588,6 +593,10 @@ class App extends Component {
 
   setCategory(search_category) {
     this.setState({ search_category });
+  }
+
+  categoryFilterCallback(object) {
+    this.setState({ category_filter_data: object });
   }
 
   componentWillReceiveProps(props) {
@@ -617,14 +626,13 @@ class App extends Component {
   }
 
   render() {
-    const { socket, chatBox } = this.state;
-    const { user, flash, tech_break, cookies, categories } = this.props;
+    const 
+        { socket, chatBox, category_filter_data, search_query, search_category } = this.state,
+        { user, flash, tech_break, cookies, categories } = this.props;
 
-    const { search_query, search_category } = this.state;
-
-    const message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null;
-
-    const w_width = window.innerWidth;
+    const 
+        message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null,
+        w_width = window.innerWidth;
 
     if (tech_break && tech_break.techbreak === false) {
         return (
@@ -635,16 +643,17 @@ class App extends Component {
             <BrowserRouter>
                 <div>
                     <header className="App-header" style={{ marginBottom: 30 }}>
-                        <Navi socket={ socket } callback={this.callback} setQuery={this.setQuery} setCategory={this.setCategory}/>
+                        <Navi socket={ socket } callback={this.callback} setQuery={this.setQuery} setCategory={this.setCategory} />
                         <Breadcrumbs />
                     </header>
             
                     <div className="main-container">
                             <CookieMessage cookies={cookies} />
-                            <Route exact path="/" component={ FrontPage } />
-                            <Route exact path="/aukcje" component={ AuctionListSearch } />
-                            <Route exact path="/aukcje/szukaj/:category/:query" render={props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} categories={categories} /> } />
-                            <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" render={props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} /> } categories={categories} />
+                            
+                            <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } /> } />
+                            <Route exact path="/aukcje" render={ props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
+                            <Route exact path="/aukcje/szukaj/:category/:query" render={ props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
+                            <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" render={props => <AuctionListSearch {...props} user={user} query={search_query} category={search_category} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route exact path="/aukcje/:title/:id" render={ (props) => <AuctionDetails {...props} socket={socket} /> } />
                             <Route path="/konto/zarejestruj" component={ RegistrationLanding } />

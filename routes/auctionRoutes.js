@@ -30,6 +30,8 @@ const Mailer                    = require('../services/Mailer');
 
 const helpers = require('../services/helpers/otherHelpers');
 
+const util = require('util');
+
 const currentUserId = (req) => {
     if (req.user) {
         return ObjectId(req.user._id);
@@ -141,8 +143,6 @@ module.exports = app => {
         }
         const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
-
-        console.log(query);
 
         const auctions = await Auction.find(
             query, 
@@ -414,12 +414,12 @@ module.exports = app => {
         const user_id = currentUserId(req);
 
         const popular = await Auction.find(
-            { _user: { $ne: user_id }, ended: { $ne: true } }, 
+            { ended: { $ne: true } }, 
             { title: 1, shortdescription: 1, price: 1, likes: 1 }, //photos: { $slice: 1 },
             { limit: 8, sort: { likes: -1 } }
         );
         const newest = await Auction.find(
-            { _user: { $ne: user_id }, ended: { $ne: true } },
+            { ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, date: 1 }, // photos: { $slice: 1 },
             { sort: { 'date.start_date': -1 }, limit: 9 }
         );
@@ -428,24 +428,78 @@ module.exports = app => {
     });
 
     app.post('/auction/filter', upload.any(), async (req, res) => {
-        let { seller, title, min, max, sort, page, per_page } = req.body;
+        let { seller, title, sort, page, per_page } = req.body,
+            max = 9999999, min = 1;
 
-        let   keys       = Object.keys(req.body),
-              state      = keys.filter(key => key.startsWith('state_')).map(key => key.replace('state_', '')),
-              categories = keys.filter(key => key.startsWith('cat_')).map(key => key.replace('cat_', ''));
+
+        const
+            category        = req.body.category || null,
+            subcategory     = req.body.subcategory || null,
+            subsubcategory  = req.body.subsubcategory || null;
+
+         console.log(req.body);
+         console.log(category, subcategory, subsubcategory);
+
+         
+        const
+            keys                    = Object.keys(req.body),
+            property_keys           = keys.filter((key) => key.startsWith('_')),
+            property_$and           = [];
+
+        for (let i = 0; i < property_keys.length; i++) {
+            const
+                key      = property_keys[i],
+                name     = key.replace('_', ''),
+                value    = req.body[key];
+
+
+            if (typeof value === 'string') {
+
+                property_$and.push({ 'properties': { $elemMatch: { name, value }}});
+
+            } else if (typeof value === 'object') {
+
+                const innerProps = value;
+
+                if (innerProps['od'] || innerProps['do']) {
+                    // range input
+                    const
+                        _od = parseInt(innerProps['od']) || 1,
+                        _do = parseInt(innerProps['do']) || 9999999;
+
+                    // nie używamy Ceny - stosujemy wartości min i max z kodu spadkowego
+                    if (name === 'Cena') {
+                        min = Math.min(_od, _do);
+                        max = Math.max(_od, _do);
+                    } else {
+                        property_$and.push({ 'int_properties' : { $elemMatch: { name, value: { $gte: Math.min(_od, _do), $lte: Math.max(_od, _do) }}}});
+                    }
+
+                } else {
+                    // multiple input
+                    const
+                        propNames = Object.keys(innerProps);
+                    
+                    if (propNames.indexOf('wszystkie') !== -1) {
+                        continue;
+                    } else {
+                        property_$and.push({ 'properties': { $elemMatch: { name , value: { $in: propNames }}}});
+                    }
+                }
+            }
+        }
+
+
+        console.log(util.inspect(property_$and));
+
 
         let user = seller ? await findUserByNames(seller) : null;
 
         title    = !title || title === '*' ? '.*' : title;
-        min      = Number(min) || 1;
-        max      = Number(max) || 9999999;
         page     = parseInt(page) || 1;
         per_page = parseInt(per_page) || 10;
 
-        if (state.length === 0) state = /.*/i;
-        if (categories.length === 0) categories = /.*/i;
 
-        if (categories)
         switch(sort) {
             case 'alfabetycznie':
                 sort = [ 'title', 1];
@@ -461,21 +515,22 @@ module.exports = app => {
         }
 
         const mongo_query = {
-            _user: ( user ? user._id : ({ $ne: currentUserId(req) })),
             title: { 
                 $regex: title, $options: 'i' 
             }, 
-            'price.start_price': { $lte: max, $gte: min },
-            'categories.sub': { $in: categories }, 
+            'price.current_price': { $lte: max, $gte: min },
             ended: { $ne: true }
         };
 
-        
+        if (category) mongo_query['categories.main'] = category;
+        if (subcategory) mongo_query['categories.sub'] = subcategory;
+        if (subsubcategory) mongo_query['category.subsub'] = subsubcategory;
 
-        if (state) {
-            mongo_query['attributes'] = { $elemMatch: { name: 'Stan', value: { $in: state } } };
+        // properties
+        if (property_$and.length > 0) {
+            mongo_query['$and'] = property_$and;
         }
-
+        
         const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
         
@@ -693,7 +748,27 @@ module.exports = app => {
     app.post('/auction/create_or_update', [requireLogin, upload.any()], async (req, res) => {
         const data = req.body;
         const update = data.auction_id ? true : false;
-        const attributes = await Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key]}));
+        //const attributes = Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key] }));
+        const 
+            properties = [], 
+            int_properties = [];
+
+        Object.keys(data).filter(key => key.startsWith('property_')).map(key => {
+            const 
+                name  = key.replace('property_', ''),
+                value = data[key];
+
+            // znakujemy wartości liczbowe
+            if (name.startsWith('%')) {
+                int_properties.push({ name: name.slice(1), value: parseInt(value) });
+            } else {
+                properties.push({ name, value });
+            }
+        });
+
+        // console.log(properties);
+        // console.log('\n');
+        // console.log(int_properties);
 
         let auction = new Auction({
             _user: ObjectId(req.user._id),
@@ -714,15 +789,20 @@ module.exports = app => {
             likes: 0,
             quantity: data.quantity,
             photos: [],
-            attributes,
+            //attributes,
             categories: {
-                main: data.main,
-                sub: data.sub
+                main: data.category,
+                sub: data.subcategory,
+                subsub: data.subsubcategory
             },
             bids: [],
             ended: false,
-            verified: false
+            verified: false,
+            properties,
+            int_properties
         });
+
+        console.log(auction);
 
         if (update) {
             auction._id             = ObjectId(data.auction_id);
@@ -772,8 +852,6 @@ module.exports = app => {
                     (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
                 );
         }
-
-        // map image files. resize, return promise buffers
     });
 
     app.post('/auction/post_photos', [requireLogin, upload.any()], async (req, res) => {
@@ -790,9 +868,10 @@ module.exports = app => {
 
         if (auction) {
             savePhotos(auction, files);
+            res.send(true);
+        } else {
+            res.send(false);
         }
-
-        res.send(true);
     });
 };
 

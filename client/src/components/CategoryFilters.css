@@ -1,0 +1,95 @@
+.CategoryFilters {
+	margin-bottom: 30px;
+}
+
+.CategoryFilters .CategoryTree a {
+	position: relative;
+	display: block; box-sizing: border-box;
+	padding-left: 32px;
+	margin-bottom: 20px;
+	flex: 0 0 25%;
+}
+.CategoryFilters .breadcrumb-navigation {
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+.CategoryFilters .Properties:last-child {
+	margin-top: 0;
+}
+
+.CategoryFilters .Properties .input-singular, 
+.CategoryFilters .Properties .input-multiple, 
+.CategoryFilters .Properties .input-range {
+	flex: 0 0 20%;
+}
+
+.CategoryFilters .Properties input {
+	width: 100%;
+}
+
+.CategoryFilters a:before {
+	position: absolute;
+	top: -1px; left: 0;
+	font-family: 'Material Icons'; font-size: 24px;
+	opacity: 0.7;
+	
+	vertical-align: baseline;
+}
+
+.CategoryFilters a[class]:before {
+	content: 'chevron_right';
+}
+
+.CategoryFilters .CategoryTree a:not(.main-cat) {
+	padding-right: 20px;
+	padding-left: 23px;
+}
+
+a[class*="Motoryzacja"]:before {
+	content: 'directions_car' !important;
+}
+
+a[class*="Nieruchomości"]:before {
+	content: 'domain' !important;
+}
+
+a[class*="Dom i Ogród"]:before {
+	content: 'local_florist' !important;
+}
+
+a[class*="Dom i ogród"]:before {
+	content: 'home' !important;
+}
+
+a[class*="Elektronika"]:before {
+	content: 'sd_storage' !important;
+}
+
+a[class*="Moda"]:before {
+	content: 'local_mall' !important;
+}
+
+a[class*="Rolnictwo"]:before {
+	content: 'local_florist' !important;
+}
+
+a[class*="Zwierzęta"]:before {
+	content: 'pets' !important;
+}
+
+a[class*="Dla dzieci"]:before {
+	content: 'child_friendly' !important;
+}
+
+a[class*="Sport i hobby"]:before {
+	content: 'pool' !important;
+}
+
+a[class*="Muzyka i edukacja"]:before {
+	content: 'music_note' !important;
+}
+
+a[class*="Ślub i Wesele"]:before {
+	content: 'cake' !important;
+}
