@@ -14,6 +14,22 @@ class Input extends Component {
 		this.hideHints = this.hideHints.bind(this);
 	}
 
+	componentWillReceiveProps(props) {
+		if (props.update && props.propertyData) {
+			if (!this.inputRef.value) {
+				const 
+					name = this.inputRef.name,
+					type = this.inputRef.type;
+
+				if (type === 'number') {
+					this.inputRef.value = props.propertyData.int_properties[name];
+				} else if (type === 'text') {
+					this.inputRef.value = props.propertyData.properties[name];
+				}
+			}
+		}
+	}
+
 	setValue(value) {
 		if (this.inputRef) {
 			this.inputRef.value = value;
@@ -43,17 +59,28 @@ class Input extends Component {
 		this.setState({ hints: [] });
 	}
 
+	getValue(initialPropData, propName) {
+		if (isNotEmpty(initialPropData)) {
+			const prop = initialPropData.filter(prop => prop.name === propName.slice(9).replace('%', ''))[0];
+			return prop ? prop.value : null;
+		}
+
+		return null;
+	};
+
 	render() {
 		const 
-			{ name, type, unit, placeholder } = this.props,
+			{ name, type, unit, placeholder, update, propertyData } = this.props,
 			{ hints } = this.state;
 
-		const symbol = unit ? unit : '';
+		const 
+			symbol = unit ? unit : '',
+			initialPropData = isNotEmpty(propertyData) ? propertyData.properties.concat(propertyData.int_properties) : null;
 
 		return (
 			<div className="input-input">
 				<span className="unit-span">
-					<input name={ name } type={ type === 'Range' ? 'number' : 'text' } placeholder={ placeholder } ref={ (e) => this.inputRef = e } onFocus={ this.showHints } onChange={ this.filterHints } />
+					<input name={ name } type={ type === 'Range' ? 'number' : 'text' } placeholder={ placeholder } ref={ (e) => this.inputRef = e } onFocus={ this.showHints } onChange={ this.filterHints } defaultValue={ this.getValue(initialPropData, name) }/>
 					{
 						symbol && <span className="unit">{ symbol }</span>
 					}
@@ -73,7 +100,7 @@ class Input extends Component {
 class Property extends Component {
 	render() {
 		const 
-			{ property, callback, marka } = this.props,
+			{ property, callback, marka, update, propertyData } = this.props,
 			{ name, type, unit, icon, values, conditional_values } = property;
 
 		if (!property) return null;
@@ -83,7 +110,7 @@ class Property extends Component {
 		return (
 			<span className="property">
 				<label htmlFor={ 'property_' + name }>{ name }</label>
-				<Input name={ 'property_' + alias } type="text" unit={ unit } callback={ callback } values={ marka ? conditional_values[marka] : values } />
+				<Input name={ 'property_' + alias } type="text" unit={ unit } callback={ callback } values={ marka ? conditional_values[marka] : values } update={ update } propertyData={ propertyData } />
 			</span>
 		);
 	}
@@ -104,9 +131,14 @@ class PropertyPicker extends Component {
 	}
 
 	render() {
-		const { properties, callback } = this.props;
+		const { properties, callback, update, propertyData } = this.props;
 
 		if (!properties) return null;
+
+		const propProps = {
+			update,
+			propertyData
+		};
 	
 		return (
 			<div className="Properties">
@@ -116,12 +148,12 @@ class PropertyPicker extends Component {
 							return null;
 
 						if (prop.name === 'Marka')
-							return <Property key={ "prop_" + index } property={ prop } callback={ this.callback } />;
+							return <Property key={ "prop_" + index } property={ prop } callback={ this.callback } {...propProps} />;
 						
 						if (prop.name === 'Model') 
-							return <Property key={ "prop_" + index } property={ prop } marka={ this.state.marka } />;
+							return <Property key={ "prop_" + index } property={ prop } marka={ this.state.marka } {...propProps} />;
 
-						return <Property key={ "prop_" + index } property={ prop } />;
+						return <Property key={ "prop_" + index } property={ prop } {...propProps} />;
 					})
 				}
 			</div>

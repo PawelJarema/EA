@@ -30,7 +30,7 @@ const Mailer                    = require('../services/Mailer');
 
 const helpers = require('../services/helpers/otherHelpers');
 
-const util = require('util');
+// const util = require('util');
 
 const currentUserId = (req) => {
     if (req.user) {
@@ -489,11 +489,7 @@ module.exports = app => {
             }
         }
 
-
-        console.log(util.inspect(property_$and));
-
-
-        let user = seller ? await findUserByNames(seller) : null;
+        let user = seller ? await findUserByNames((!seller || seller === '*' ? '.*' : seller)) : null;
 
         title    = !title || title === '*' ? '.*' : title;
         page     = parseInt(page) || 1;
@@ -531,7 +527,7 @@ module.exports = app => {
             mongo_query['$and'] = property_$and;
         }
         
-        const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
         
         if (sort) {
@@ -876,15 +872,19 @@ module.exports = app => {
 };
 
 async function savePhotos(auction, files) {
-    const promises = await files.map(file => ({
+    const promises = await files.map((file, index) => ({
+        order: index,
         type: file.mimetype,
-        data: Sharp(file.buffer).resize(1024).toBuffer()
+        data: Sharp(file.buffer).resize(1024).withMetadata().toBuffer()
     }));
 
     let progress = 0;
 
     promises.map(promise => {
-        const type = promise.type;
+        const 
+            type  = promise.type,
+            order = promise.order;
+
         promise.data.then(buffer => {
             Imagemin.buffer(buffer, {
                 plugins: [
@@ -896,7 +896,7 @@ async function savePhotos(auction, files) {
             }).then(optimisedBuffer => {
                 progress++;
 
-                auction.photos.push({ type: type, data: optimisedBuffer.toString('base64') });
+                auction.photos[order] = { type: type, data: optimisedBuffer.toString('base64') };
                 if (progress === files.length) {
                     auction.save();
                 }

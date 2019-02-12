@@ -9,7 +9,7 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { Link } from 'react-router-dom';
-import { CreateUpdateAction } from './Auctions';
+import { CreateUpdateAuction } from './Auctions';
 import { Opinions } from './OtherUser';
 import Progress from './Progress';
 import { Pagination } from './Pagination';
@@ -678,4 +678,4 @@ ProfileLinks = connect(mapUserStateToProps)(ProfileLinks);
 Settings = connect(mapUserStateToProps, profileActions)(Settings);
 Delivery = connect(mapUserStateToProps, profileActions)(Delivery);
 
-export { ProfileLinks, Settings, CreateUpdateAction, Delivery, MyOpinions, Invoices };
+export { ProfileLinks, Settings, CreateUpdateAuction, Delivery, MyOpinions, Invoices };

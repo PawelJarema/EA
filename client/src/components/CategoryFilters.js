@@ -114,6 +114,37 @@ class CategoryFilters extends Component {
 		this.sendData = this.sendData.bind(this);
 	}
 
+	componentWillReceiveProps(props) {
+		const { category } = props;
+
+		if (category && category !== this.state.category) {
+			if (category !== 'Kategorie' && category !== 'Szukaj Sprzedawcy') {
+				this.setState({ category, categoryIndex: props.categories.map(cat => cat.name).indexOf(category) });
+			} else {
+				this.setState({ category: null, categoryIndex: null });
+			}
+		}
+
+		if (props.categoryData) {
+			const { categoryData } = props;
+
+			if (categoryData.category !== this.state.category || categoryData.subcategory !== this.state.subcategory) {
+				const
+					category = categoryData.category || null,
+					categoryIndex = category ? props.categories.map(cat => cat.name).indexOf(category) : null,
+					subcategory = categoryData.subcategory || null,
+					subcategoryIndex = subcategory ? props.categories[categoryIndex].subcategories.map(sub => sub.name).indexOf(subcategory) : null;
+
+				this.setState({  
+					category,
+					categoryIndex,
+					subcategory,
+					subcategoryIndex  
+				});
+			}
+		}
+	}
+
 	setCategory(which, name, index) {
 		switch(which) {
 			case 'category':
@@ -172,7 +203,7 @@ class CategoryFilters extends Component {
 
 	render() {
 		const 
-			{ categories } 		= this.props,
+			{ categories } = this.props,
 			{ categoryIndex, subcategoryIndex, subsubcategoryIndex } = this.state,
 			// conditional props
 			{ marka }			= this.state,
@@ -185,6 +216,7 @@ class CategoryFilters extends Component {
 			dataToDisplay 		= level === null ? categories : level === 'category' ? subcategories : level === 'subcategory' ? subsubcategories : null,
 			properties 			= subcategory && isNotEmpty(subcategory.properties) ? subcategory.properties : subsubcategory && isNotEmpty(subsubcategory.properties) ? subsubcategory.properties : null;
 
+		const initialCategory = this.props.category;
 
 		return (
 			<div className="CategoryFilters">

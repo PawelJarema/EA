@@ -66,7 +66,7 @@ a[class*="Elektronika"]:before {
 	content: 'sd_storage' !important;
 }
 
-a[class*="Moda"]:before {
+a[class="main-cat Moda"]:before {
 	content: 'local_mall' !important;
 }
 

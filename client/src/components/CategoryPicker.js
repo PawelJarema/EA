@@ -7,8 +7,6 @@ class CategoryPicker extends Component {
 
     this.state = {
       categories: props.categories,
-      subcategories: null,
-      subsubcategories: null,
 
       activeCategory: null,
       activeSubcategory: null,
@@ -21,6 +19,35 @@ class CategoryPicker extends Component {
   componentWillReceiveProps(props) {
     if (props.categories && !this.state.categories) {
       this.setState({ categories: props.categories });
+    }
+
+    if (props.update && props.categoryData && !this.editPropertiesLoaded) {
+      this.editPropertiesLoaded = true;
+
+      const 
+        { categories } = this.props,
+        { category, subcategory, subsubcategory } = props.categoryData;
+
+      if (!categories) return;
+
+      const getIndex = (catSet, cat) => {
+        if (!catSet || !category) return null;
+
+        const index = catSet.map(cs => cs.name).indexOf(cat);
+        return index !== -1 ? index : null;
+      };
+
+      const 
+        activeCategory       = getIndex(this.props.categories, category),
+        activeSubcategory    = getIndex(this.props.categories[activeCategory].subcategories, subcategory),
+        activeSubSubCategory = getIndex(this.props.categories[activeCategory].subcategories[activeSubcategory].sub_subcategories, subsubcategory);
+
+      this.setState({ activeCategory, activeSubcategory, activeSubSubCategory }, () => {
+        if (isSet(activeCategory)) this.catRef.value = category;
+        if (isSet(activeSubcategory)) this.subCatRef.value = subcategory;
+        if (isSet(activeSubSubCategory)) this.subSubCatRef.value = subsubcategory;
+      });
+
     }
   }
 
@@ -44,7 +71,9 @@ class CategoryPicker extends Component {
   }
 
   render() {
-    const { categories, activeCategory, activeSubcategory, activeSubSubCategory } = this.state;
+    const 
+      { update, categoryData, propertyData } = this.props,
+      { categories, activeCategory, activeSubcategory, activeSubSubCategory } = this.state;
 
     if (!categories) return null;
 
@@ -74,7 +103,7 @@ class CategoryPicker extends Component {
     return (
       <div>
         <p>
-          <select name="category" onChange={ this.handleCategory } defaultValue="Wybierz...">
+          <select ref={ (e) => this.catRef = e } name="category" onChange={ this.handleCategory } defaultValue="Wybierz...">
               {
                   categories !== null && categories.map(category  => <option key={ category.name }>{category.name}</option>)
               }
@@ -83,7 +112,7 @@ class CategoryPicker extends Component {
         </p>
         {
           isNotEmpty(subcategories) && (<p>
-              <select name="subcategory" onChange={ this.handleCategory } defaultValue="Wybierz...">
+              <select ref={ (e) => this.subCatRef = e } name="subcategory" onChange={ this.handleCategory } defaultValue="Wybierz...">
                   {
                     subcategories.map(subcategory => <option key={ subcategory.name }>{subcategory.name}</option>)
                   }
@@ -93,7 +122,7 @@ class CategoryPicker extends Component {
         }
         {
           isNotEmpty(subsubcategories) && (<p>
-            <select name="subsubcategory" onChange={ this.handleCategory } defaultValue="Wybierz...">
+            <select ref={ (e) => this.subSubCatRef = e } name="subsubcategory" onChange={ this.handleCategory } defaultValue="Wybierz...">
               {
                 subsubcategories.map(subsubcategory => <option key={ subsubcategory.name }>{subsubcategory.name}</option>)
               }
@@ -102,7 +131,7 @@ class CategoryPicker extends Component {
           </p>)
         }
         {
-          isNotEmpty(properties) && <PropertyPicker properties={ properties } />
+          isNotEmpty(properties) && <PropertyPicker properties={ properties } update={ update } propertyData={ propertyData } />
         }
       </div>
     );

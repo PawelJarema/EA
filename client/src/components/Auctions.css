@@ -59,6 +59,8 @@ input.disabled {
 .thumbnails {
     overflow: hidden;
     max-height: 100%;
+    left: 0;
+    list-style: none;
 }
 
 .thumbnails .container {
@@ -76,6 +78,48 @@ input.disabled {
     border: 1px solid #eee;
     background: #f0f0f0;
     border-radius: 10px;
+}
+
+.thumbnails .container, .thumbnails .container img {
+    user-drag: none; 
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+li.sortable-helper {
+    list-style: none;
+}
+li.sortable-helper img {
+    height: 111px;
+    clip-path: polygon(0px 111px, 111px 111px, 111px 0px, 0px 0px);
+}
+li.sortable-helper .options {
+    display: none;
+}
+
+.thumbnails .options {
+    position: absolute;
+    top: 0; right: 0;
+    background: black;
+    opacity: 0; height: 0; border-radius: 0 5px;
+}
+.thumbnails .container:hover .options {
+    opacity: 1; height: auto;
+}
+.thumbnails .options span i {
+    color: white; user-select: none;
+    margin: 0;
+}
+.thumbnails .container:hover .options span.disabled i {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.thumbnails .container[style^="tran"] .options {
+    display: none;
 }
 
 .thumbnails .image-preview {
@@ -417,19 +461,23 @@ input.disabled {
 }
 
 .AuctionDetails .attribute-tags {
-    padding: 10px 0;
+    padding: 10px 0; display: flex; flex-wrap: wrap;
 }
 
 .AuctionDetails .attribute-tags .attribute {
     font-size: 12px;
-    padding: 5px 10px;
+    padding: 5px 10px; margin: 2.5px 0;
     border: 1px solid #ddd;
     margin-right: 5px;
+    white-space: nowrap;
 }
-
+.attribute-tags .unit {
+    text-transform: none !important;
+}
 .AuctionDetails .attribute-tags .attribute > span {
     text-transform: capitalize;
     display: inline-block;
+    margin: 2px 0;
     margin-left: 5px;
 }
 .AuctionDetails .text .price {
