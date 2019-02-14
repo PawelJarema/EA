@@ -345,6 +345,12 @@ class CreateUpdateAuction extends Component {
             allValid = false;
         }
 
+        if (!deliveryChecked()) {
+            alert('Wybierz sposób dostawy towaru');
+            allValid = false;
+        }
+        
+
         if (allValid) {
             if (this.props.update) {
                 formData.append('auction_id', this.props.auctions._id);
@@ -551,9 +557,10 @@ class CreateUpdateAuction extends Component {
 
                     <fieldset>
                         <legend><i className="material-icons">local_shipping</i>Dostawa</legend>
+                        <p><label className="required" style={{ marginBottom: 4 }}>Wybierz chociaż 1 sposób dostawy towaru</label></p>
                         <p className="auction-deliveries">
                             {
-                                concatUnique(user.deliveries, auctions ? auctions.deliveries : null).map((delivery, i) => (
+                                concatUnique(user.deliveries, (auctions ? auctions.deliveries : null)).map((delivery, i) => (
                                     <span>
                                         <input type="checkbox" name={ "delivery_" + `${delivery.name}_${delivery.price}` } />
                                         <span className="checkbox-value"></span>
@@ -572,6 +579,16 @@ class CreateUpdateAuction extends Component {
             </div>
        );
    }
+}
+
+function deliveryInAuction(delivery, auction) {
+    const deliveries = (auction.deliveries || []).map(d => d.name + d.price);
+    return deliveries.indexOf(delivery.name + delivery.price) !== -1;
+}
+
+function deliveryChecked() {
+    const deliveries = document.querySelectorAll('.auction-deliveries input:checked');
+    return deliveries && deliveries.length > 0;
 }
 
 function mapAuctionsUserAndCategoryStateToProps({ auctions, user, categories }) {

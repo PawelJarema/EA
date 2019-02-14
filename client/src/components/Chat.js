@@ -24,6 +24,7 @@ class Chat extends Component {
 		this.openChat = this.openChat.bind(this);
 		this.sendMessage = this.sendMessage.bind(this);
 		this.closeChat = this.closeChat.bind(this);
+		this.scrollToBottom = this.scrollToBottom.bind(this);
 	}
 
 	componentWillReceiveProps(props) {
@@ -65,7 +66,6 @@ class Chat extends Component {
 		}
 		
 		this.setState({ chatBoxMode: 'messages', messages: chat.messages, title: chat.title, chat, unseen }, this.scrollToBottom);
-
 	}
 
 	closeChat() {
@@ -76,8 +76,11 @@ class Chat extends Component {
 	}
 
 	scrollToBottom() {
-		if (this.messagesRef)
+		if (this.messagesRef) 
 			this.messagesRef.scrollTop = this.messagesRef.scrollHeight;
+		else {
+			setTimeout(this.scrollToBottom, 50);
+		}
 	}
 
 	sendMessage() {

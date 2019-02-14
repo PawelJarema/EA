@@ -1179,3 +1179,14 @@ form.disabled {
 .cropper .cropper-bg, .cropper-modal  {
   background: white !important;
 }
+
+.auction-deliveries input {
+    position: absolute;
+    width: 100%;
+}
+
+.auction-deliveries .label {
+    display: block;
+    padding-top: 10px; padding-left: 26px;
+
+}

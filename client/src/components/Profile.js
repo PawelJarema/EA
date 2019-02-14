@@ -532,7 +532,9 @@ class Delivery extends Component {
 
         this.removeFunc = (event) => {
             const button = event.target;
-            const input = button.previousSibling;
+            const input = button.previousSibling.children[0];
+            console.log(button, input);
+
             const index = parseInt(input.name.replace('price_', '')) - 1;
 
             this.setState(prev => ({ deliveries: prev.deliveries - 1, data: prev.data.slice(0, index).concat(prev.data.slice(index + 1)) }));
