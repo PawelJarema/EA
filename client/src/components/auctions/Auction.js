@@ -1,13 +1,44 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import RawImage from './RawImage';
+import sizeMe from 'react-sizeme';
 import { ImageProgress } from '../Progress';
 import PriceHelper from '../../helpers/priceHelper';
 import { auctionPath } from './functions';
 
-class Auction extends Component {
+import { IMAGE_ASPECT_RATIO } from './constants';
+
+class AuctionPhoto extends Component {
     render() {
-        const { auction } = this.props;
+        const 
+            { auction, height } = this.props;
+
+        return (
+            <div ref={(e) => this.photoRef = e} className="photo" style={ height ? { height } : null }>
+                <ImageProgress />
+                {
+                    <RawImage link={auction} />
+                }
+            </div>
+        );
+    }
+}
+
+class Auction extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    onSize(size) {
+        const height = size.width / IMAGE_ASPECT_RATIO;
+        this.setState({ photoHeight: height });
+    }
+
+    render() {
+        const 
+            { auction } = this.props;
+
         if (!auction)
             return null;
 
@@ -16,12 +47,7 @@ class Auction extends Component {
         return (
             <Link to={auctionPath(auction)}>
                 <div className="auction">
-                    <div className="photo">
-                        <ImageProgress />
-                        {
-                            <RawImage link={auction} />
-                        }
-                    </div>
+                    <AuctionPhoto auction={ auction } onSize={ this.onSize.bind(this) } height={ this.state.photoHeight } />
                     <div className="title">
                         <h2>{auction.title}</h2>
                     </div>
@@ -37,4 +63,5 @@ class Auction extends Component {
     }
 }
 
+AuctionPhoto = sizeMe({ monitorHeight: true })(AuctionPhoto);
 export default Auction;

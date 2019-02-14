@@ -425,6 +425,18 @@ nav .user-links .search-mobile {
 	footer .category-links {
 		display: none;
 	}
+
+	.FrontPage .two-column .auction .title {
+	    font-size: 18px;
+	}
+
+	.FrontPage .three-column .auction .title {
+	    font-size: 18px;
+	}
+
+	.AuctionDetails .basic-info .text .content h1 {
+		font-size: 30px;
+	}
 }
 @media screen and (max-width: 1150px) {
 	footer .footer-bar {
@@ -439,13 +451,17 @@ nav .user-links .search-mobile {
 	}
 }
 @media screen and (max-width: 1050px) {
-	.FrontPage .two-third-column, .FrontPage .three-column  {
+	.FrontPage .two-third-column, .FrontPage .three-column, .FrontPage .two-column {
 		flex-direction: column;
 	}
-	.App .FrontPage .two-third-column .column, .App .FrontPage .three-column .column{
+	.App .FrontPage .two-third-column .column, 
+	.App .FrontPage .three-column .column, 
+	.App .FrontPage .two-column .column {
 		margin: 0;
 	}
-	.App .FrontPage .two-third-column .column:not(:last-child), .App .FrontPage .three-column .column:not(:last-child) {
+	.App .FrontPage .two-third-column .column:not(:last-child), 
+	.App .FrontPage .three-column .column:not(:last-child),
+	.App .FrontPage .two-column .column:not(:last-child) {
 		margin-bottom: 20px;
 	}
 	.App .FrontPage .six-column {

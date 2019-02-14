@@ -45,4 +45,30 @@ function getUnits(name) {
     }
 }
 
-export { userName, applyToAuctions, auctionPath, getUnits };
+function isSet(number) {
+  if (typeof number === 'number' && number >= 0) return true;
+  return false;
+}
+
+function isNotEmpty(object) {
+  if (Object.prototype.toString.call(object) === '[object Array]') {
+    return object.length > 0;
+  }
+
+  return Boolean(object);
+}
+
+function isIn(value, array) {
+    const arr = array.map(val => String(val));
+    return arr.indexOf(String(value)) !== -1;
+}
+
+function isBidder(user, auction) {
+    if (!user || !auction) return false;
+
+    const id = user._id;
+
+    return isIn(id, auction.buynowpayees) || isIn(id, auction.payees) || isIn(id, auction.bids.map(bid => bid._user));
+}
+
+export { userName, applyToAuctions, auctionPath, getUnits, isSet, isNotEmpty, isBidder };

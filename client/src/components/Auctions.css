@@ -110,8 +110,12 @@ li.sortable-helper .options {
     opacity: 1; height: auto;
 }
 .thumbnails .options span i {
+    font-size: 18px;
     color: white; user-select: none;
-    margin: 0;
+    margin: 0 5px;
+}
+.thumbnails .options span:first-child i {
+    font-size: 16px; margin-right: 0px;
 }
 .thumbnails .container:hover .options span.disabled i {
     opacity: 0.4;
@@ -125,6 +129,12 @@ li.sortable-helper .options {
 .thumbnails .image-preview {
     max-height: 111px;
     
+}
+.user-settings fieldset {
+    max-width: 100%;
+}
+.user-settings fieldset .cropper {
+    max-width: 100%;
 }
 .user-settings fieldset .add {
     margin-top: 6px;
@@ -356,6 +366,9 @@ li.sortable-helper .options {
     box-sizing: border-box;
     padding-right: 100px; /* page margin */
 }
+.AuctionDetails .basic-info .text h1 {
+    font-size: 40px;
+}
 .AuctionDetails .basic-info .text h1, .AuctionDetails .basic-info .text p {
     margin-bottom: 30px;
 }
@@ -367,14 +380,39 @@ li.sortable-helper .options {
     box-sizing: border-box;
 }
 
-.AuctionDetails .photos .photo-big, .AuctionDetails .photos .image-wrapper {
+
+
+
+.AuctionDetails .photos .photo-big {
     width: 100%;
-    min-height: 470px;
 }
-.AuctionDetails .photos .photo-big img {
+.AuctionDetails .photos .image-wrapper {
+    width: 100%;
+    height: 100%;
+}
+.AuctionDetails .photos .photo-big .div-image-block {
     min-width: 100%;
     min-height: 100%;
+    cursor: pointer;
 }
+.AuctionDetails .photo-big.enlarge .image-wrapper, 
+.AuctionDetails .photo-big.enlarge .div-image-block {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; 
+}
+.AuctionDetails .photo-big.enlarge .image-wrapper {
+    height: 100vh;
+    background: white;
+    z-index: 40;
+    transition: background 0.3s ease-in-out;
+}
+.AuctionDetails .photo-big.enlarge .div-image-block {
+    z-index: 50; transform: none;
+}
+
+
+
 .AuctionDetails .photos-small {
     display: flex;
     width: 100%;
@@ -461,9 +499,11 @@ li.sortable-helper .options {
 }
 
 .AuctionDetails .attribute-tags {
-    padding: 10px 0; display: flex; flex-wrap: wrap;
+    padding: 10px 0; display: flex; flex-wrap: wrap; user-select: none; 
 }
-
+.AuctionDetails .attribute span {
+    letter-spacing: 1px;
+}
 .AuctionDetails .attribute-tags .attribute {
     font-size: 12px;
     padding: 5px 10px; margin: 2.5px 0;
@@ -488,7 +528,7 @@ li.sortable-helper .options {
 }
 
 .add-horizontal-margin {
-    margin-left: -4px;
+    margin-left: -10px;
 }
 .add-horizontal-margin input {
     cursor: pointer;
@@ -627,13 +667,13 @@ li.sortable-helper .options {
     display: block;
 }
 
-.two-third-column {
+.two-third-column, .three-column, .two-column {
     display: flex;
     margin-top: 30px;
     margin-bottom: 10px;
 }
 .two-third-column > .column:first-child {
-    --temp-width: calc(60% - 20px);
+    --temp-width: calc(60% - 10px);
     flex: 0 0 var(--temp-width);
     margin-right: 20px;
 }
@@ -642,18 +682,23 @@ li.sortable-helper .options {
     flex: 0 0 var(--temp-width);
 }
 
-.three-column {
-    display: flex;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
 .three-column > .column {
-    --temp-width: calc(33% - 13.5px);
-    flex: 0 0 var(--temp-width);
+    flex: 0 0 33%;
 }
 .three-column > .column:not(:last-child) {
     margin-right: 20px;
 }
+
+.two-column > .column {
+    flex: 0 0 50%;
+}
+.two-column > .column:first-child {
+    margin-right: 10px;
+}
+.two-column > .column:last-child {
+    margin-left: 10px;
+}
+
 .advertising {
     padding: 0 var(--page-margin);
 }
@@ -736,16 +781,26 @@ i.disabled {
 .FrontPage .auction {
     cursor: pointer;
     background: white !important;
+    border: 1px solid #eee;
+    padding: 0;
     box-shadow: 1px 1px 1px #ccc;
 }
 .FrontPage .auction .photo {
     position: relative;
-    width: 100%;
-    min-height: 400px;
+    width: calc(100% + 1px);
     
     box-sizing: border-box;
     overflow: hidden;
+    border-bottom: 5px solid #f8f8f8;
     
+}
+.FrontPage .auction .title {
+    position: relative; z-index: 5;
+    font-size: 26px;
+}
+.FrontPage .auction .description {
+    font-weight: 100; opacity: 0.7;
+    margin-top: -6px;
 }
 .FrontPage .auction .photo img {
     max-width: 100%;
@@ -767,7 +822,7 @@ i.disabled {
     padding-top: 0;
 
     opacity: 0.7;
-    
+    margin-bottom: 0;
 }
 .FrontPage .six-column .column:hover .title {
     opacity: 1;
@@ -796,6 +851,8 @@ i.disabled {
 .FrontPage .price-div {
     padding-top: 10px;
     padding-bottom: 20px;
+
+    white-space: nowrap;
 }
 
 
@@ -1065,4 +1122,33 @@ form.disabled {
 .Auction .user-settings .price-input-wrapper input {
     width: 100%;
     padding-right: 28px;
+}
+
+.cropper { 
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+.cropper .title {
+    padding: 6px 20px;
+    background: #eee; border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+.cropper .options {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
+    background: #eee; border-top: 1px solid #ddd;
+    cursor: pointer;
+}
+.cropper .options div:nth-child(3) i {
+    margin-left: 10px;
+    color: var(--bad);
+}
+.cropper .options div:nth-child(4) i {
+    color: var(--good);
+}
+
+.cropper .cropper-bg, .cropper-modal  {
+  background: white !important;
 }

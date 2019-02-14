@@ -10,6 +10,33 @@ import PriceHelper from '../helpers/priceHelper';
 import SinceHelper from '../helpers/sinceHelper';
 import DateHelper from '../helpers/dateHelper';
 
+class UserData extends Component {
+	render() {
+		const { user } = this.props;
+		return (
+			<div className="user-detailed-data">
+				{ user.address &&
+					(
+						<p>
+							<i className="material-icons">domain</i>
+							<span>
+								{user.address.street} <br />
+								{user.address.postal} {user.address.city}
+							</span>
+						</p>
+					)
+				}
+				<p><i className="material-icons">mail_outline</i> { user.contact.email }</p>
+				{
+					user.contact.phone && <p><i className="material-icons">phone</i> { user.contact.phone }</p>
+				}
+				{
+					user.balance.account_number && <p><i className="material-icons">account_balance</i> { user.balance.account_number }</p>
+				}
+			</div>
+		);
+	}
+}
 class Rating extends Component {
 	render() {
 		const { rating } = this.props;
@@ -193,9 +220,11 @@ class Seller extends Component {
 	}
 
 	render() {
-		const user = this.props.other_user;
-		const auction = this.props.auction;
-		const withUs = user ? SinceHelper(new Date().getTime() - user.joindate) : null;
+		const 
+			user 	= this.props.other_user,
+			auction = this.props.auction,
+			withUs 	= user ? SinceHelper(new Date().getTime() - user.joindate) : null,
+			showAllData = this.props.showAllData;
 
 		// TODO wystaw opinie tylko jeśli user znajduje się na liście raters
 		// <button className="rate standard-button">Wystaw opinie</button> 
@@ -207,7 +236,17 @@ class Seller extends Component {
 							<div className="user-data">
 								<div className="column">
 									<h3 className="name">{ `${user.firstname || ''} ${user.lastname || (!user.firstname && 'Anonim' : '')}` }</h3>
-									<div className="city">{ user.address ? user.address.city : null }</div>
+									{
+										showAllData 
+										?
+										(
+											<UserData user={user} />
+										)
+										:
+										( 
+											<div className="city">{ user.address ? user.address.city : null }</div>
+										)
+									}
 									<div className="with-us transparent">{ (withUs ? `${ user.firstname || '' } jest z nami ${withUs}` : null) }</div>
 								</div>
 								<div className="column">

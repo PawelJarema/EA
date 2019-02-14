@@ -11,9 +11,41 @@ import AuctionBids from './Bids';
 import { Seller, Deliveries, Opinions } from '../OtherUser';
 import Progress, { ImageProgress } from '../Progress';
 
+import sizeMe from 'react-sizeme';
+import { IMAGE_ASPECT_RATIO } from './constants';
+
 import PriceHelper from '../../helpers/priceHelper';
 import AuctionEndHelper from '../../helpers/auctionEndHelper';
-import { getUnits } from './functions';
+import { getUnits, isBidder } from './functions';
+
+class BigPhoto extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { enlarge: false };
+    }
+
+    toggleEnlarge() {
+        this.setState(({ enlarge }) => ({ enlarge: !enlarge }));
+    }
+
+    render() {
+        const { photo, height } = this.props;
+
+        return (
+            <div className={"photo-big" + (this.state.enlarge ? ' enlarge' : '')} style={ height ? { height } : null } onClick={ this.toggleEnlarge.bind(this) }>
+                <div className="image-wrapper">
+                    {
+                        photo 
+                        ?
+                        <RawImage data={ photo } />
+                        :
+                        <div><ImageProgress /></div>
+                    }
+                </div>
+            </div>
+        );
+    }
+}
 
 class AuctionDetails extends Component {
     constructor(props) {
@@ -142,7 +174,8 @@ class AuctionDetails extends Component {
         //const thumbnails = auction ? auction.photos.slice(0, active_photo).concat(auction.photos.slice(active_photo + 1)) : null;
         const thumbnails = photos ? photos.slice(0, active_photo).concat(photos.slice(active_photo + 1)) : null;
 
-        const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price && auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
+        //const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price && auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
+        const buy_now = auction ? !auction.ended && user._id !== auction._user && auction.price.buy_now_price : false; //&& auction.price.buy_now_price >= auction.price.current_price && auction.bids.filter(bid => bid._user === user._id).length : false;
         const min_price = auction ? !auction.ended && auction.price.min_price && !auction.price.hide_min_price : false;
         const payee = auction ? auction.payees && auction.payees.indexOf(user._id) !== -1 : false;
         const buy_now_payee = auction ? auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1 : false;
@@ -150,6 +183,7 @@ class AuctionDetails extends Component {
         const current_price = auction ? auction.price.current_price || auction.price.start_price : false;
 
         const extended_view = true || window.innerWidth > 1579;
+        const iAmBidder = isBidder(user);
 
         return (
             <div className="AuctionDetails">
@@ -161,17 +195,7 @@ class AuctionDetails extends Component {
                             }
                             <div className="basic-info">
                                 <div className="photos">
-                                    <div className="photo-big">
-                                        <div className="image-wrapper">
-                                            {
-                                                photos.length 
-                                                ?
-                                                <RawImage data={ photos[active_photo] } />
-                                                :
-                                                <div><ImageProgress /></div>
-                                            }
-                                        </div>
-                                    </div>
+                                    <BigPhoto photo={ photos[active_photo] } onSize={ (size) => this.setState({ photoHeight: size.width / IMAGE_ASPECT_RATIO }) } height={ this.state.photoHeight }/>
                                     <div className="photos-small">
                                         {
                                             thumbnails && thumbnails.length 
@@ -264,7 +288,7 @@ class AuctionDetails extends Component {
                                         </div>
                                     </div>
                                     <div id="seller">
-                                        <Seller auction={ auction } user={user} socket={this.props.socket} />
+                                        <Seller auction={ auction } user={user} socket={this.props.socket} showAllData={ iAmBidder } />
                                         <div className="background">
                                             <i className="material-icons">account_circle</i>
                                         </div>
@@ -292,6 +316,8 @@ class AuctionDetails extends Component {
         );
     }
 }
+
+BigPhoto = sizeMe({ monitorHeight: true })(BigPhoto);;
 
 function mapAuctionsPhotosUserAndOtherUserStateToProps({ auctions, photos, user, other_user }) {
     return { auctions, photos, user, other_user };

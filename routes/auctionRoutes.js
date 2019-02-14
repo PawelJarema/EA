@@ -824,8 +824,7 @@ module.exports = app => {
                 }  
 
                 if (doc) {
-                    req.session.message = 'Pomyślnie dokonano edycji aukcji'; 
-                    auction = doc;
+                    req.session.message = 'Pomyślnie dokonano edycji aukcji';
 
                     res.send({});
                 }
@@ -835,8 +834,7 @@ module.exports = app => {
                 .save()
                 .then(
                     async doc => { 
-                        req.session.message = 'Pomyślnie dodano aukcję'; 
-                        auction = doc; 
+                        req.session.message = 'Pomyślnie dodano aukcję';
 
                         // const user = req.user;
                         // const { credits } = user.balance;
@@ -875,7 +873,7 @@ async function savePhotos(auction, files) {
     const promises = await files.map((file, index) => ({
         order: index,
         type: file.mimetype,
-        data: Sharp(file.buffer).resize(1024).withMetadata().toBuffer()
+        data: Sharp(file.buffer).resize(1024).toBuffer() // withMetadata()
     }));
 
     let progress = 0;
@@ -897,8 +895,9 @@ async function savePhotos(auction, files) {
                 progress++;
 
                 auction.photos[order] = { type: type, data: optimisedBuffer.toString('base64') };
+
                 if (progress === files.length) {
-                    auction.save();
+                    auction.save(); 
                 }
             });
         });

@@ -14,8 +14,6 @@ class CategoryLink extends Component {
         new Promise((resolve, reject) => {
             resolve(categoryCallback({ category, subcategory, time: new Date().getTime() }));
         }).then(this.props.navigate);
-
-
     }
 
     render() {

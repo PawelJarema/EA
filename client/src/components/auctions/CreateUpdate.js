@@ -14,6 +14,10 @@ import b64toBlob from 'b64-to-blob';
 import { arrayMove } from 'react-sortable-hoc';
 
 import ThumbnailPreview from './ThumbnailPreview';
+import ImageEditor from './ImageEditor';
+
+import { isSet, isNotEmpty } from './functions';
+
 
 class CreateUpdateAuction extends Component {
    constructor(props) {
@@ -22,7 +26,9 @@ class CreateUpdateAuction extends Component {
        let emptyValue = RichTextEditor.createEmptyValue();
        this.state = { 
         subcategories: [], images: [], richText: emptyValue, description: emptyValue.toString('html'), message: [],
-        categoryData: null, propertyData: null
+        categoryData: null, propertyData: null,
+        editPhotoIndex: null,
+        buyNowOption: false
        };
        
        this.addAttribute = this.addAttribute.bind(this);
@@ -33,6 +39,8 @@ class CreateUpdateAuction extends Component {
        this.handleRichText = this.handleRichText.bind(this);
        this.validate = this.validate.bind(this);
        this.submit = this.submit.bind(this);
+       this.saveEditedPhoto = this.saveEditedPhoto.bind(this);
+       this.editPhoto = this.editPhoto.bind(this);
        this.onSortEnd = this.onSortEnd.bind(this);
    }
     
@@ -118,8 +126,16 @@ class CreateUpdateAuction extends Component {
             // prices
             input = queryByName('start_price');
             input.value = auction.price.start_price;
-            input = queryByName('buy_now_price');
-            input.value = auction.price.buy_now_price;
+            
+
+            if (auction.price.buy_now_price) {
+                this.setState({ buyNowOption: true }, () => {
+                    input = queryByName('buy_now_price');
+                    input.value = auction.price.buy_now_price;
+                })
+            }
+ 
+
             input = queryByName('min_price');
             input.value = auction.price.min_price;
             input = queryByName('hide_min_price');
@@ -136,8 +152,7 @@ class CreateUpdateAuction extends Component {
             if (auction.photos) {
                 auction.photos.forEach(photo => {
                     const   type    = photo.type || 'image/jpeg',
-                            blob    = b64toBlob(photo.data, type),
-                            url     = window.URL.createObjectURL(blob);
+                            blob    = b64toBlob(photo.data, type);
  
                     files.push(blob);
                 });
@@ -337,6 +352,28 @@ class CreateUpdateAuction extends Component {
         }
     }
 
+    editPhoto(index) {
+        this.setState({ editPhotoIndex: index });
+    }
+
+    saveEditedPhoto(blob) {
+        if (blob) {
+            const { editPhotoIndex } = this.state;
+
+            this.setState(({ images }) => {
+                const files = images;
+                URL.revokeObjectURL(files[editPhotoIndex].preview);
+
+                files[editPhotoIndex] = { file: blob, preview: URL.createObjectURL(blob) };
+
+                return { files };
+            }, () => this.editPhoto(null));
+
+        } else {
+            this.editPhoto(null);
+        }
+    }
+
     onSortEnd({ oldIndex, newIndex }) {
         this.setState(({images}) => ({
             images: arrayMove(images, oldIndex, newIndex)
@@ -349,6 +386,9 @@ class CreateUpdateAuction extends Component {
        const deliveries = user.deliveries && user.deliveries.length;
        const bids = auctions && auctions.bids && auctions.bids.length > 0;
        const { categoryData, propertyData } = this.state;
+
+       const blockBuyNowPriceChange = auctions && isNotEmpty(auctions.buynowpayees);
+       const blockAllChanges = auctions && isNotEmpty(auctions.bids);
 
        // if (!update && !user.balance.credits) {
        //      return (
@@ -377,12 +417,15 @@ class CreateUpdateAuction extends Component {
                 <ProfileLinks active="addauction" />
                 <div>
                     {
+                        blockAllChanges && <p className="warn">Nie można edytować aukcji. Ktoś już licytuje.</p>
+                    }
+                    {
                         !userDataComplete && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</span></p>
                     }
                     {
                         !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
                     }
-                <form ref={ e => this.formRef = e } className={"user-settings" + (!userDataComplete || !deliveries ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
+                <form ref={ e => this.formRef = e } className={"user-settings" + (!userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
                     <fieldset>
@@ -402,17 +445,31 @@ class CreateUpdateAuction extends Component {
                     <fieldset>
                         <legend><span className="lettr-icon">PLN</span>Cena</legend>
                         <p>
+                            <span className="label add-horizontal-margin">
+                                <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: false }) } checked={ !this.state.buyNowOption } />
+                                <span className="label"> Czysta licytacja</span>
+                        
+                                <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: true }) } checked={ this.state.buyNowOption } />
+                                <span className="label"> Z opcją "Kup Teraz"</span>
+                            </span>
+                        </p>
+                        <p>
                             <label htmlFor="start_price" className="required">Cena wywoławcza</label>
-                            <span className="price-input-wrapper"><input name="start_price" type="number" step="0.01" onInput={this.validate} className={ (update ? 'disabled' : '') } /></span>
+                            <span className="price-input-wrapper"><input name="start_price" type="number" step="0.01" onInput={this.validate} /></span>
                             <span className="validation-message">{ this.state.message[1] }</span>
                         </p>
-                        <p>
-                            <label htmlFor="buy_now_price">Cena "kup teraz"</label>
-                            <span className="price-input-wrapper"><input name="buy_now_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } /></span>
-                        </p>
+                        {
+                            this.state.buyNowOption && 
+                            (
+                                <p>
+                                    <label htmlFor="buy_now_price">Cena "Kup Teraz" <span style={{ opacity: 0.3 }}>{ (blockBuyNowPriceChange ? '- nie można zmienić ceny, ponieważ ktoś już kupił przedmiot' : null) }</span></label>
+                                    <span className="price-input-wrapper"><input name="buy_now_price" type="number" step="0.01" className={ (blockBuyNowPriceChange ? 'disabled' : '') } /></span>
+                                </p>
+                            )
+                        }
                         <p>
                             <label htmlFor="min_price">Cena minimalna</label>
-                            <span className="price-input-wrapper"><input name="min_price" type="number" step="0.01" className={ (update ? 'disabled' : '') } /></span>
+                            <span className="price-input-wrapper"><input name="min_price" type="number" step="0.01" /></span>
                         </p>
                         <p className="checkbox">
                             <span>
@@ -427,7 +484,7 @@ class CreateUpdateAuction extends Component {
                         <legend><i className="material-icons">access_time</i>Czas trwania</legend>
                         <p>
                             <label htmlFor="duration" className="required">Ilość dni</label>
-                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} className={ (update ? 'disabled' : '') } />
+                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
                             <span className="validation-message">{ this.state.message[2] }</span>
                         </p>
                     </fieldset>
@@ -440,20 +497,29 @@ class CreateUpdateAuction extends Component {
                             <span className="validation-message">{ this.state.message[3] }</span>
                         </p>
                     </fieldset>
-
-                    <fieldset>
-                        <legend><i className="material-icons">photo</i>Zdjęcia</legend>
-                        <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie</label></p>
-                        <Dropzone className="drag-and-drop-images" 
-                            onDrop={ this.onDrop }
-                            onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
-                            accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
-                            multiple={ true }
-                            onDropRejected={ this.onDropRejected }
-                        >
-                            <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } /> 
-                        </Dropzone>
-                    </fieldset>
+                    {
+                        isSet(this.state.editPhotoIndex)
+                        ? 
+                        (
+                            <ImageEditor src={ this.state.images[this.state.editPhotoIndex].preview } callback={ this.saveEditedPhoto } />
+                        )
+                        :
+                        (
+                            <fieldset>
+                                <legend><i className="material-icons">photo</i>Zdjęcia</legend>
+                                <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie</label></p>
+                                <Dropzone className="drag-and-drop-images" 
+                                    onDrop={ this.onDrop }
+                                    onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
+                                    accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
+                                    multiple={ true }
+                                    onDropRejected={ this.onDropRejected }
+                                >
+                                    <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } editPhoto={ this.editPhoto } /> 
+                                </Dropzone>
+                            </fieldset>
+                        )
+                    }
 
                     <fieldset>
                         <legend><i className="material-icons">description</i>Opis</legend>

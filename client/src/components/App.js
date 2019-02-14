@@ -18,6 +18,7 @@ import { Settings, CreateUpdateAuction, Delivery, ProfileLinks, MyOpinions, Invo
 import { AdminPanel, TechBreak } from './Admin';
 import { CategoryLinks, FooterLinks, FooterBar } from './Footer';
 import { Page404 } from './Page404';
+import Contact from './Contact';
 import CategoryFilters from './CategoryFilters';
 import Filters from './Filters';
 import Progress from './Progress';
@@ -172,7 +173,7 @@ class App extends Component {
                             <Route path="/konto/zarejestruj" component={ RegistrationLanding } />
                             <Route path="/konto/zaloguj" component={ LoginLanding } />
                             <Route path="/admin" component={ AdminPanel } />
-
+                            <Route path="/(pomoc|kontakt)" component={ Contact } />
                             {
                                 user && <div>
                                     <Route exact path="/moje-aukcje" render={ (props) => <MyAuctionList {...props} mode='current_auctions' /> } />

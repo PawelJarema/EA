@@ -14,61 +14,32 @@ const mailUserTemplate = require('../services/emailTemplates/mailUserTemplate');
 const bulkMailTemplate = require('../services/emailTemplates/bulkMailTemplate');
 const mailAuctionTemplate = require('../services/emailTemplates/mailAuctionTemplate');
 const auctionDeletedTemplate = require('../services/emailTemplates/auctionDeletedTemplate');
+const contactEaukcjeTemplate = require('../services/emailTemplates/contactEaukcjeTemplate');
 const business = require('../services/emailTemplates/business');
+const requireLogin = require('../middleware/requireLogin');
 
 const multer = require('multer');
 const upload = multer();
 
 const DOCUMENT_DOCTYPES = ['user', 'auction'];
 
-async function fetchOpinions(user_id) {
-	const opinions = await Rate.find({ _user: ObjectId(user_id) }, { rate: 1 });
-	const count = opinions.length;
-	const rate = count ? (opinions.map(opinion => opinion.rate).reduce((a, b) => a + b) / count).toFixed(2) : 0;
-
-	return ({ count, rate });
-}
-
-async function paginateAuctions(page, per_page) {
-	const auctions = await Auction.find(
-		{},{},
-		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
-	).lean();
-	
-	const 	count = await Auction.countDocuments(),
-			pages = Math.ceil(count / +per_page);
-
-	for (let i = 0, l = auctions.length; i < l; i++) {
-		const doc = auctions[i];
-		const user = await User.findOne({ _id: doc._user }, { firstname: 1, lastname: 1, contact: 1 });
-		if (user) {
-			doc.owner = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
-			doc.email = user.contact.email;
-		} else {
-			doc.owner = 'null';
-			doc.email = 'null';
-		}
-	}
-
-	return ({ 'auction': auctions, count: pages });
-}
-
-async function paginateUsers(page, per_page) {
-	const users = await User.find(
-		{},{},
-		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
-	).lean();
-	const pages = Math.ceil(await User.countDocuments() / +per_page);
-
-	for (let i = 0; i < users.length; i++) {
-		const user = users[i];
-		user.opinion = await fetchOpinions(user._id);
-	}
-
-	return ({ 'user': users, count: pages });
-}
-
 module.exports = app => {
+	app.post('/api/contact_eaukcje', [requireLogin, upload.any()], async(req, res) => {
+		const
+			to 	 = 'pawel.jarema@dd1studio.com',
+			from = req.user.contact.email, 
+			{ message } = req.body,
+			mailer = new Mailer(
+				{ subject: 'Pomoc eaukcje.pl', recipients: [{ email: to }] }, 
+				contactEaukcjeTemplate(from, message)
+			);
+
+			mailer.send();
+			req.session.message = 'Wysłano wiadomość. Odpowiemy niebawem';
+
+			res.send(true);
+	});
+
 	app.post('/api/delete_auction', async (req, res) => {
 		const { auction_id, email, title, reason, admin_id, doctype, page, per_page } = req.body;
 
@@ -239,4 +210,51 @@ module.exports = app => {
 			);
 
 	});
+}
+
+async function fetchOpinions(user_id) {
+	const opinions = await Rate.find({ _user: ObjectId(user_id) }, { rate: 1 });
+	const count = opinions.length;
+	const rate = count ? (opinions.map(opinion => opinion.rate).reduce((a, b) => a + b) / count).toFixed(2) : 0;
+
+	return ({ count, rate });
+}
+
+async function paginateAuctions(page, per_page) {
+	const auctions = await Auction.find(
+		{},{},
+		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
+	).lean();
+	
+	const 	count = await Auction.countDocuments(),
+			pages = Math.ceil(count / +per_page);
+
+	for (let i = 0, l = auctions.length; i < l; i++) {
+		const doc = auctions[i];
+		const user = await User.findOne({ _id: doc._user }, { firstname: 1, lastname: 1, contact: 1 });
+		if (user) {
+			doc.owner = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
+			doc.email = user.contact.email;
+		} else {
+			doc.owner = 'null';
+			doc.email = 'null';
+		}
+	}
+
+	return ({ 'auction': auctions, count: pages });
+}
+
+async function paginateUsers(page, per_page) {
+	const users = await User.find(
+		{},{},
+		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
+	).lean();
+	const pages = Math.ceil(await User.countDocuments() / +per_page);
+
+	for (let i = 0; i < users.length; i++) {
+		const user = users[i];
+		user.opinion = await fetchOpinions(user._id);
+	}
+
+	return ({ 'user': users, count: pages });
 }
