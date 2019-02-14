@@ -130,6 +130,17 @@ li.sortable-helper .options {
     max-height: 111px;
     
 }
+
+.auction-deliveries {
+    flex-direction: column;
+}
+
+.auction-deliveries .d-price {
+    color: var(--link-blue);
+    vertical-align: baseline;
+    margin-left: 5px;
+}
+
 .user-settings fieldset {
     max-width: 100%;
 }
@@ -562,7 +573,13 @@ li.sortable-helper .options {
     font-weight: bold;
     color: var(--link-blue);
 }
-
+.auction-bids {
+    height: 100%;
+}
+.no-result {
+    width: 100%;
+    height: 100%;
+}
 .no-result i, .TechBreak i {
     font-size: 70px;
 }
@@ -572,8 +589,10 @@ li.sortable-helper .options {
 .no-result div {
 
 }
-.no-result, .TechBreak {
+.TechBreak, .Filtered .no-result {
     min-height: 50vh;
+}
+.no-result, .TechBreak {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -893,6 +912,17 @@ i.disabled {
     background: #ddd;
 }
 
+.AuctionDetails .auction-views {
+    font-size: 10px;
+    display: flex; flex-wrap: wrap;
+    width: 100%; margin-bottom: 30px;
+    justify-content: flex-start;
+    opacity: 1;
+}
+.AuctionDetails .auction-views span {
+    margin-right: 16px;
+}
+
 .AuctionDetails .all-bids {
     padding-top: 60px;
     max-width: var(--html-w);
@@ -1073,10 +1103,7 @@ i.disabled {
 .AuctionDetails .like-icon {
     margin-left: 5px;
 }
-.AuctionDetails .tab-view .extra-tab .no-result {
-    top: 75%;
-    left: 50%;
-}
+
 .lettr-icon {
     font-family: sans-serif;
     font-weight: bold;

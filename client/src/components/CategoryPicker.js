@@ -38,9 +38,9 @@ class CategoryPicker extends Component {
       };
 
       const 
-        activeCategory       = getIndex(this.props.categories, category),
-        activeSubcategory    = getIndex(this.props.categories[activeCategory].subcategories, subcategory),
-        activeSubSubCategory = getIndex(this.props.categories[activeCategory].subcategories[activeSubcategory].sub_subcategories, subsubcategory);
+        activeCategory       = category ? getIndex(this.props.categories, category) : null,
+        activeSubcategory    = subcategory ? getIndex(this.props.categories[activeCategory].subcategories, subcategory) : null,
+        activeSubSubCategory = subsubcategory ? getIndex(this.props.categories[activeCategory].subcategories[activeSubcategory].sub_subcategories, subsubcategory) : null;
 
       this.setState({ activeCategory, activeSubcategory, activeSubSubCategory }, () => {
         if (isSet(activeCategory)) this.catRef.value = category;

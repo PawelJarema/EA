@@ -42,7 +42,8 @@ const auctionSchema = new Schema({
     raters: [ObjectId],
     rated: Boolean,
     properties: [attributeSchema],
-    int_properties: [intAttributeSchema]
+    int_properties: [intAttributeSchema],
+    deliveries: [{ name: String, price: Number }]
 });
 
 mongoose.model('auction', auctionSchema);

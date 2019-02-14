@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as auctionActions from '../../actions/auctionActions';
 import * as photosActions from '../../actions/photosActions';
 import * as otherUserActions from '../../actions/otherUserActions';
+import * as viewsActions from '../../actions/viewsActions';
 
 import RawImage from './RawImage';
 import Pay from './Pay';
@@ -16,7 +17,7 @@ import { IMAGE_ASPECT_RATIO } from './constants';
 
 import PriceHelper from '../../helpers/priceHelper';
 import AuctionEndHelper from '../../helpers/auctionEndHelper';
-import { getUnits, isBidder } from './functions';
+import { getUnits, isBidder, pluralize } from './functions';
 
 class BigPhoto extends Component {
     constructor(props) {
@@ -50,11 +51,13 @@ class BigPhoto extends Component {
 class AuctionDetails extends Component {
     constructor(props) {
         super(props);        
-        this.state = { auction: '', photo: 0, pay: false };
+        this.state = { auction: '', photo: 0, pay: false, views: 0, activeViews: 0 };
         this.seePhoto = this.seePhoto.bind(this);
         this.buyNow = this.buyNow.bind(this);
         this.submit = this.submit.bind(this);
         this.payCallback = this.payCallback.bind(this);
+        this.fetchTotalViews = this.fetchTotalViews.bind(this);
+        this.fetchViews = this.fetchViews.bind(this);
     }
 
     componentDidMount() {
@@ -65,6 +68,28 @@ class AuctionDetails extends Component {
         this.props.clearPhotos();
         this.props.fetchAuction(auction_id);
         this.props.fetchPhotos(auction_id);
+
+        this.props.registerView(auction_id)
+        .then(() => this.fetchViews(auction_id));
+        
+        this.props.addView(auction_id) 
+        .then(() => this.fetchTotalViews(auction_id));
+    }
+
+    fetchTotalViews(auction_id) {
+        fetch(`/api/get_total_views/${auction_id}`)
+            .then(res => res.json())
+            .then(data => this.setState({ views: data.views }));
+    }
+
+    fetchViews(auction_id) {
+        fetch(`/api/views/${auction_id}`)
+            .then(res => res.json())
+            .then(data => this.setState({ activeViews: data.viewers }));
+    }
+
+    componentWillUnmount() {
+        this.props.unregisterView(this.props.match.params.id);
     }
 
     componentWillReceiveProps(props) {
@@ -185,6 +210,10 @@ class AuctionDetails extends Component {
         const extended_view = true || window.innerWidth > 1579;
         const iAmBidder = isBidder(user);
 
+        const 
+            viewers = this.state.activeViews,
+            personArr = ['osoba', 'osoby', 'osób'];
+
         return (
             <div className="AuctionDetails">
                 {
@@ -227,7 +256,12 @@ class AuctionDetails extends Component {
                                                     <span key={`${attr.name}_${attr.value}`} className="attribute">{attr.name}<span>{attr.value} <span className="unit">{ getUnits(attr.name) }</span></span></span>
                                                 ))
                                             }
-                                        </p> 
+                                        </p>
+                                        <span className="auction-views">
+                                            <span>Ogłoszenie wyświetla teraz { pluralize(viewers, personArr) }</span>
+                                            <span> Aukcję obserwuje { pluralize(auction.likes, personArr) }</span>
+                                            <span> Wszystkie wyświetlenia: { this.state.views }</span>
+                                        </span>
                                         <div className={ (auction.ended ? 'transparent' : '') }>
                                             <div className="price">Aktualna cena: <span className="value">{ PriceHelper.write(current_price) }</span></div>
                                             { buy_now ? <div className="buy-now"><button className="standard-button" onClick={this.buyNow}>* Kup teraz za <span className="price-value">{ PriceHelper.write(auction.price.buy_now_price) }</span>!</button></div> : null }
@@ -323,5 +357,5 @@ function mapAuctionsPhotosUserAndOtherUserStateToProps({ auctions, photos, user,
     return { auctions, photos, user, other_user };
 }
 
-AuctionDetails = connect(mapAuctionsPhotosUserAndOtherUserStateToProps, {...auctionActions, ...photosActions, ...otherUserActions})(AuctionDetails);
+AuctionDetails = connect(mapAuctionsPhotosUserAndOtherUserStateToProps, {...auctionActions, ...photosActions, ...otherUserActions, ...viewsActions})(AuctionDetails);
 export default AuctionDetails;

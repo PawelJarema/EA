@@ -42,6 +42,7 @@ require('./routes/adminRoutes')(app);
 require('./routes/importExportRoutes')(app);
 
 require('./services/cronScheduleTaskService')(app);
+require('./services/viewsService')(app);
 
 if (process.env.NODE_ENV === 'production') {
     console.log('in production');

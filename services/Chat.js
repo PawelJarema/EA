@@ -1,33 +1,31 @@
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const production = process.env.NODE_ENV === 'production';
+
+
+// SSL CERT
+const privateKey = production ? fs.readFileSync('../cert/privkey.pem', 'utf8') : null;
+const certificate = production ? fs.readFileSync('../cert/cert.pem', 'utf8') : null;
+const ca = production ? fs.readFileSync('../cert/chain.pem', 'utf8') : null;
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
+
+const socketIo = require('socket.io');
+const mongoose = require('mongoose');
+require('../models/Chat');
+const Chat = mongoose.model('chat');
+const { ObjectId } = mongoose.Types;
+
+let auctionClientsOnline = {};
+
 module.exports = app => {
-	const fs = require('fs');
-	const http = require('http');
-	const https = require('https');
-	const production = process.env.NODE_ENV === 'production';
-
-
-	// SSL CERT
-	const privateKey = production ? fs.readFileSync('../cert/privkey.pem', 'utf8') : null;
-	const certificate = production ? fs.readFileSync('../cert/cert.pem', 'utf8') : null;
-	const ca = production ? fs.readFileSync('../cert/chain.pem', 'utf8') : null;
-
-	const credentials = {
-    	key: privateKey,
-    	cert: certificate,
-    	ca: ca
-  	};
-
-
 	const chatServer = production ? https.createServer(credentials, app) : http.createServer(app);
-	const socketIo = require('socket.io');
 	const io = socketIo(chatServer);
-
-	const mongoose = require('mongoose');
-	require('../models/Chat');
-	const Chat = mongoose.model('chat');
-	const { ObjectId } = mongoose.Types;
-
-
-	let auctionClientsOnline = {};
 
 	const emitMessagePulse = (socket, user_id) => {
 		console.log('incoming message for ' + user_id);

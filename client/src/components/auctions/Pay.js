@@ -74,7 +74,7 @@ class Pay extends Component {
                             <table>
                             <tbody>
                             {
-                                other_user.deliveries.map((delivery, index) => (
+                                auction.deliveries.map((delivery, index) => (
                                     <tr>
                                         <td>
                                             <input key={'delivery_' + index} name="delivery" type="radio" value={1} onChange={() => this.setState({ delivery_price: delivery.price, delivery_method: delivery.name })} />

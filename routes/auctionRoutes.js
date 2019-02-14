@@ -745,11 +745,13 @@ module.exports = app => {
         const data = req.body;
         const update = data.auction_id ? true : false;
         //const attributes = Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key] }));
-        const 
+        const
+            keys = Object.keys(data),
             properties = [], 
-            int_properties = [];
+            int_properties = [],
+            deliveries = [];
 
-        Object.keys(data).filter(key => key.startsWith('property_')).map(key => {
+        keys.filter(key => key.startsWith('property_')).map(key => {
             const 
                 name  = key.replace('property_', ''),
                 value = data[key];
@@ -760,6 +762,17 @@ module.exports = app => {
             } else {
                 properties.push({ name, value });
             }
+        });
+
+        keys.filter(key => key.startsWith('delivery_')).map(key => {
+            const 
+                arr = key.split('_'),
+                name = arr[1],
+                price = parseInt(arr[2]);
+
+            if (name && price >= 0) {
+                deliveries.push({ name, price });
+            } 
         });
 
         // console.log(properties);
@@ -795,7 +808,8 @@ module.exports = app => {
             ended: false,
             verified: false,
             properties,
-            int_properties
+            int_properties,
+            deliveries
         });
 
         console.log(auction);
@@ -945,7 +959,7 @@ async function buyNowNotifications(user, owner, auction) {
     let res;
 
     const price = auction.price.buy_now_price;
-    const username = `${user.firstname || ''} ${user.lastname || !user.firstname ? 'Anonim' : ''}`;
+    const username = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
     
     subject = 'Kupiłeś przedmiot ' + auction.title;
     recipients = [{ email: user.contact.email }];

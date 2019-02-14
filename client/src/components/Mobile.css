@@ -276,6 +276,9 @@ nav .user-links .search-mobile {
 	.AuctionDetails .end-tag {
 		margin-left: 20%;
 	}
+	.App .AuctionDetails .auction-views {
+	    justify-content: center;
+	}
 }
 
 @media screen and (max-width: 980px) {

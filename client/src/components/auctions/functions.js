@@ -71,4 +71,38 @@ function isBidder(user, auction) {
     return isIn(id, auction.buynowpayees) || isIn(id, auction.payees) || isIn(id, auction.bids.map(bid => bid._user));
 }
 
-export { userName, applyToAuctions, auctionPath, getUnits, isSet, isNotEmpty, isBidder };
+function pluralize(num, arr) {
+    if (num < 0) return '';
+    if (num === 0) return `0 ${arr[2]}`;
+    if (num === 1) return `${num} ${arr[0]}`;
+    if (num > 1 && num < 5 || num > 21 && num % 10 > 1 && num % 10 < 5) return `${num} ${arr[1] }`;
+    return `${num} ${arr[2] || arr[1]}`;
+}
+
+function concatUnique(arr1, arr2) {
+    const 
+        values = [],
+        result = [],
+        indexArrayValues = (item) => {
+            let value = '';
+            if (typeof item === 'object') {
+                for (let key in item) {
+                    if (!key.startsWith('_')) value += String(item[key]); // omijamy pola _id z unikatową wartością w rekordach Mongo
+                }
+            } else {
+                value = String(item);
+            }
+
+            if (values.indexOf(value) === -1) {
+                values.push(value);
+                result.push(item);
+            }
+        };
+
+    if (isNotEmpty(arr1)) arr1.map(indexArrayValues);
+    if (isNotEmpty(arr2)) arr2.map(indexArrayValues);
+
+    return result
+}
+
+export { userName, applyToAuctions, auctionPath, getUnits, isSet, isNotEmpty, isBidder, pluralize, concatUnique };

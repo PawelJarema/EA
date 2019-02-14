@@ -38,7 +38,7 @@ module.exports = app => {
             let value = all[name];
 
             if (name.indexOf('delivery') !== -1) {
-                delivery.name = value;
+                delivery.name = value.replace(/_/g, ' ');
             } else {
                 delivery.price = parseInt(value);
                 deliveries.push(delivery);

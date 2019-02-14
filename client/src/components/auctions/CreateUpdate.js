@@ -16,7 +16,7 @@ import { arrayMove } from 'react-sortable-hoc';
 import ThumbnailPreview from './ThumbnailPreview';
 import ImageEditor from './ImageEditor';
 
-import { isSet, isNotEmpty } from './functions';
+import { isSet, isNotEmpty, concatUnique } from './functions';
 
 
 class CreateUpdateAuction extends Component {
@@ -187,6 +187,18 @@ class CreateUpdateAuction extends Component {
             if (auction.description) {
                 const text = RichTextEditor.createValueFromString(auction.description, 'html');
                 this.handleRichText(text);
+            }
+
+            //deliveries
+            if (auction.deliveries) {
+                for (let i = 0; i < auction.deliveries.length; i++) {
+                    const 
+                        delivery = auction.deliveries[i],
+                        name     = `delivery_${delivery.name}_${delivery.price}`;
+
+                    input = queryByName(name);
+                    if (input) input.checked = true;
+                }
             }
         }
    }
@@ -535,11 +547,25 @@ class CreateUpdateAuction extends Component {
                             placeholder="Opis szczegółowy"
                         />
                         <input name="description" type="hidden" value={this.state.description} />
+                    </fieldset>
+
+                    <fieldset>
+                        <legend><i className="material-icons">local_shipping</i>Dostawa</legend>
+                        <p className="auction-deliveries">
+                            {
+                                concatUnique(user.deliveries, auctions ? auctions.deliveries : null).map((delivery, i) => (
+                                    <span>
+                                        <input type="checkbox" name={ "delivery_" + `${delivery.name}_${delivery.price}` } />
+                                        <span className="checkbox-value"></span>
+                                        <span className="label">{delivery.name} <span className="d-price">{delivery.price} zł</span></span>
+                                    </span>
+                                ))
+                            }
+                        </p>
                         <br />
                         <button type="submit" onClick={this.submit}>Zapisz</button>
                     </fieldset>
-                    <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />
-                    
+                    <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />   
                 </form>
 
                 </div>
