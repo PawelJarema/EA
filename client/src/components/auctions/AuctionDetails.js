@@ -17,7 +17,7 @@ import { IMAGE_ASPECT_RATIO } from './constants';
 
 import PriceHelper from '../../helpers/priceHelper';
 import AuctionEndHelper from '../../helpers/auctionEndHelper';
-import { getUnits, isBidder, pluralize } from './functions';
+import { getUnits, isBidder, isNotEmpty, pluralize } from './functions';
 
 class BigPhoto extends Component {
     constructor(props) {
@@ -247,12 +247,12 @@ class AuctionDetails extends Component {
                                         <p className="attribute-tags">
                                             <span className="attribute">Ilość<span>{ auction.quantity }</span></span>
                                             {
-                                                auction.properties.map(attr => (
+                                                isNotEmpty(auction.properties) && auction.properties.map(attr => (
                                                     <span key={`${attr.name}_${attr.value}`} className="attribute">{attr.name}<span>{attr.value}</span></span>
                                                 ))
                                             }
                                             {
-                                                auction.int_properties.map(attr => (
+                                                isNotEmpty(auction.int_properties) && auction.int_properties.map(attr => (
                                                     <span key={`${attr.name}_${attr.value}`} className="attribute">{attr.name}<span>{attr.value} <span className="unit">{ getUnits(attr.name) }</span></span></span>
                                                 ))
                                             }
@@ -328,7 +328,7 @@ class AuctionDetails extends Component {
                                         </div>
                                     </div>
                                     <div id="shipping">
-                                        <Deliveries />
+                                        <Deliveries auction={ auction } />
                                         <div className="background">
                                             <i className="material-icons">local_shipping</i>
                                         </div>

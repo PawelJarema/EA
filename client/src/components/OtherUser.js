@@ -9,6 +9,7 @@ import Modal from './Modal';
 import PriceHelper from '../helpers/priceHelper';
 import SinceHelper from '../helpers/sinceHelper';
 import DateHelper from '../helpers/dateHelper';
+import { isNotEmpty } from './auctions/functions';
 
 class UserData extends Component {
 	render() {
@@ -134,14 +135,14 @@ class Opinions extends Component {
 class Deliveries extends Component {
 	constructor(props) {
 		super(props);
-		this.id = props.id;
 		this.state = {};
 	}
 
 	render() {
-		const user = this.props.other_user;
+		const 
+			auction = this.props.auction;
 
-		if (user && user.deliveries.length !== 0) {
+		if (auction && isNotEmpty(auction)) {
 			return (
 				<div className="Deliveries">
 					{
@@ -152,7 +153,7 @@ class Deliveries extends Component {
 								<table>
 								<tbody>
 								{
-									user.deliveries.map((delivery, index) => (
+									auction.deliveries.map((delivery, index) => (
 										<tr key={'delivery_' + index} className="delivery">
 											<td className="name">{delivery.name}</td>
 											<td className="price">{ PriceHelper.write(delivery.price) }</td>
@@ -165,7 +166,7 @@ class Deliveries extends Component {
 					}
 				</div>
 			);
-		} else if (user && !user.deliveries.length) {
+		} else if (auction && !isNotEmpty(auction)) {
 			return (
 				<div className="no-result">
 					<i className="material-icons">local_shipping</i>
@@ -323,7 +324,6 @@ function mapOtherUserStateToProps({ other_user }) {
 }
 
 Opinions = connect(mapOpinionStateToProps, opinionActions)(Opinions);
-Deliveries = connect(mapOtherUserStateToProps, otherUserActions)(Deliveries);
 Seller = connect(mapOtherUserStateToProps, otherUserActions)(Seller);
 
 export { Seller, Deliveries, Opinions };
