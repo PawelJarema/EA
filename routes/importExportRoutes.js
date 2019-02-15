@@ -38,6 +38,7 @@ module.exports = app => {
 		let categories = doc.ele('categories');
 		categories.ele('main', auction.categories.main);
 		categories.ele('sub', auction.categories.sub);
+		categories.ele('subsub', auction.categories.subsub);
 
 		let attributes = doc.ele('attributes');
 		for (let i = 0; i < auction.attributes.length; i++) {
@@ -49,6 +50,23 @@ module.exports = app => {
 		for (let i = 0; i < auction.photos.length; i++) {
 			const photo = auction.photos[i];
 			photos.ele('photo', { 'type': (photo.type || 'image/jpg') }, photo.data);
+		}
+
+		let properties = doc.ele('properties');
+		for (let i = 0; i < auction.properties.length; i++) {
+			const prop = auction.properties[i];
+			properties.ele('property', { 'name': prop.name }, prop.value);
+		}
+		let int_properties = doc.ele('int_properties');
+		for (let i = 0; i < auction.int_properties.length; i++) {
+			const prop = auction.int_properties[i];
+			int_properties.ele('int_property', { 'name': prop.name }, prop.value);
+		}
+
+		let deliveries = doc.ele('deliveries');
+		for (let i = 0; i < auction.deliveries.length; i++) {
+			const del = auction.deliveries[i];
+			deliveries.ele('delivery', { 'name': del.name }, del.price);
 		}
 
 		doc.end({ pretty: true });
@@ -82,7 +100,10 @@ module.exports = app => {
 								date 		= data.date[0],
 								categories	= data.categories[0],
 								attributes	= data.attributes[0],
-								photos		= data.photos[0];
+								photos		= data.photos[0],
+								properties 	= data.properties[0],
+								int_properties = data.int_properties[0],
+								deliveries 	= data.deliveries[0];
 
 						const 	user 		= req.user,
 								auction 	= new Auction({
@@ -104,10 +125,14 @@ module.exports = app => {
 									},
 									categories: {
 										main: categories.main[0],
-										sub: categories.sub[0]
+										sub: categories.sub[0],
+										subsub: categories.subsub[0]
 									},
 									attributes: [],
-									photos: []
+									photos: [],
+									properties: [],
+									int_properties: [],
+									deliveries: []
 								});
 
 						const code = md5([auction.title, date.start_date[0]._, auction.price.start_price].join('|'));
@@ -117,14 +142,37 @@ module.exports = app => {
 							return;
 						}
 
-						for (let i = 0; i < attributes.attribute.length; i ++) {
-							const attribute = attributes.attribute[i];
-							auction.attributes.push({ name: attribute.$.name, value: attribute._ })
+						if (attributes) {
+							for (let i = 0; i < attributes.attribute.length; i++) {
+								const attribute = attributes.attribute[i];
+								auction.attributes.push({ name: attribute.$.name, value: attribute._ })
+							}
 						}
 
-						for (let i = 0; i < photos.photo.length; i ++) {
+						for (let i = 0; i < photos.photo.length; i++) {
 							const photo = photos.photo[i];
 							auction.photos.push({ type: photo.$.type, data: photo._ })
+						}
+
+						if (properties) {
+							for (let i = 0; i < properties.property.length; i++) {
+								const prop = properties.property[i];
+								auction.properties.push({ name: prop.$.name, value: prop._ });
+							}
+						}
+
+						if (int_properties) {
+							for (let i = 0; i < int_properties.int_property.length; i++) {
+								const prop = int_properties.int_property[i];
+								auction.int_properties.push({ name: prop.$.name, value: parseInt(prop._) });
+							}
+						}
+
+						if (deliveries) {
+							for (let i = 0; i < deliveries.delivery.length; i++) {
+								const d = deliveries.delivery[i];
+								auction.deliveries.push({ name: d.$.name, price: parseInt(d._) });
+							}
 						}
 
 						await auction
