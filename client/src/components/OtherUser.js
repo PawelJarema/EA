@@ -142,7 +142,7 @@ class Deliveries extends Component {
 		const 
 			auction = this.props.auction;
 
-		if (auction && isNotEmpty(auction)) {
+		if (auction && isNotEmpty(auction.deliveries)) {
 			return (
 				<div className="Deliveries">
 					{
@@ -166,7 +166,7 @@ class Deliveries extends Component {
 					}
 				</div>
 			);
-		} else if (auction && !isNotEmpty(auction)) {
+		} else if (auction && !isNotEmpty(auction.deliveries)) {
 			return (
 				<div className="no-result">
 					<i className="material-icons">local_shipping</i>
