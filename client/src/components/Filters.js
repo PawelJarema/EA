@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
 import './Filters.css';
 import { applyToAuctions } from './Auctions.js';
+import { DEFAULT } from '../constants/sort';
 
 class Filters extends Component {
 	constructor(props) {
@@ -84,6 +85,14 @@ class Filters extends Component {
 			change = true;
 		}
 
+		if (props.per_page && this.props.per_page !== props.per_page) {
+			change = true;
+		}
+
+		if (props.sort && this.props.sort !== props.sort) {
+			if (props.sort !== DEFAULT) change = true;
+		}
+
 		if (change) {
 			setTimeout(this.filterList, 50);
 		}
@@ -97,11 +106,13 @@ class Filters extends Component {
 		}
 
 		this.filterListTimeout = setTimeout(() => {
-			const 	{ page, pages, per_page } 	= this.props,
-					formData  					= new FormData(this.formRef);
+			const 	
+				{ page, pages, per_page, sort } = this.props,
+				formData  						= new FormData(this.formRef);
 
 			formData.append('page', page);
 			formData.append('per_page', per_page);
+			formData.append('sort', sort);
 
 			const categoryInfo = ['category', 'subcategory', 'subsubcategory'];
 			if (categoryData) {

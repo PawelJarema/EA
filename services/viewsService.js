@@ -41,7 +41,7 @@ function addViewer(auction_id, uid) {
 function removeViewer(auction_id, uid) {
 	const 
 		entry = viewers[auction_id],
-		index = entry.indexOf(uid);
+		index = entry ? entry.indexOf(uid) : -1;
 
 	if (index !== -1) viewers[auction_id].splice(index, 1);
 }
@@ -72,7 +72,7 @@ module.exports = app => {
 	});
 
 	app.get('/api/get_total_views/:auction_id', async(req, res) => {
-		const views = (await Views.findOne({ _auction: ObjectId(req.params.auction_id) }, { views: 1}).lean()).views;
+		const views = ((await Views.findOne({ _auction: ObjectId(req.params.auction_id) }, { views: 1}).lean()) || {}).views;
 		res.send({ views: (views || 0) });
 	});
 
@@ -83,13 +83,9 @@ module.exports = app => {
 			doc 			= await Views.findOne({ _auction: _id }).lean(),
 			views 			= doc ? doc.views : 0;
 
-		console.log(views);
-
 		if (views) {
-			console.log('updating');
 			await Views.updateOne({ _auction: _id }, { $set: { views: +views + 1 } });
 		} else {
-			console.log('new');
 			new Views({
 				_auction: _id,
 				views: 1

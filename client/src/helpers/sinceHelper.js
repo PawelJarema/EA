@@ -1,4 +1,4 @@
-export default function SinceHelper(millis) {
+export default function SinceHelper(millis, arr) {
 	if (!millis) 
 		return '';
 		//millis = new Date((Math.random() * (new Date().getTime() - 60000) + 60000)).getTime();
@@ -6,7 +6,7 @@ export default function SinceHelper(millis) {
 	const years = ['rok', 'lata', 'lat'];
 	const months = ['miesiąc', 'miesiące', 'miesięcy'];
 	const days = ['dzień', 'dni'];
-	const hours = ['godzinę', 'godziny', 'godzin'];
+	const hours = arr ? arr : ['godzinę', 'godziny', 'godzin'];
 
 	const format = (num, arr) => {
 		if (num <= 0) return '';

@@ -29,10 +29,12 @@ import socketIOClient from 'socket.io-client';
 class AuctionListSearch extends Component {
     constructor(props) {
         super(props);
-        this.state = { page: 1, pages: 1, per_page: 10 };
+        this.state = { page: 1, pages: 1, per_page: 10, sort: null };
 
         this.setPage = this.setPage.bind(this);
         this.setPages = this.setPages.bind(this);
+        this.perPageCallback = this.perPageCallback.bind(this);
+        this.sortCallback = this.sortCallback.bind(this);
     }
 
     setPage(page) {
@@ -47,16 +49,25 @@ class AuctionListSearch extends Component {
         }
     }
 
+    perPageCallback(per_page) {
+        this.setState({ per_page });
+    }
+
+    sortCallback(sort) {
+        console.log(sort);
+        this.setState({ sort });
+    }
+
     render() {
-        const { page, pages, per_page } = this.state;
+        const { page, pages, per_page, sort } = this.state;
         const { user, categories, query, category, categoryData, categoryCallback } = this.props;
 
         return (
             <div className="AuctionListSearch">
-                <Filters match={ this.props.match } page={ page } pages={ pages } per_page={ per_page } query={ query } category={ category } user={ user } categories={ categories } categoryData={ categoryData } categoryCallback={ categoryCallback } />
+                <Filters match={ this.props.match } page={ page } pages={ pages } per_page={ per_page } query={ query } category={ category } user={ user } categories={ categories } categoryData={ categoryData } categoryCallback={ categoryCallback } sort={ sort }/>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                     <CategoryFilters categories={ categories } categoryCallback={ categoryCallback } category={ category } categoryData={ categoryData } />
-                    <FilteredList page={ page } pages={ pages } setPage={ this.setPage } setPages={ this.setPages } />
+                    <FilteredList page={ page } pages={ pages } per_page={ per_page } sort={ sort } setPage={ this.setPage } setPages={ this.setPages } perPageCallback={ this.perPageCallback } sortCallback={ this.sortCallback } />
                 </div>
             </div>
         );

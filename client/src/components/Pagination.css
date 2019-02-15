@@ -1,0 +1,37 @@
+.pagination {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	font-size: 14px; color: rgb(0,0,0);
+
+	padding: 8px 0;
+	border: 1px solid #fff; background: #fafafa;
+}
+.pagination .word {
+	margin-right: 6px;
+}
+.pagination-sort, .pagination-pages {
+	display: block;
+}
+.pagination-pages > span:last-child {
+	margin-left: 30px;
+}
+.pagination input, .pagination select {
+	font-size: 14px; color: rgba(0,0,0,.7);
+	height: 26px; 
+	padding: 5px;
+	margin-right: 9px;
+	
+	border: 1px solid #ddd;
+}
+.pagination input {
+	margin-left: 5px;
+}
+
+.pagination select {
+	height: 37px;
+}
+
+.pagination .pagination-pages {
+	white-space: pre-line;
+}

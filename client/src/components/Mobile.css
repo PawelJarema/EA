@@ -410,6 +410,16 @@ nav .user-links .search-mobile {
 		margin-bottom: 5px;
 	}
 }
+@media screen and (max-width: 820px) {
+	.App .pagination {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.App .pagination-pages {
+		margin-top: 16px;
+	}
+}
 @media screen and (max-width: 770px) {
 	.App .OtherUser .auctions {
 		column-count: 2;
@@ -421,6 +431,9 @@ nav .user-links .search-mobile {
 	}
 	.App .OtherUser .auctions .auction {
 		word-break: normal;
+	}
+	.App .pagination, .App .pagination input, .App .pagination select {
+		font-size: 11px;
 	}
 }
 

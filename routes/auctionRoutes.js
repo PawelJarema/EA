@@ -115,7 +115,6 @@ module.exports = app => {
                 mode             = req.body.mode,
                 user_id          = req.user._id;
 
-
         let query;
         if (mode === 'ended') {
             query = { 
@@ -141,7 +140,7 @@ module.exports = app => {
                 ended: (mode === 'ended' ? true : ({ $ne: true }))
             };
         }
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 }; // photos: { $slice: 1 },
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(
@@ -169,7 +168,7 @@ module.exports = app => {
         const idArray = likes.map(like => ObjectId(like._auction));
 
         const query = { _id: { $in: idArray }, ended: { $ne: true }};
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, ended: 1, rated: 1, payees: 1, buynowpayees: 1, raters: 1 }; // photos: { $slice: 1 },
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(
@@ -193,7 +192,7 @@ module.exports = app => {
         const mode = req.body.mode;
 
         const query = { _user: req.user._id, ended: (mode === 'ended' ? true : ({ $ne: true })) };
-        const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, photos: { $slice: 1 }, ended: 1 };
+        const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, ended: 1 }; // photos: { $slice: 1 },
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
         
         const auctions = await Auction.find(
@@ -431,6 +430,8 @@ module.exports = app => {
         let { seller, title, sort, page, per_page } = req.body,
             max = 9999999, min = 1;
 
+        if (per_page > 100) per_page = 100;
+        if (per_page < 1) per_page = 1;
 
         const
             category        = req.body.category || null,
@@ -495,17 +496,25 @@ module.exports = app => {
         page     = parseInt(page) || 1;
         per_page = parseInt(per_page) || 10;
 
-
         switch(sort) {
+            case 'najnowsze':
+                sort = { 'date.start_date': -1 };
+                break;
             case 'alfabetycznie':
-                sort = [ 'title', 1];
+                sort = { 'title': 1 };
                 break;
-            case 'tanie':
-                sort = [ 'price.start_price', 1 ];
+            case 'najtańsze':
+                sort = { 'price.start_price': 1 };
                 break;
-            case 'drogie':
-                sort = [ 'price.start_price', -1];
-                break
+            case 'najdroższe':
+                sort = { 'price.start_price': -1 };
+                break;
+            case 'najpopularniejsze':
+                sort = { 'likes': -1 };
+                break;
+            case 'kończące się':
+                sort = { 'date.duration': 1, 'date.start_date': 1 };
+                break;
             default:
                 sort = null;
         }
@@ -527,11 +536,11 @@ module.exports = app => {
             mongo_query['$and'] = property_$and;
         }
         
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1 }; // photos:{ $slice: 1 }
         const options = { skip: (page-1) * per_page, limit: per_page };
         
         if (sort) {
-            options.sort = { [sort[0]]: sort[1] };
+            options.sort = sort;
         }
 
         const count = await Auction.countDocuments(mongo_query);

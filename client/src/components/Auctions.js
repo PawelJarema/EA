@@ -12,6 +12,7 @@ import './Auctions.css';
 
 import { Link } from 'react-router-dom';
 import { Pagination } from './Pagination';
+import { AuctionPagination } from './AuctionPagination';
 import { ProfileLinks } from './Profile';
 import { ImageProgress } from './Progress';
 
@@ -47,13 +48,15 @@ class FilteredList extends Component {
     }
 
     render() {
-        const { user, page, pages, setPage } = this.props,
+        const { user, page, pages, per_page, sort, setPage, perPageCallback, sortCallback } = this.props,
             auctions = this.props.auctions;
 
+        const pagination = <AuctionPagination page={page} pages={pages} per_page={ per_page } sort={ sort } clickHandler={setPage} sortCallback={ sortCallback } perPageCallback={ perPageCallback }/>;
+        
         return (
             <div className="Filtered AuctionList">
                 {
-                    pages > 1 && auctions.length > 2 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
+                    pagination
                 }
                 { 
                     (auctions === null || auctions && !auctions.map)
@@ -79,7 +82,7 @@ class FilteredList extends Component {
                             <div key={ auction.title + '_' + i } className="auction">
                                 <div className="image-wrapper">
                                     {
-                                        auction.photos ? <Link to={auctionPath(auction)}><RawImage data={auction.photos[0]} /></Link> : <div className="no-image"></div>
+                                        <Link to={auctionPath(auction)}><RawImage link={auction} /></Link>
                                     }
                                 </div>
                                 <div className="text">
@@ -100,7 +103,7 @@ class FilteredList extends Component {
                     })
                 }
                 {
-                    pages > 1 && <Pagination page={page} pages={pages} clickHandler={setPage}/>
+                    pagination
                 }
             </div>
         );
@@ -364,7 +367,7 @@ class MyAuctionList extends Component {
                         my_auctions && my_auctions != 'empty' && my_auctions.length > 0 && my_auctions.map((auction, index) => (
                             <div key={'my_auction_' + index} className="auction">
                                 <div className="image-wrapper">
-                                    { auction.photos.length ? <Link to={auctionPath(auction)}><RawImage data={auction.photos[0]} /></Link> : <div className="no-image"/> }
+                                    <Link to={auctionPath(auction)}><RawImage link={auction} /></Link>
                                 </div>
                                  <div className="text">
                                     <Link to={auctionPath(auction)}><h3>{ auction.title }</h3></Link>
