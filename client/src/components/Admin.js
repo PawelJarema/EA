@@ -3,13 +3,253 @@ import { Link, NavLink, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as adminActions from '../actions/adminActions';
 import * as techBreakActions from '../actions/techBreakActions';
+import * as categoryActions from '../actions/categoryActions';
 import './Admin.css';
+
+import Tree from 'react-ui-tree';
+import 'react-ui-tree/dist/react-ui-tree.css';
 
 import Modal from './Modal';
 import Progress from './Progress';
 import { Pagination } from './Pagination';
 
 import AuctionEndHelper from '../helpers/auctionEndHelper';
+
+function findParent(node, tree) {
+	const 
+		category_index = tree.children.map((child, i) => ({ name: child.module, index: i })).filter(child => child.name === node.category)[0].index,
+		category = tree.children[category_index];
+
+	return category;
+}
+
+function findSubcategory(node, tree) {
+	if (node.type !== 'subcategory') return null;
+
+	const 
+		category_index = tree.children.map((child, i) => ({ name: child.module, index: i })).filter(child => child.name === node.category)[0].index,
+		category = tree.children[category_index],
+		subcategory_index = category.children.indexOf(node),
+		subcategory = category.children[subcategory_index];
+
+	return subcategory;
+}
+
+function categoriesToTreeObject(categories) {
+	const tree = {
+		module: 'Kategorie Główne',
+		type: 'root',
+		children: []
+	};
+
+	for (let c = 0; c < categories.length; c++) {
+		const
+			category 		= categories[c],
+			category_name 	= category.name,
+			subcategories 	= category.subcategories,
+			categoryModule 	= {
+				module: category_name,
+				type: 'category'
+			};
+
+		if (category.subcategories) {
+			categoryModule.children = [];
+
+			for (let sc = 0; sc < subcategories.length; sc++) {
+				const
+					subcategory 		= subcategories[sc],
+					subcategory_name	= subcategory.name,
+					properties 			= subcategory.properties,
+					subcategoryModule   = {
+						module: subcategory_name,
+						category: category_name,
+						type: 'subcategory'
+					};
+
+				// podkategoria - albo ma cechy albo jeszcze jeden poziom kategorii
+				if (subcategory.sub_subcategories) {
+					subcategoryModule.children = [];
+
+					const
+						subsubcategories 		= subcategory.sub_subcategories;
+
+					for (let ssc = 0; ssc < subsubcategories.length; ssc++) {
+						const
+							subsubcategory 			= subsubcategories[ssc],
+							subsubcategory_name 	= subsubcategory.name,
+							properties 				= subcategory.properties,
+							subsubcategoryModule 	= {
+								module: subsubcategory_name,
+								type: 'subsubcategory',
+								leaf: true
+							};
+
+						if (properties) {
+							subsubcategoryModule.properties = properties;
+						}
+
+						subcategoryModule.children.push(subsubcategoryModule);
+					}
+				} else if (properties) {
+					subcategoryModule.leaf = true;
+					subcategoryModule.properties = properties;
+				}
+
+				categoryModule.children.push(subcategoryModule);
+			}
+		} else {
+			// categoryModule.leaf = true;
+		}
+
+		tree.children.push(categoryModule);
+	}
+
+	return tree;
+}
+
+function treeObjectToCategories(treeObject) {
+
+}
+
+class Categories extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { activeNode: null, tree: {} };
+
+		this.treeChange = this.treeChange.bind(this);
+		this.onClickNode = this.onClickNode.bind(this);
+		this.renderNode = this.renderNode.bind(this);
+		this.addCat = this.addCat.bind(this);
+	}
+
+	componentDidMount() {
+		if (!this.props.categories) {
+			this.props.fetchCategories();
+		}
+	}
+
+	componentWillReceiveProps(props) {
+		if (props.categories && !this.props.categories) {
+			this.setState({ tree: categoriesToTreeObject(props.categories) });
+		}
+	}
+
+	treeChange(tree) {
+		this.setState({
+			tree
+		});
+	}
+
+	addCat(node) {
+		const 
+			name 	 = window.prompt('Podaj nazwę'),
+			{ tree } = this.state;
+
+		let index = -1;
+
+		if (name) {
+			switch(node.type) {
+				case 'root':
+					tree.children.unshift({ module: name, type: 'category' });
+					break;
+				case 'category':
+					index = tree.children.indexOf(node);
+					if (!tree.children[index].chilren) tree.children[index].children = [];
+					tree.children[index].children.unshift({ module: name, type: 'subcategory' });
+					break;
+				case 'subcategory':
+					const 
+						subcategory = findSubcategory(tree, node);
+
+					if (!subcategory.children) subcategory.children = [];
+					subcategory.children.unshift({ module: name, type: 'subsubcategory' });
+					break;
+			}
+
+
+			this.setState({
+				tree
+			}, () => setTimeout(() => this.setState({ tree }), 200));
+		}
+	}
+
+	removeCat(node) {
+		const 
+			confirm  = window.confirm('Napewno usunąć "' + node.module + '" i wszystkie podkategorie ?'),
+			{ tree } = this.state;
+		let 
+			index,
+			change = false;
+
+		if (confirm) {
+			switch(node.type) {
+				case 'category':
+					index = tree.children.indexOf(node);
+					tree.children.splice(index, 1);
+					change = true;
+					break;
+
+				case 'subcategory':
+					const category = findParent(tree, node);
+					index = category.children.indexOf(node);
+					category.children.splice(index, 1);
+					change = true;
+					break;
+			}
+
+			if (change) {
+				this.setState({
+					tree
+				}, () => setTimeout(() => this.setState({ tree }), 200));
+			}
+		}
+	}
+
+	onClickNode(node) {
+		this.setState({ activeNode: node });
+	}
+
+	renderNode(node) {
+		console.log('render node');
+		const 
+			{ activeNode } = this.state;
+
+		let options = [];
+		if (node.type === 'root') {
+			options = [<i key="a" className="material-icons" title="dodaj kategorię" onClick={ () => this.addCat(node) }>playlist_add</i>];
+		}
+		if (node.type === 'category') {
+			options = [
+				<i key="a" className="material-icons" title="dodaj podkategorię" onClick={ () => this.addCat(node) }>playlist_add</i>,
+				<i key="b" className="material-icons" title="usuń kategorię" onClick={ () => this.removeCat(node) }>close</i>
+			]
+		}
+		if (node.type === 'subcategory') {
+			options = [
+				<i key="a" className="material-icons" title="dodaj podkategorię 3 poziomu" onClick={ () => this.addCat(node) }>playlist_add</i>,
+				<i key="b" className="material-icons" title="usuń podkategorię" onClick={ () => this.removeCat(node) }>close</i>
+			]
+		}
+
+		return (
+			<span 
+				className={ 'node ' + node.type + ( node === activeNode ? ' is-active' : '' ) }
+				onClick={ this.onClickNode.bind(null, node) }
+			>
+				{ node.module } <span className="options">{ options }</span>
+			</span>
+		);
+	}
+
+	render() {
+		return (
+			<div>
+				<Tree paddingLeft={20} tree={ this.state.tree } onChagne={ this.treeChange } renderNode={ this.renderNode } />
+			</div>
+		);
+	}
+}
 
 class NoDocuments extends Component {
 	render() {
@@ -418,6 +658,7 @@ class AdminLinks extends Component {
 			<div className="links">
 				<h2><i className="material-icons">verified_user</i>Administracja</h2>
 				<NavLink to="/admin/prowizja" activeClassName="active">Opłaty</NavLink>
+				<NavLink to="/admin/kategorie" activeClassName="active">Kategorie</NavLink>
 				<NavLink to="/admin/uzytkownicy" activeClassName="active">Użytkownicy</NavLink>
 				<NavLink to="/admin/aukcje">Aukcje</NavLink>
 				<NavLink to="/admin/baza-mailingowa">Baza mailingowa</NavLink>
@@ -480,6 +721,7 @@ class AdminPanel extends Component {
 							</Switch>
 							<div>
 								<Route path="/admin/prowizja" component={ Provision } />
+								<Route path="/admin/kategorie" component={ Categories } />
 								<Route path="/admin/uzytkownicy" component={ UserList } />
 								<Route path="/admin/aukcje" component={ AuctionList } />
 								<Route path="/admin/baza-mailingowa" component={ BulkMail } />
@@ -490,6 +732,10 @@ class AdminPanel extends Component {
 			</div>
 		);
 	}
+}
+
+function mapCategoryStateToProps({ categories }) {
+	return { categories };
 }
 
 function applyToTable(func) {
@@ -512,6 +758,7 @@ function mapAdminAndDocumentStateToProps({ admin, documents }) {
 AdminLinks = connect(mapAdminAndTechBreakStateToProps, {...techBreakActions, ...adminActions})(AdminLinks);
 AdminPanel = connect(mapAdminStateToProps, adminActions)(AdminPanel);
 Provision = connect(mapAdminStateToProps, adminActions)(Provision);
+Categories = connect(mapCategoryStateToProps, categoryActions)(Categories);
 UserList = connect(mapAdminAndDocumentStateToProps, adminActions)(UserList);
 AuctionList = connect(mapAdminAndDocumentStateToProps, adminActions)(AuctionList);
 BulkMail = connect(mapAdminStateToProps, adminActions)(BulkMail);

@@ -16,7 +16,7 @@ class Pagination extends Component {
       
         return (
             <div className="pagination-wrapper">
-                <div className="pagination">
+                <div className="avg-pagination">
                     {
                         range.shift && page > 1 && <a className="pagination-chevron" onClick={() => clickHandler(page - 1)}><i className="material-icons">chevron_left</i></a>
                     }

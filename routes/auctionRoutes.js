@@ -794,10 +794,10 @@ module.exports = app => {
             shortdescription: data.shortdescription,
             description: data.description,
             price: {
-                start_price: data.start_price,
+                start_price: data.start_price || 1,
                 min_price: data.min_price,
                 buy_now_price: data.buy_now_price,
-                current_price: data.start_price || 0,
+                current_price: data.start_price || 1,
                 hide_min_price: data.hide_min_price === 'on'
             },
             date: {

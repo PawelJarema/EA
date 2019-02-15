@@ -556,7 +556,7 @@ li.sortable-helper .options {
     height: 80px;
     margin-bottom: 30px;
 }
-.pagination {
+.avg-pagination {
     position: absolute;
 
     max-width: 100%;
@@ -565,11 +565,11 @@ li.sortable-helper .options {
 
     transform: translateX(-50%) translateY(-50%);
 }
-.pagination > a {
+.avg-pagination > a {
     margin: 0 5px;
     cursor: pointer;
 }
-.pagination > a.active {
+.avg-pagination > a.active {
     font-weight: bold;
     color: var(--link-blue);
 }
@@ -1003,7 +1003,7 @@ i.disabled {
     content: ' -- ';
 }
 
-.pagination, .pagination a {
+.avg-pagination, .pagination a {
     user-select: none;
 }
 .pagination-chevron {

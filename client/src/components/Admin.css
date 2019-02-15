@@ -144,3 +144,40 @@
 	padding: 15px 10px;
 	border-bottom: 1px solid #ddd;
 }
+
+.m-tree .options {
+	position: absolute;
+	top: -2px; right: 6px; display: none;
+}
+.m-tree .inner:hover > .node > .options {
+	display: block;
+}
+.m-tree .options i {
+	font-size: 18px;
+	opacity: 0.7; 
+}
+.m-tree .m-node .inner {
+	padding: 0 26px;
+}
+.m-tree > .m-node > .inner {
+	font-size: 18px; font-weight: 800;
+	height: 50px; line-height: 50px;
+}
+.m-tree > .m-node > .children > .m-node > .inner {
+	font-weight: bold;
+}
+.m-node .inner {
+	height: 40px; line-height: 40px;
+	border: 1px solid #eee; border-radius: 5px;
+	margin: 5px 0; background: white;
+}
+.Admin .m-tree .inner span.collapse:before {
+	padding-left: 10px;
+}
+
+.m-tree .subcategory {
+	font-size: 16px;
+}
+.m-tree .subsubcategory {
+	font-size: 14px;
+}
