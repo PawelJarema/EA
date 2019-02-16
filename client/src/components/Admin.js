@@ -6,121 +6,191 @@ import * as techBreakActions from '../actions/techBreakActions';
 import * as categoryActions from '../actions/categoryActions';
 import './Admin.css';
 
-import Tree from 'react-ui-tree';
-import 'react-ui-tree/dist/react-ui-tree.css';
+// import Tree from 'react-ui-tree';
+// import 'react-ui-tree/dist/react-ui-tree.css';
+import Tree from './Tree';
 
 import Modal from './Modal';
 import Progress from './Progress';
 import { Pagination } from './Pagination';
 
 import AuctionEndHelper from '../helpers/auctionEndHelper';
+import { isNotEmpty } from './auctions/functions';
 
-function findParent(node, tree) {
-	const 
-		category_index = tree.children.map((child, i) => ({ name: child.module, index: i })).filter(child => child.name === node.category)[0].index,
-		category = tree.children[category_index];
+let noteString = '';
 
-	return category;
-}
+class Property extends Component {
+	constructor(props) {
+		super(props);
+		this.state = { prop: props.prop, open: false };
 
-function findSubcategory(node, tree) {
-	if (node.type !== 'subcategory') return null;
+		this.skip = ['values', '_id', 'conditional_values'];
+		this.names = {
+			type: 'rodzaj pola',
+			name: 'nazwa pola',
+			unit: 'jednostka'
+		};
 
-	const 
-		category_index = tree.children.map((child, i) => ({ name: child.module, index: i })).filter(child => child.name === node.category)[0].index,
-		category = tree.children[category_index],
-		subcategory_index = category.children.indexOf(node),
-		subcategory = category.children[subcategory_index];
-
-	return subcategory;
-}
-
-function categoriesToTreeObject(categories) {
-	const tree = {
-		module: 'Kategorie Główne',
-		type: 'root',
-		children: []
-	};
-
-	for (let c = 0; c < categories.length; c++) {
-		const
-			category 		= categories[c],
-			category_name 	= category.name,
-			subcategories 	= category.subcategories,
-			categoryModule 	= {
-				module: category_name,
-				type: 'category'
-			};
-
-		if (category.subcategories) {
-			categoryModule.children = [];
-
-			for (let sc = 0; sc < subcategories.length; sc++) {
-				const
-					subcategory 		= subcategories[sc],
-					subcategory_name	= subcategory.name,
-					properties 			= subcategory.properties,
-					subcategoryModule   = {
-						module: subcategory_name,
-						category: category_name,
-						type: 'subcategory'
-					};
-
-				// podkategoria - albo ma cechy albo jeszcze jeden poziom kategorii
-				if (subcategory.sub_subcategories) {
-					subcategoryModule.children = [];
-
-					const
-						subsubcategories 		= subcategory.sub_subcategories;
-
-					for (let ssc = 0; ssc < subsubcategories.length; ssc++) {
-						const
-							subsubcategory 			= subsubcategories[ssc],
-							subsubcategory_name 	= subsubcategory.name,
-							properties 				= subcategory.properties,
-							subsubcategoryModule 	= {
-								module: subsubcategory_name,
-								type: 'subsubcategory',
-								leaf: true
-							};
-
-						if (properties) {
-							subsubcategoryModule.properties = properties;
-						}
-
-						subcategoryModule.children.push(subsubcategoryModule);
-					}
-				} else if (properties) {
-					subcategoryModule.leaf = true;
-					subcategoryModule.properties = properties;
-				}
-
-				categoryModule.children.push(subcategoryModule);
+		this.translateProp = (prop) => {
+			const translate = {
+				'Range': 'Pole liczbowe',
+				'Singular': 'Pole tekstowe jednokrotnego wyboru',
+				'Multiple': 'Pole tekstowe wielokrotnego wyboru'
 			}
-		} else {
-			// categoryModule.leaf = true;
+
+			if (translate[prop]) return translate[prop];
+			return prop;
 		}
 
-		tree.children.push(categoryModule);
+		this.edit = (key, prop) => {
+			switch(key) {
+				case 'type':
+					return (
+						<select name={ key } value={ prop[key] } onChange={ this.handleChange }>
+							<option value='Singular'>{ this.translateProp('Singular') }</option>
+							<option value='Multiple'>{ this.translateProp('Multiple') }</option>
+							<option value='Range'>{ this.translateProp('Range') }</option>
+						</select>
+					);
+					break;
+				default:
+					return <input name={ key } type="text" value={ prop[key] } onChange={ this.handleChange } />
+			} 
+		}
+
+		this.handleChange = this.handleChange.bind(this);
 	}
 
-	return tree;
+	handleChange(e) {
+		const
+			{ prop } = this.state,
+			input = e.target,
+			name  = input.name,
+			value = input.value;
+
+		prop[name] = value;
+
+		this.setState({ prop });
+		this.props.updateProps(prop);
+	}
+
+	render() {
+		const 
+			{ prop, open } = this.state;
+
+		return (
+			<div className={ "property-editor-property" + (open ? ' open' : '')}>
+				<span className="title" onClick={ () => this.setState({ open: !open }) }>{ prop.name }</span>
+				{
+					open && (
+						<div className="property-editor-property-details">
+							{
+								Object.keys(prop).map((key, i) => {
+									if (this.skip.indexOf(key) !== -1) return null;
+									return (
+										<div>
+											{ this.names[key] }: 
+											{ this.edit(key, prop) }
+										</div>
+									)
+								})
+							}
+						</div>
+					)
+				}
+			</div>
+		);
+	}
 }
 
-function treeObjectToCategories(treeObject) {
+class PropertyEditor extends Component {
+	updateProps(prop) {
+		const 
+			{ properties, updateProps } = this.props,
+			index = properties.indexOf(prop);
 
+		properties[index] = prop;
+		updateProps(properties);
+	}
+
+	render() {
+		const 
+			{ properties } 	= this.props,
+			numberProps 	= [],
+			textProps 		= [];
+
+		const updateProps = this.updateProps.bind(this);
+
+		if (!isNotEmpty(properties)) return null;
+
+		properties.map((prop, i) => {
+			const key =  "prop_" + i;
+
+			if (prop.type === 'Range') {
+				numberProps.push(<Property key={ key } Property prop={prop} updateProps={ updateProps } />);
+			} else {
+				textProps.push(<Property key={ key } prop={prop} updateProps={ updateProps } />);
+			}
+		});
+
+		return (
+			<div className="PropertyEditor">
+				<div className="property-editor-heading">Szablony Cech</div>
+				<div className="property-editor-info">przeciągaj cechy na najgłębiej zagnieżdżone kategorie, <br/>potem ustawiaj wartości cech w powstałym w ten sposób kontekście</div>
+				<div className="property-editor-subheading" title="występują jako pola jednokrotnego lub wielokrotnego wyboru. zawierają wartości tekstowe">cechy o wartościach tekstowych</div>
+				<div className="property-editor-text-properties">
+					{ textProps }
+				</div>
+				<div className="property-editor-subheading" title="występują jako pola - widełki. zawierają wartość liczbową">cechy o wartościach liczbowych</div>
+				<div className="property-editor-number-properties">
+					{ numberProps }
+				</div>
+			</div>
+		)
+	}
+}
+
+class NotePad extends Component {
+	componentWillReceiveProps(props) {
+		if (props.notes) {
+			if (this.notesRef) {
+				const value = this.notesRef.value;
+				this.notesRef.value = (value  ? value + '\n\n' : '') + props.notes;
+			}
+		}
+	}
+
+	clear() {
+		this.notesRef.value = '';
+	}
+
+	render() {
+		const { notes } = this.props; 
+		return (
+			<div className="NotePad">
+				<div className="title">
+					Notatnik
+					<span className="notepad-options">
+						<i className="material-icons clickable" onClick={ this.clear.bind(this) }>delete_outline</i>
+					</span>
+				</div>
+				<textarea ref={ (e) => this.notesRef = e } />
+			</div>
+		);
+	}
 }
 
 class Categories extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { activeNode: null, tree: {} };
+		this.state = { activeNode: null, tree: null, properties: null, notes: '' };
 
 		this.treeChange = this.treeChange.bind(this);
 		this.onClickNode = this.onClickNode.bind(this);
 		this.renderNode = this.renderNode.bind(this);
 		this.addCat = this.addCat.bind(this);
+		this.updateProps = this.updateProps.bind(this);
 	}
 
 	componentDidMount() {
@@ -130,14 +200,21 @@ class Categories extends Component {
 	}
 
 	componentWillReceiveProps(props) {
-		if (props.categories && !this.props.categories) {
-			this.setState({ tree: categoriesToTreeObject(props.categories) });
+		if (props.categories && !this.state.tree) {
+			this.setState({ tree: categoriesToTreeObject(props.categories), properties: categoriesToProperties(props.categories) }, () => this.setState({ notes: noteString }));
 		}
 	}
 
 	treeChange(tree) {
+		tree = recreateTreeIndexes(tree);
 		this.setState({
 			tree
+		});
+	}
+
+	updateProps(props) {
+		this.setState({
+			properties: props
 		});
 	}
 
@@ -146,7 +223,9 @@ class Categories extends Component {
 			name 	 = window.prompt('Podaj nazwę'),
 			{ tree } = this.state;
 
-		let index = -1;
+		let 
+			index = -1,
+			children = null;
 
 		if (name) {
 			switch(node.type) {
@@ -154,23 +233,23 @@ class Categories extends Component {
 					tree.children.unshift({ module: name, type: 'category' });
 					break;
 				case 'category':
-					index = tree.children.indexOf(node);
-					if (!tree.children[index].chilren) tree.children[index].children = [];
-					tree.children[index].children.unshift({ module: name, type: 'subcategory' });
+					index 	 = node.index; // tree.children.indexOf(node);
+					children = tree.children[index].children;
+
+					if (!isNotEmpty(children)) tree.children[index].children = [];
+					tree.children[index].children.unshift({ module: name, type: 'subcategory', parent_indexes: [index] });
 					break;
 				case 'subcategory':
-					const 
-						subcategory = findSubcategory(tree, node);
+					index = node.index; //tree.children[node.parent_indexes[0]].children.indexOf(node);
+					children = tree.children[node.parent_indexes[0]].children[index].children;
 
-					if (!subcategory.children) subcategory.children = [];
-					subcategory.children.unshift({ module: name, type: 'subsubcategory' });
+					if (!isNotEmpty(children)) tree.children[node.parent_indexes[0]].children[index].children = [];
+					tree.children[node.parent_indexes[0]].children[index].children.unshift({ module: name, type: 'subsubcategory', parent_indexes: [node.parent_indexes[0], index] });
 					break;
 			}
 
 
-			this.setState({
-				tree
-			}, () => setTimeout(() => this.setState({ tree }), 200));
+			this.treeChange(tree);
 		}
 	}
 
@@ -180,28 +259,35 @@ class Categories extends Component {
 			{ tree } = this.state;
 		let 
 			index,
+			parent,
+			children,
 			change = false;
 
 		if (confirm) {
 			switch(node.type) {
 				case 'category':
-					index = tree.children.indexOf(node);
+					index = node.index; //tree.children.indexOf(node);
 					tree.children.splice(index, 1);
 					change = true;
 					break;
 
 				case 'subcategory':
-					const category = findParent(tree, node);
-					index = category.children.indexOf(node);
-					category.children.splice(index, 1);
+					parent = tree.children[node.parent_indexes[0]];
+					index = node.index; //parent.children.indexOf(node);
+					parent.children.splice(index, 1);
+					change = true;
+					break;
+
+				case 'subsubcategory':
+					parent = tree.children[node.parent_indexes[0]].children[node.parent_indexes[1]];
+					index = node.index; //parent.children.indexOf(node);
+					parent.children.splice(index, 1);
 					change = true;
 					break;
 			}
 
 			if (change) {
-				this.setState({
-					tree
-				}, () => setTimeout(() => this.setState({ tree }), 200));
+				this.treeChange(tree);
 			}
 		}
 	}
@@ -211,13 +297,15 @@ class Categories extends Component {
 	}
 
 	renderNode(node) {
-		console.log('render node');
 		const 
 			{ activeNode } = this.state;
 
-		let options = [];
-		if (node.type === 'root') {
-			options = [<i key="a" className="material-icons" title="dodaj kategorię" onClick={ () => this.addCat(node) }>playlist_add</i>];
+		let 
+			options 	= [],
+			collapsible = null;
+
+		if (isNotEmpty(node.children)) {
+			collapsible = <i className="material-icons" onClick={ () => { node.collapsed = !node.collapsed; }}>{ node.collapsed ? 'arrow_right' : 'arrow_drop_down' }</i>
 		}
 		if (node.type === 'category') {
 			options = [
@@ -231,21 +319,27 @@ class Categories extends Component {
 				<i key="b" className="material-icons" title="usuń podkategorię" onClick={ () => this.removeCat(node) }>close</i>
 			]
 		}
+		if (node.type === 'subsubcategory') {
+			options = [<i key="b" className="material-icons" title="usuń kategorię 3 poziomu" onClick={ () => this.removeCat(node) }>close</i>]
+		}
+
 
 		return (
 			<span 
 				className={ 'node ' + node.type + ( node === activeNode ? ' is-active' : '' ) }
 				onClick={ this.onClickNode.bind(null, node) }
 			>
-				{ node.module } <span className="options">{ options }</span>
+				<span className="tree-collapsible">{ collapsible }</span> { node.module } <span className="options">{ options }</span>
 			</span>
 		);
 	}
 
 	render() {
 		return (
-			<div>
-				<Tree paddingLeft={20} tree={ this.state.tree } onChagne={ this.treeChange } renderNode={ this.renderNode } />
+			<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+				<Tree paddingLeft={20} tree={ this.state.tree } onChange={ this.treeChange } renderNode={ this.renderNode } addCat={ this.addCat } />
+				<NotePad notes={ this.state.notes } />
+				<PropertyEditor properties={ this.state.properties } updateProps={ this.updateProps }/>
 			</div>
 		);
 	}
@@ -719,7 +813,7 @@ class AdminPanel extends Component {
 							<Switch>
 								<AdminLinks />
 							</Switch>
-							<div>
+							<div style={{ width: '100%' }}>
 								<Route path="/admin/prowizja" component={ Provision } />
 								<Route path="/admin/kategorie" component={ Categories } />
 								<Route path="/admin/uzytkownicy" component={ UserList } />
@@ -733,6 +827,173 @@ class AdminPanel extends Component {
 		);
 	}
 }
+
+function recreateTreeIndexes(tree) {
+	// categories
+	if (isNotEmpty(tree.children)) {
+		for (let c = 0; c < tree.children.length; c++) {
+			tree.children[c].index = c;
+
+			// subcategories
+			if (isNotEmpty(tree.children[c].children)) {
+				for (let sc = 0; sc < tree.children[c].children.length; sc++) {
+					tree.children[c].children[sc].index = sc;
+					tree.children[c].children[sc].parent_indexes = [c];
+
+					// subsubcategories
+					if (isNotEmpty(tree.children[c].children[sc].children)) {
+						for (let ssc = 0; ssc < tree.children[c].children[sc].children.length; ssc++) {
+							tree.children[c].children[sc].children[ssc].index = ssc;
+							tree.children[c].children[sc].children[ssc].parent_indexes = [c, sc];
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return tree;
+}
+
+function categoriesToTreeObject(categories) {
+	const tree = {
+		module: 'Drzewo Kategorii',
+		type: 'root',
+		children: []
+	};
+
+	for (let c = 0; c < categories.length; c++) {
+		const
+			category 		= categories[c],
+			category_name 	= category.name,
+			category_index 	= c,
+			subcategories 	= category.subcategories,
+			categoryModule 	= {
+				module: category_name,
+				type: 'category',
+				index: category_index
+			};
+
+		if (category.subcategories) {
+			categoryModule.children = [];
+
+			for (let sc = 0; sc < subcategories.length; sc++) {
+				const
+					subcategory 		= subcategories[sc],
+					subcategory_name	= subcategory.name,
+					subcategory_index 	= sc,
+					properties 			= subcategory.properties,
+					subcategoryModule   = {
+						module: subcategory_name,
+						category: category_name,
+						type: 'subcategory',
+						index: subcategory_index,
+						parent_indexes: [category_index]
+					};
+
+				// podkategoria - albo ma cechy albo jeszcze jeden poziom kategorii
+				if (subcategory.sub_subcategories) {
+					subcategoryModule.children = [];
+
+					const
+						subsubcategories 		= subcategory.sub_subcategories;
+
+					for (let ssc = 0; ssc < subsubcategories.length; ssc++) {
+						const
+							subsubcategory 			= subsubcategories[ssc],
+							subsubcategory_name 	= subsubcategory.name,
+							subsubcategory_index 	= ssc,
+							properties 				= subcategory.properties,
+							subsubcategoryModule 	= {
+								module: subsubcategory_name,
+								type: 'subsubcategory',
+								index: subsubcategory_index,
+								parent_indexes: [category_index, subcategory_index],
+								leaf: true
+							};
+
+						if (properties) {
+							subsubcategoryModule.properties = properties;
+						}
+
+						subcategoryModule.children.push(subsubcategoryModule);
+					}
+				} else if (properties) {
+					subcategoryModule.leaf = true;
+					subcategoryModule.properties = properties;
+				}
+
+				categoryModule.children.push(subcategoryModule);
+			}
+		} else {
+			// categoryModule.leaf = true;
+		}
+
+		tree.children.push(categoryModule);
+	}
+
+	return tree;
+}
+
+function categoriesToProperties(categories) {
+	let properties = [];
+	noteString = '';
+
+	for (let c = 0; c < categories.length; c ++) {
+		const category = categories[c];
+			
+		if (isNotEmpty(category.properties)) {
+			properties = concatUnique(properties, parseProperties(category.properties));
+		}
+
+		if (isNotEmpty(category.subcategories)) {
+			for (let sc = 0; sc < category.subcategories.length; sc++) {
+				const subcategory = category.subcategories[sc];
+				
+				if (isNotEmpty(subcategory.properties)) {
+					properties = concatUnique(properties, parseProperties(subcategory.properties));
+				}
+
+				if (isNotEmpty(subcategory.sub_subcategories)) {
+					for (let ssc = 0; ssc < subcategory.sub_subcategories.length; ssc++) {
+						const subsubcategory = subcategory.sub_subcategories[ssc];
+						
+						if (isNotEmpty(subsubcategory.properties)) {
+							properties = concatUnique(properties, parseProperties(subsubcategory.properties));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (let i = 0; i < properties.length; i++) {
+		const prop = properties[i];
+		noteString += `- Przykładowe Podpowiedzi dla Cechy "${ prop.name }":\n\n${ prop.values.join(', ') }\n\n\n`;
+	}
+
+	return properties;
+}
+
+function parseProperties(propArray) {
+	return propArray;
+}
+
+function concatUnique(propArray_1, propArray_2) {
+	const
+		nameIndex = propArray_1.map(prop => prop.name),
+		result = propArray_1.slice(0);
+
+	for (let i = 0; i < propArray_2.length; i++) {
+		const prop = propArray_2[i];
+		if (nameIndex.indexOf(prop.name) === -1) {
+			result.push(prop);
+		}
+	}
+
+	return result;
+}
+
 
 function mapCategoryStateToProps({ categories }) {
 	return { categories };
