@@ -206,6 +206,9 @@
 	position: relative;
 	cursor: pointer;
 }
+.property-editor-property .options {
+	padding-right: 28px;
+}
 .property-editor-property .title:before {
 	font-family: 'Material Icons'; font-size: 20px; font-weight: 100;
 	position: absolute; left: 0; top: 1px;
