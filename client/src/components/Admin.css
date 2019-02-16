@@ -145,7 +145,6 @@
 	border-bottom: 1px solid #ddd;
 }
 
-
 .CategoryTree ul {
 	list-style: none;
 }
@@ -182,30 +181,43 @@
 	background: black;  
 }
 .property-editor-subheading {
-	font-size: 14px; font-weight: bold; text-align: right;
-	margin: 8px 0; letter-spacing: 1px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 14px; font-weight: bold; letter-spacing: 1px; text-align: right;
+	padding: 5px 0;
+	margin: 8px 0;
 	border-bottom: 1px solid #bbb;
+}
+.property-editor-subheading i {
+	font-size: 24px;
+	padding-left: 19px;
 }
 .property-editor-property {
 	max-width: 330px;
 	padding: 5px 0;
 }
+.property-editor-property .title:hover .options {
+	display: block;
+}
 .property-editor-property .title {
-	padding-left: 16px; font-weight: 400;
+	display: flex; justify-content: space-between;
+	width: 100%;
+	padding-left: 20px; font-weight: 400;
 	position: relative;
 	cursor: pointer;
 }
 .property-editor-property .title:before {
-	position: absolute; left: 0;
-	content: '+ ';
-	font-weight: 100; margin-right: 5px;
+	font-family: 'Material Icons'; font-size: 20px; font-weight: 100;
+	position: absolute; left: 0; top: 1px;
+	content: 'arrow_right';
+	margin-right: 5px;
 	opacity: 0;
 }
 .property-editor-property .title:hover:before {
 	opacity: 1;
 }
 .property-editor-property.open .title:before {
-	content: '- ';
+	content: 'arrow_drop_down';
 }
 .property-editor-property-details {
 	padding: 5px 0; padding-left: 30px; font-size: 12px;
@@ -216,7 +228,8 @@
 	justify-content: space-between;
 }
 .property-editor-property-details input, .property-editor-property-details select {
-	text-align: right; padding: 2px 6px;
+	text-align: right; padding: 3px 6px;
+	border-bottom: 1px solid #ddd; border-radius: 0 !important;
 }
 
 .category-tree-heading .options {
@@ -227,7 +240,7 @@
 	position: relative;
 }
 
-.CategoryTree .node .options {
+.CategoryTree .node .options, .property-editor-property .options {
 	position: absolute;
 	top: -2px; right: 6px; 
 	user-select: none; display: none;
@@ -241,7 +254,7 @@
 	display: block;
 }
 
-.CategoryTree .options i {
+.CategoryTree .options i, .Admin .options i {
 	font-size: 18px;
 	opacity: 0.6;
 	cursor: pointer;
@@ -261,6 +274,14 @@
 	cursor: pointer;
 }
 
+.PropertyEditor {
+	position: fixed;
+	top: 199px; bottom: 110px; right: var(--page-margin);
+}
+.PropertyEditor  .container {
+	height: 100%;
+	overflow: scroll;
+}
 .property-editor-info {
 	position: relative;
 	font-size: 10px;
@@ -275,9 +296,8 @@
 
 .NotePad {
 	position: fixed;
-	left: var(--page-margin); bottom: 30px;
-	width: 320px; height: 43vh;
-	
+	top: 199px; left: var(--page-margin); bottom: 30px;
+	width: 320px;
 	border: 1px solid #ddd; background: white;
 	z-index: 50;
 }

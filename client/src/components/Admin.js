@@ -17,12 +17,44 @@ import { Pagination } from './Pagination';
 import AuctionEndHelper from '../helpers/auctionEndHelper';
 import { isNotEmpty } from './auctions/functions';
 
-let noteString = '';
+let 
+	noteString = '',
+	uid = 1;
+
+class NotePad extends Component {
+	componentWillReceiveProps(props) {
+		if (props.notes) {
+			if (this.notesRef) {
+				const value = this.notesRef.value;
+				this.notesRef.value = (value  ? value + '\n\n' : '') + props.notes;
+			}
+		}
+	}
+
+	clear() {
+		this.notesRef.value = '';
+	}
+
+	render() {
+		const { notes } = this.props; 
+		return (
+			<div className="NotePad">
+				<div className="title">
+					Notatnik
+					<span className="notepad-options">
+						<i className="material-icons clickable" onClick={ this.clear.bind(this) }>delete_outline</i>
+					</span>
+				</div>
+				<textarea ref={ (e) => this.notesRef = e } />
+			</div>
+		);
+	}
+}
 
 class Property extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { prop: props.prop, open: false };
+		this.state = { prop: props.prop, open: false, dragged: false };
 
 		this.skip = ['values', '_id', 'conditional_values'];
 		this.names = {
@@ -59,6 +91,7 @@ class Property extends Component {
 		}
 
 		this.handleChange = this.handleChange.bind(this);
+		this.confirm = this.confirm.bind(this);
 	}
 
 	handleChange(e) {
@@ -70,17 +103,36 @@ class Property extends Component {
 
 		prop[name] = value;
 
-		this.setState({ prop });
-		this.props.updateProps(prop);
+		this.setState({ prop }, this.confirm);
+	}
+
+	confirm() {
+		const { prop } = this.state;
+		if (this.changeTimeout) {
+			clearTimeout(this.changeTimeout);
+		}
+
+		this.changeTimeout = setTimeout(() => this.props.updateProps(prop), 2500);
+	}
+
+	remove() {
+		const { prop } = this.state;
+		this.props.deleteProp(prop);
 	}
 
 	render() {
 		const 
-			{ prop, open } = this.state;
+			{ prop, open } = this.state,
+			remove = this.remove.bind(this);
 
 		return (
-			<div className={ "property-editor-property" + (open ? ' open' : '')}>
-				<span className="title" onClick={ () => this.setState({ open: !open }) }>{ prop.name }</span>
+			<div draggable onDragStart={ () => this.props.dragProp(prop) } className={ "property-editor-property" + (open ? ' open' : '')}>
+				<span className="title" onClick={ () => this.setState({ open: !open }) }>
+					<span>{ prop.name }</span>
+					<span className="options">
+						<i className="material-icons clickable" onClick={ remove }>close</i>
+					</span>
+				</span>
 				{
 					open && (
 						<div className="property-editor-property-details">
@@ -113,23 +165,52 @@ class PropertyEditor extends Component {
 		updateProps(properties);
 	}
 
+	addProp(which) {
+		const 
+			{ properties, addProp } = this.props,
+			prop = { 
+				name: 'Nazwij...',
+				values: []
+			};
+		switch(which) {
+			case 'Range':
+				prop.type = 'Range';
+				prop.unit = 'dodaj jednostkę...';
+				break;
+			default:
+				prop.type = 'Singular';
+		}
+
+		addProp(prop);
+	}
+
+	deleteProp(prop) {
+		const { removeProp } = this.props;
+		removeProp(prop);
+	}
+
 	render() {
 		const 
 			{ properties } 	= this.props,
 			numberProps 	= [],
 			textProps 		= [];
 
-		const updateProps = this.updateProps.bind(this);
+		const 
+			updateProps = this.updateProps.bind(this),
+			deleteProp = this.deleteProp.bind(this),
+			addProp = this.addProp.bind(this);
 
 		if (!isNotEmpty(properties)) return null;
 
 		properties.map((prop, i) => {
-			const key =  "prop_" + i;
+			const 
+				key = 'prop_' + prop.name + '_' + ++uid,
+				property = <Property key={ key } prop={prop} updateProps={ updateProps } dragProp={ this.props.dragProp } deleteProp={ deleteProp } />;
 
 			if (prop.type === 'Range') {
-				numberProps.push(<Property key={ key } Property prop={prop} updateProps={ updateProps } />);
+				numberProps.push(property);
 			} else {
-				textProps.push(<Property key={ key } prop={prop} updateProps={ updateProps } />);
+				textProps.push(property);
 			}
 		});
 
@@ -137,46 +218,28 @@ class PropertyEditor extends Component {
 			<div className="PropertyEditor">
 				<div className="property-editor-heading">Szablony Cech</div>
 				<div className="property-editor-info">przeciągaj cechy na najgłębiej zagnieżdżone kategorie, <br/>potem ustawiaj wartości cech w powstałym w ten sposób kontekście</div>
-				<div className="property-editor-subheading" title="występują jako pola jednokrotnego lub wielokrotnego wyboru. zawierają wartości tekstowe">cechy o wartościach tekstowych</div>
-				<div className="property-editor-text-properties">
-					{ textProps }
-				</div>
-				<div className="property-editor-subheading" title="występują jako pola - widełki. zawierają wartość liczbową">cechy o wartościach liczbowych</div>
-				<div className="property-editor-number-properties">
-					{ numberProps }
+				<div className="container">
+					<div className="property-editor-subheading" title="występują jako pola jednokrotnego lub wielokrotnego wyboru. zawierają wartości tekstowe">
+						<span className="options">
+							<i className="material-icons clickable" onClick={ () => addProp('Singular') }>playlist_add</i>
+						</span>
+						<span>cechy o wartościach tekstowych</span>
+					</div>
+					<div className="property-editor-text-properties">
+						{ textProps }
+					</div>
+					<div className="property-editor-subheading" title="występują jako pola - widełki. zawierają wartość liczbową">
+						<span className="options">
+							<i className="material-icons clickable" onClick={ () => addProp('Range') }>playlist_add</i>
+						</span>
+						<span>cechy o wartościach liczbowych</span>
+					</div>
+					<div className="property-editor-number-properties">
+						{ numberProps }
+					</div>
 				</div>
 			</div>
 		)
-	}
-}
-
-class NotePad extends Component {
-	componentWillReceiveProps(props) {
-		if (props.notes) {
-			if (this.notesRef) {
-				const value = this.notesRef.value;
-				this.notesRef.value = (value  ? value + '\n\n' : '') + props.notes;
-			}
-		}
-	}
-
-	clear() {
-		this.notesRef.value = '';
-	}
-
-	render() {
-		const { notes } = this.props; 
-		return (
-			<div className="NotePad">
-				<div className="title">
-					Notatnik
-					<span className="notepad-options">
-						<i className="material-icons clickable" onClick={ this.clear.bind(this) }>delete_outline</i>
-					</span>
-				</div>
-				<textarea ref={ (e) => this.notesRef = e } />
-			</div>
-		);
 	}
 }
 
@@ -184,13 +247,18 @@ class Categories extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { activeNode: null, tree: null, properties: null, notes: '' };
+		this.state = { activeNode: null, draggedProp: null, tree: null, properties: null, notes: '' };
 
 		this.treeChange = this.treeChange.bind(this);
 		this.onClickNode = this.onClickNode.bind(this);
 		this.renderNode = this.renderNode.bind(this);
 		this.addCat = this.addCat.bind(this);
+		this.addProp = this.addProp.bind(this);
+		this.removeProp = this.removeProp.bind(this);
 		this.updateProps = this.updateProps.bind(this);
+		this.onDragOver = this.onDragOver.bind(this);
+		this.dragProp = this.dragProp.bind(this);
+		this.onDrop = this.onDrop.bind(this);
 	}
 
 	componentDidMount() {
@@ -209,6 +277,25 @@ class Categories extends Component {
 		tree = recreateTreeIndexes(tree);
 		this.setState({
 			tree
+		});
+	}
+
+	addProp(prop) {
+		this.setState(({ properties }) => {
+			let data = properties.slice(0);
+			data.unshift(prop);
+			return ({ properties: data });
+		});
+	}
+
+	dragProp(prop) {
+		this.draggedProp = prop;
+	}
+
+	removeProp(prop) {
+		this.setState(({ properties }) => {
+			const index = properties.indexOf(prop);
+			return ({ properties: properties.slice(0, index).concat(properties.slice(index + 1)) });
 		});
 	}
 
@@ -296,6 +383,21 @@ class Categories extends Component {
 		this.setState({ activeNode: node });
 	}
 
+	onDragOver(e, node) {
+		e.preventDefault();
+		console.log('drag to ' + node.module);
+
+	}
+
+	onDrop(e, node) {
+		e.preventDefault();
+		const { draggedProp } = this.state;
+
+		if (this.draggedProp) {
+			alert(this.draggedProp.name + ' dragged to ' + node.module); // TODO
+		}
+	}
+
 	renderNode(node) {
 		const 
 			{ activeNode } = this.state;
@@ -325,7 +427,9 @@ class Categories extends Component {
 
 
 		return (
-			<span 
+			<span
+				onDragOver={ (e) => this.onDragOver(e, node) }
+				onDrop={ (e) => this.onDrop(e, node) }
 				className={ 'node ' + node.type + ( node === activeNode ? ' is-active' : '' ) }
 				onClick={ this.onClickNode.bind(null, node) }
 			>
@@ -335,11 +439,13 @@ class Categories extends Component {
 	}
 
 	render() {
+		const { tree, properties, notes } = this.state;
+
 		return (
 			<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-				<Tree paddingLeft={20} tree={ this.state.tree } onChange={ this.treeChange } renderNode={ this.renderNode } addCat={ this.addCat } />
-				<NotePad notes={ this.state.notes } />
-				<PropertyEditor properties={ this.state.properties } updateProps={ this.updateProps }/>
+				<Tree paddingLeft={20} tree={ tree } onChange={ this.treeChange } renderNode={ this.renderNode } addCat={ this.addCat } />
+				<NotePad notes={ notes } />
+				<PropertyEditor properties={ properties } updateProps={ this.updateProps } addProp={ this.addProp } dragProp={ this.dragProp } removeProp={ this.removeProp }/>
 			</div>
 		);
 	}
@@ -991,7 +1097,7 @@ function concatUnique(propArray_1, propArray_2) {
 		}
 	}
 
-	return result;
+	return result.filter(prop => prop.name);
 }
 
 
