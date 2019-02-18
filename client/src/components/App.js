@@ -126,7 +126,7 @@ class App extends Component {
 
   componentWillReceiveProps(props) {
     if (props.flash) {
-        setTimeout(this.props.clearMessage, 5000);
+        setTimeout(this.props.clearMessage, 10000);
     }
     if (props.user && !this.state.socket) {
         const { endpoint } = this.state;

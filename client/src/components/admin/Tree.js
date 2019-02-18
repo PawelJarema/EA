@@ -27,16 +27,20 @@ const SortableList = SortableContainer(({ items, renderNode, onChange, tree }) =
 
 class Tree extends Component {
 	render() {
-		const { paddingLeft, tree, onChange, addCat, renderNode } = this.props;
+		const { paddingLeft, tree, onChange, addCat, saveTree, resetCategories, renderNode } = this.props;
 		const listIndex = 0;
 
-		if (isEmptyObject(tree)) return null;
+		if (isEmptyObject(tree)) return <span className="anim-loading-text">Trwa wczytywanie ...</span>;
 
 		return (
 			<div className="CategoryTree">
-				<div className="category-tree-heading">{ tree.module } 
+				<div className="category-tree-heading">{ tree.module }
 					<span className="options">
+						<i className="material-icons" title="zapisz układ kategorii" onClick={ saveTree }>save</i>
 						<i className="material-icons" title="dodaj kategorię główną" onClick={ () => addCat(tree) }>playlist_add</i>
+					</span>
+					<span className="external-options">
+						<i className="material-icons clickable" title="przywróć fabryczny zestaw kategorii" onClick={ resetCategories }>restore</i>
 					</span>
 				</div>
 				<div className="category-tree-main-categories">

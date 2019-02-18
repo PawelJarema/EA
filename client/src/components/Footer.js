@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import Logo from './Logo';
 
+import { isNotEmpty } from './auctions/functions';
+
 class CategoryLink extends Component {
     constructor(props) {
         super(props);
@@ -32,44 +34,66 @@ class CategoryLink extends Component {
 }
 
 class CategoryLinks extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { sections: null };
+    }
+
     navigate() {
         this.props.history.push('/aukcje');
     }
 
     render() {
-        const categories = this.props.categories;
+        const 
+            { categories, categoryCallback } = this.props;
         
         if (categories === null || categories === false)
             return null;
 
-        const top = categories.slice(0, 6);
-        const bottom = categories.slice(6);
+        let sections = this.state.sections;
 
-        const { categoryCallback } = this.props;
+        if (!sections) {
+            sections = [];
+            let 
+                index = 0,
+                notEmpty = true;
+
+            do {
+                const 
+                    section = categories.slice(index, index + 6);
+                    notEmpty = isNotEmpty(section);
+
+                if (notEmpty) sections.push(section);
+                index += 6;
+            } while(notEmpty);
+
+            this.setState({ sections });
+        }
+
+       
         
         return (
             <div className="category-links">
-                <div className="row">
-                    {
-                        top.map(category => (
-                            <div key={category.name} className="column">
-                                <CategoryLink data={category} categoryCallback={categoryCallback} navigate={this.navigate.bind(this)} />
-                            </div>
-                        ))
-                    }
-                </div>
-                <div className="row">
-                    <div className="column">
-                        <Logo />
-                    </div>
-                    {
-                        bottom.map(category => (
-                            <div key={category.name} className="column">
-                                <CategoryLink data={category} categoryCallback={categoryCallback} navigate={this.navigate.bind(this)}  />
-                            </div>
-                        ))
-                    }
-                </div>
+                {
+                    sections.map((section, i) => (
+                        <div key={ 'row_' + i } className="row">
+                            {
+                                section.length < 6 && (
+                                    <div className="column">
+                                        <Logo />
+                                    </div>
+                                )
+                            }
+                            {
+                                section.map((cat, i) => (
+                                    <div key={ cat.name } className="column">
+                                        <CategoryLink data={ cat } categoryCallback={ categoryCallback } navigate={ this.navigate.bind(this) } />
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    ))
+                }
             </div>
         )
     }

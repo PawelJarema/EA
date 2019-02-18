@@ -3,17 +3,17 @@ import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-ho
 import TreeProperty from './TreeProperty';
 import { isNotEmpty } from '../auctions/functions';
 
-const SortableTreeProperty = SortableElement(({ i, prop, changeFieldValue, changeFieldValues }) => (
+const SortableTreeProperty = SortableElement(({ i, prop, changeFieldValue, changeFieldValues, deleteProp  }) => (
 	<li>
-		<TreeProperty i={ i } prop={prop} changeFieldValue={ changeFieldValue } changeFieldValues={ changeFieldValues } />
+		<TreeProperty i={ i } prop={prop} changeFieldValue={ changeFieldValue } changeFieldValues={ changeFieldValues } deleteProp={ deleteProp } />
 	</li>
 ));
 
-const SortableTreePropertyList = SortableContainer(({ props, changeFieldValue, changeFieldValues }) => {
+const SortableTreePropertyList = SortableContainer(({ props, changeFieldValue, changeFieldValues, deleteProp }) => {
 	return (
 		<ul>
 			{
-				props.map((prop, i) => <SortableTreeProperty key={ prop.name + '_' + i } index={ i } i={ i } prop={ prop } changeFieldValue={ changeFieldValue } changeFieldValues={ changeFieldValues }/> )
+				props.map((prop, i) => <SortableTreeProperty key={ prop.name + '_' + i } index={ i } i={ i } prop={ prop } changeFieldValue={ changeFieldValue } changeFieldValues={ changeFieldValues } deleteProp={ deleteProp }/> )
 			}
 		</ul>
 	);
@@ -32,6 +32,7 @@ class TreeProperties extends Component {
 		this.onSortEnd = this.onSortEnd.bind(this);
 		this.changeFieldValue = this.changeFieldValue.bind(this);
 		this.changeFieldValues = this.changeFieldValues.bind(this);
+		this.deleteProp = this.deleteProp.bind(this);
 		this.updateProperties = this.updateProperties.bind(this);
 	}
 
@@ -49,6 +50,15 @@ class TreeProperties extends Component {
 
 	changeFieldValues(prop, values) {
 		this.changeFieldValue(prop, 'values', values.split(/\s*,\s*/));
+	}
+
+	deleteProp(prop) {
+		const
+			{ props } = this.state,
+			index = props.indexOf(prop),
+			newProps = props.slice(0, index).concat(props.slice(index + 1));
+
+		this.setState({ props: newProps }, this.updateProperties);
 	}
 
 	updateProperties() {
@@ -80,7 +90,7 @@ class TreeProperties extends Component {
 
 		return (
 			<div className="tree-properties">
-				<SortableTreePropertyList props={ props } onSortEnd={ this.onSortEnd } helperClass="tree-drag" pressDelay={200} changeFieldValues={ this.changeFieldValues } changeFieldValue={ this.changeFieldValue }/>
+				<SortableTreePropertyList props={ props } onSortEnd={ this.onSortEnd } helperClass="tree-drag" pressDelay={200} changeFieldValues={ this.changeFieldValues } changeFieldValue={ this.changeFieldValue } deleteProp={ this.deleteProp }/>
 			</div>
 		);
 	}

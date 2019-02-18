@@ -24,13 +24,14 @@ class Property extends Component {
 		}
 
 		this.edit = (key, prop) => {
+			const text = prop.type === 'Singular' || prop.type === 'Multiple';
 			switch(key) {
 				case 'type':
 					return (
 						<select name={ key } value={ prop[key] } onChange={ this.handleChange }>
-							<option value='Singular'>{ this.translateProp('Singular') }</option>
-							<option value='Multiple'>{ this.translateProp('Multiple') }</option>
-							<option value='Range'>{ this.translateProp('Range') }</option>
+							{ text && <option value='Singular'>{ this.translateProp('Singular') }</option> }
+							{ text && <option value='Multiple'>{ this.translateProp('Multiple') }</option> }
+							{ !text && <option value='Range'>{ this.translateProp('Range') }</option> }
 						</select>
 					);
 					break;

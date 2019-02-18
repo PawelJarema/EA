@@ -4,10 +4,15 @@ require('../models/Admin');
 require('../models/User');
 require('../models/Auction');
 require('../models/Rate');
+require('../models/Category');
 const Admin = mongoose.model('admin');
 const User = mongoose.model('user');
 const Auction = mongoose.model('auction');
 const Rate = mongoose.model('rate');
+const Category = mongoose.model('category');
+const Subcategory = mongoose.model('subcategory');
+const SubSubCategory = mongoose.model('sub_subcategory');
+const Property = mongoose.model('property');
 const Mailer = require('../services/Mailer');
 const userDeletedTemplate = require('../services/emailTemplates/userDeletedTemplate');
 const mailUserTemplate = require('../services/emailTemplates/mailUserTemplate');
@@ -20,6 +25,8 @@ const requireLogin = require('../middleware/requireLogin');
 
 const multer = require('multer');
 const upload = multer();
+
+const util = require('util');
 
 const DOCUMENT_DOCTYPES = ['user', 'auction'];
 
@@ -39,6 +46,95 @@ module.exports = app => {
 
 			res.send(true);
 	});
+
+	app.post('/api/post_categories', async (req, res) => {
+		const
+			tree = req.body,
+			_id  = tree.admin_id;
+
+		const admin = await Admin.countDocuments({ _id: ObjectId(_id) });
+
+		if (Number(admin) > 0) {
+			await Category.deleteMany({});
+	        await Subcategory.deleteMany({});
+	        await SubSubCategory.deleteMany({});
+	        await Property.deleteMany({});
+
+	        // kategorie
+	        const categories = tree.children;
+	        if (isNotEmpty(categories)) {
+		        for (let c = 0; c < categories.length; c++) {
+		            const
+		            	categoryItem = categories[c],
+		                category = new Category({
+		                    name: categoryItem.module,
+		                    subcategories: []
+		                }),
+		                subcategories = categoryItem.children;
+		            
+		            if (isNotEmpty(subcategories)) {
+			            for (let sc = 0; sc < subcategories.length; sc++) {
+			                const
+			                	subcategoryItem = subcategories[sc],
+			                    subcategory = new Subcategory({
+			                        name: subcategoryItem.module,
+			                    }),
+			                    subsubcategories = subcategoryItem.children,
+			                    properties = subcategoryItem.properties;
+
+			                if (isNotEmpty(properties)) {
+			                    // create subcategory with props
+			                    subcategory.properties = [];
+
+			                    for (let p = 0; p < properties.length; p++) {
+			                        const prop = new Property(properties[p]);
+			                        subcategory.properties.push(prop);
+			                    }
+
+			                    subcategory.markModified('properties');
+			                } else if (isNotEmpty(subsubcategories)) {
+			                    // iterate third level
+			                    subcategory.sub_subcategories = [];
+			                    for (let ssc = 0; ssc < subsubcategories.length; ssc++) {
+			                        const
+			                        	subsubcategoryItem = subsubcategories[ssc],
+			                            properties      = subsubcategoryItem.properties,
+			                            sub_subcategory = new SubSubCategory({
+			                                name: subsubcategoryItem.module,
+			                                properties: []
+			                            });
+
+			                        if (isNotEmpty(properties)) {
+			                            for (let p = 0; p < properties.length; p++) {
+			                                const prop = new Property(properties[p]);
+			                                sub_subcategory.properties.push(prop);
+			                            }
+			                        }
+
+			                        sub_subcategory.markModified('properties');
+			                        await sub_subcategory.save();
+			                        subcategory.sub_subcategories.push(sub_subcategory);
+			                        subcategory.markModified('sub_subcategories');
+			                    }
+			                }
+
+			                await subcategory.save();
+			                category.subcategories.push(subcategory);
+			            }
+		      		}
+
+		            await category.save();
+		        }
+	    	}
+
+
+			req.session.message = 'Zapisano drzewo kategorii';
+			res.send(true);
+		} else {
+			req.session.error = 'Zaloguj się jako administrator';
+			res.send(false);
+		}
+    });
 
 	app.post('/api/delete_auction', async (req, res) => {
 		const { auction_id, email, title, reason, admin_id, doctype, page, per_page } = req.body;
@@ -257,4 +353,12 @@ async function paginateUsers(page, per_page) {
 	}
 
 	return ({ 'user': users, count: pages });
+}
+
+function isNotEmpty(object) {
+  if (Object.prototype.toString.call(object) === '[object Array]') {
+    return object.length > 0;
+  }
+
+  return Boolean(object);
 }

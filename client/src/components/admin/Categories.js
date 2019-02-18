@@ -9,7 +9,6 @@ import NotePad from './NotePad';
 
 import { isNotEmpty } from '../auctions/functions';
 
-
 let noteString = '';
 
 class Categories extends Component {
@@ -30,6 +29,27 @@ class Categories extends Component {
 		this.onDrop = this.onDrop.bind(this);
 		this.replaceTreeNode = this.replaceTreeNode.bind(this);
 		this.togglePropVisibility = this.togglePropVisibility.bind(this);
+		this.postTree = this.postTree.bind(this);
+		this.resetCategories = this.resetCategories.bind(this);
+	}
+
+	postTree() {
+		const
+			confirm = window.confirm('Chcesz nadpisać układ kategorii w serwisie ?'),
+			{ admin } = this.props,
+			{ tree } = this.state;
+
+		tree.admin_id = String(admin._id);
+
+		if (confirm) this.props.postCategoryTree(tree)
+	}
+
+	resetCategories() {
+		const
+			confirm = window.confirm('Napewno przywrócić fabryczny zestaw kategorii ?'),
+			{ admin } = this.props;
+
+		if (confirm) this.props.resetCategories().then(() => window.location.href='/admin/kategorie');
 	}
 
 	componentDidMount() {
@@ -84,7 +104,7 @@ class Categories extends Component {
 		}
 
 		const 
-			name 	 = window.prompt('Podaj nazwę'),
+			name 	 = window.prompt('Podaj nazwę nowej kategorii'),
 			{ tree } = this.state;
 
 		let 
@@ -200,7 +220,7 @@ class Categories extends Component {
 			}
 
 			node.properties_seen = true;
-			node.properties.unshift(this.draggedProp);
+			node.properties.push(this.draggedProp);
 			this.treeChange(replaceTreeNode(tree, node));
 		}
 	}
@@ -234,7 +254,7 @@ class Categories extends Component {
 		}
 		if (isNotEmpty(node.properties)) {
 			
-			options.unshift(<i key='_' className="material-icons layers" title={ (seen ? 'ukryj cechy' : 'pokaż cechy') } onClick={ () => this.togglePropVisibility(node) } >{ (seen ? 'layers' : 'layers_clear') }</i>)
+			options.unshift(<i key='_' className="material-icons layers" title={ (seen ? 'ukryj cechy' : 'pokaż cechy') } onClick={ () => this.togglePropVisibility(node) } >{ (seen ? 'layers_clear' : 'layers') }</i>)
 		}
 
 		return (
@@ -259,7 +279,7 @@ class Categories extends Component {
 
 		return (
 			<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-				<Tree paddingLeft={20} tree={ tree } onChange={ this.treeChange } renderNode={ this.renderNode } addCat={ this.addCat } />
+				<Tree paddingLeft={20} tree={ tree } onChange={ this.treeChange } renderNode={ this.renderNode } addCat={ this.addCat } saveTree={ this.postTree } resetCategories={ this.resetCategories } />
 				<NotePad notes={ notes } />
 				<PropertyEditor properties={ properties } updateProps={ this.updateProps } addProp={ this.addProp } dragProp={ this.dragProp } removeProp={ this.removeProp }/>
 			</div>
@@ -334,6 +354,10 @@ function categoriesToTreeObject(categories) {
 						parent_indexes: [category_index]
 					};
 
+				if (subcategory.properties) {
+					subcategoryModule.properties = subcategory.properties;
+					//subcategoryModule.properties_seen = true;
+				}
 				// podkategoria - albo ma cechy albo jeszcze jeden poziom kategorii
 				if (subcategory.sub_subcategories) {
 					subcategoryModule.children = [];
@@ -346,7 +370,6 @@ function categoriesToTreeObject(categories) {
 							subsubcategory 			= subsubcategories[ssc],
 							subsubcategory_name 	= subsubcategory.name,
 							subsubcategory_index 	= ssc,
-							properties 				= subcategory.properties,
 							subsubcategoryModule 	= {
 								module: subsubcategory_name,
 								type: 'subsubcategory',
@@ -355,8 +378,9 @@ function categoriesToTreeObject(categories) {
 								leaf: true
 							};
 
-						if (properties) {
-							subsubcategoryModule.properties = properties;
+						if (subsubcategory.properties) {
+							subsubcategoryModule.properties = subsubcategory.properties;
+							//subsubcategoryModule.properties_seen = true;
 						}
 
 						subcategoryModule.children.push(subsubcategoryModule);
@@ -445,8 +469,8 @@ function recreateTreeIndexes(tree) {
 	return tree;
 }
 
-function mapCategoryStateToProps({ categories }) {
-	return { categories };
+function mapCategoryStateToProps({ admin, categories }) {
+	return { admin, categories };
 }
 
 Categories = connect(mapCategoryStateToProps, categoryActions)(Categories);

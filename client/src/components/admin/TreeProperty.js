@@ -8,7 +8,7 @@ class ValueEditor extends Component {
 
 		return (
 			<div className="tree-property-value-editor">
-				<div className="title">Wpisz wartości oddzielone przecinkiem</div>
+				<div className="title">Wpisz wartości oddzielone przecinkiem:</div>
 				<textarea ref={ (e) => this.textRef = e } defaultValue={ values } />
 
 				<div className="options">
@@ -38,12 +38,12 @@ class TreeProperty extends Component {
 
 	render() {
 		const 
-			{ i, prop, changeFieldValue, changeFieldValues } = this.props,
+			{ i, prop, changeFieldValue, changeFieldValues, deleteProp } = this.props,
 			{ editValues } = this.state;
 
 		return (
 			<div className="tree-property">
-				<div className="title"><span className="lp">{ i + 1 }.</span> { prop.name }</div>
+				<div className="title"><span className="lp">{ i + 1 }.</span> { prop.name } <span className="options"><i className="material-icons clickable" onClick={ () => deleteProp(prop) }>close</i></span></div>
 				<div>
 				{
 					prop.unit && (

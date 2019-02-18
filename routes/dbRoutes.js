@@ -5,9 +5,9 @@ const util = require('util');
 require('../models/Category');
 require('../models/Auction');
 require('../models/User');
-const Category = mongoose.model('category');
 const Auction = mongoose.model('auction');
 const User = mongoose.model('user');
+const Category = mongoose.model('category');
 const Subcategory = mongoose.model('subcategory');
 const SubSubCategory = mongoose.model('sub_subcategory');
 const Property = mongoose.model('property');
@@ -25,7 +25,7 @@ const isArray = function(object) {
 }
 
 module.exports = app => {
-    app.get('/api/reconstruct-categories', async (req, res) => {
+    app.post('/api/reconstruct-categories', async (req, res) => {
         await Category.deleteMany({});
         await Subcategory.deleteMany({});
         await SubSubCategory.deleteMany({});
@@ -89,6 +89,7 @@ module.exports = app => {
             await category.save();
         }
 
+        req.session.message = "Przywrócono domyślny zestaw kategorii";
         res.send(true);
     });
 
