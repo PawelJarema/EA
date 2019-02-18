@@ -280,10 +280,13 @@
 .PropertyEditor {
 	position: fixed;
 	top: 199px; bottom: 110px; right: var(--page-margin);
+	z-index: 50;
 }
-.PropertyEditor  .container {
+.PropertyEditor .container {
 	height: 100%;
-	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	background: #fcfcfc; opacity: 1;
 }
 .property-editor-info {
 	position: relative;
@@ -299,8 +302,9 @@
 
 .NotePad {
 	position: fixed;
-	top: 199px; left: var(--page-margin); bottom: 30px;
+	top: 54vh; left: var(--page-margin); bottom: 30px;
 	width: 320px;
+	overflow: hidden;
 	border: 1px solid #ddd; background: white;
 	z-index: 50;
 }
@@ -330,4 +334,68 @@
 }
 .clickable:hover {
 	opacity: 1;
+}
+
+.tree-properties { 
+	font-size: 13px;
+	margin: 10px 5px;
+}
+.tree-property {
+	margin: 5px 0; margin-bottom: 7px; cursor: pointer;
+}
+.tree-property .title {
+	width: calc(100% - 11px); font-weight: 400;
+	margin-left: -5px;
+	border-bottom: 1px solid #bbb;
+}
+.tree-property .lp {
+	font-size: 11px; opacity: 0.6;
+}
+.tree-property input {
+	background: white;
+	padding: 6px;
+}
+
+.tree-property-value-editor {
+	position: fixed;
+	top: 50%; left: calc(var(--page-margin) + 330px);
+	display: flex;
+	flex-direction: column;
+	width: 50vw;
+	height: 50vh;
+	transform: translateY(-50%);
+	background: white; border: 1px solid #ccc;
+	z-index: 100;
+
+
+}
+
+.tree-property-value-editor .title, .tree-property-value-editor .options {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 10px 30px;
+	margin: 0; 
+}
+.tree-property-value-editor textarea {
+	box-sizing: border-box;
+	padding: 16px 30px;
+	resize: none;
+	height: calc(100% - 80px);
+}
+.tree-property-value-editor .options {
+	display: flex;
+	justify-content: flex-end;
+	border-top: 1px solid #eee;
+}
+.tree-property-value-editor .options i {
+	margin-left: 10px;
+}
+.tree-property-value-editor .options i:first-child:hover {
+	color: var(--bad);
+}
+.tree-property-value-editor .options i:last-child:hover {
+	color: var(--good);
+}
+i.layers {
+	margin-right: 10px;
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-import { isNotEmpty } from './auctions/functions';
+import { isNotEmpty } from '../auctions/functions';
 
 const SortableItem = SortableElement(({ tree, node, renderNode, onChange, i }) => {
 	let children = null;
@@ -18,7 +18,7 @@ const SortableList = SortableContainer(({ items, renderNode, onChange, tree }) =
 		<ul className="tree-node-list">
 			{
 				items.map((node, i) => (
-					<SortableItem key={ 'item_' + i } index={ i } i={ i } node={ node } renderNode={ renderNode } onChange={ onChange } tree={ tree } />
+					<SortableItem key={ node.module + '_' + i } index={ i } i={ i } node={ node } renderNode={ renderNode } onChange={ onChange } tree={ tree } />
 				))
 			}
 		</ul>
