@@ -55,6 +55,7 @@ class PropertyEditor extends Component {
 			x = e.pageX,
 			y = e.pageY,
 			screen = this.screenWidth = window.innerWidth,
+			screenTop = (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0),
 			initialPosition = this.initialPosition = this.initialPosition || this.editorRef.getBoundingClientRect(),
 			currentPosition = this.editorRef.getBoundingClientRect();
 
@@ -64,7 +65,7 @@ class PropertyEditor extends Component {
 			yOffset = initialPosition.y - y;
 
 		this.setState({
-			position: { right: xOffset , top: initialPosition.top - yOffset }
+			position: { right: xOffset , top: initialPosition.top - yOffset - screenTop }
 		});
 	}
 
