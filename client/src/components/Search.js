@@ -68,11 +68,15 @@ class SearchField extends Component {
             clearTimeout(this.inputTimeout);
         }
 
-        this.inputTimeout = setTimeout(() => history.push(`/aukcje/szukaj/${this.state.category}/${this.state.query || '*'}`), 300);
+        this.inputTimeout = setTimeout(() => {
+            history.push(`/aukcje/szukaj/${this.state.category}/${this.state.query || '*'}`);
+            if (this.closeTimeout) clearTimeout(this.closeTimeout);
+            this.closeTimeout = setTimeout(this.props.searchHandler, 1500);
+        }, 300);
     }
 
     render() {
-        const { open, categories } = this.props;
+        const { open, categories, searchHandler } = this.props;
         const className = "search-auctions" + (open ? ' open' : '');
         if (categories === null || categories === false)
             return null;

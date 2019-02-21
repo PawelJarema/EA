@@ -230,14 +230,14 @@ nav .user-links .search-mobile {
 		display: none;
 
 		box-sizing: border-box;
-		flex: 0 0 100%;
-		order: 3;
+		flex: 0 0 100%; width: 100%;
+		height: auto !important;
 
 		justify-content: flex-end;
 		align-items: center;
 		
 		margin-top: -2px;
-		padding: 0 var(--page-margin);
+		padding: 0 var(--page-margin); padding-bottom: 16px;
 		height: 70px;
 		background: white;
 		border-bottom: 1px solid #eee;
@@ -310,11 +310,12 @@ nav .user-links .search-mobile {
 	}
 	
 	.App .AuctionListSearch .CategoryFilters {
-		order: 2;
+		/*order: 2;*/
 	}
+
 	.App .AuctionListSearch .advanced-search {
-		margin: 0;
-		order: 2;
+		margin: 0; margin-bottom: 20px;
+		/*order: 2;*/
 	}
 	
 	.App .OtherUser .auctions {

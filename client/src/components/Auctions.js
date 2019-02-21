@@ -43,6 +43,7 @@ class FilteredList extends Component {
             if (typeof props.auctions[props.auctions.length - 1] === 'number') {
                 this.props.setPages(props.auctions.pop());
                 applyToAuctions(auction => auction.style.opacity = 1);
+                this.listRef.scrollIntoView({ behavior: 'smooth' });
             }
         }
     }
@@ -54,7 +55,7 @@ class FilteredList extends Component {
         const pagination = <AuctionPagination page={page} pages={pages} per_page={ per_page } sort={ sort } clickHandler={setPage} sortCallback={ sortCallback } perPageCallback={ perPageCallback }/>;
         
         return (
-            <div className="Filtered AuctionList">
+            <div className="Filtered AuctionList" ref={ (e) => this.listRef = e }>
                 {
                     pagination
                 }
