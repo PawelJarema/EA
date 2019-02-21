@@ -55,6 +55,8 @@ class Categories extends Component {
 	componentDidMount() {
 		if (!this.props.categories) {
 			this.props.fetchCategories();
+		} else {
+			this.componentWillReceiveProps(this.props);
 		}
 	}
 

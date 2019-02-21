@@ -86,7 +86,7 @@ class PropertyEditor extends Component {
 
 	render() {
 		const
-			{ txtProps, numProps, position } = this.state, // wartości bool dla wyświetlania
+			{ txtProps, numProps, position } = this.state, // txtProps, numProps - wartości bool do wyświetlania
 			{ properties } 	= this.props,
 			drag 			= this.drag.bind(this),
 			numberProps 	= [],
