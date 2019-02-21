@@ -31,10 +31,10 @@ class Pay extends Component {
     }
 
     pay() {
-        const { auction, user } = this.props;
+        const { auction, user, auction } = this.props;
         const { paySimple, price, qty, delivery_price, delivery_method } = this.state;
 
-        if (!delivery_method) {
+        if (isNotEmpty(auction.deliveries) && !delivery_method) {
             alert('Wybierz metodę dostawy');
             return;
         }
