@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 
+const DragHandle = SortableHandle(() => <span><i className="material-icons">compare_arrows</i></span>)
 const SortableItem = SortableElement(({ image, i, removeImage, editPhoto }) => (
     <li className="container">
         <img className="image-preview absolute-center" src={ image.preview } />
         <span className="options">
+            <DragHandle />
             <span><i className="material-icons" onClick={ () => editPhoto(i) }>edit</i></span>
             <span><i className="material-icons" onClick={ () => removeImage(i) }>close</i></span>
         </span>
@@ -28,7 +30,7 @@ class ThumbnailPreview extends Component {
         if (!images) return;
 
         return (
-            <SortableList images={ images } removeImage={ removeImage } editPhoto={ editPhoto } onSortEnd={ onSortEnd } pressDelay={200} axis="xy" helperClass="sortable-helper" />
+            <SortableList images={ images } removeImage={ removeImage } editPhoto={ editPhoto } onSortEnd={ onSortEnd } axis="xy" helperClass="sortable-helper" useDragHandle />
         );
     }
 }

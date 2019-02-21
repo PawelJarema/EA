@@ -2,7 +2,7 @@ const name = (user) => `${user.firstname || ''} ${user.lastname || (user.firstna
 
 const NameHelper = {
 	name,
-	covername: (user) => name(user).replace(/[a-zęółśążźćń]/g, '')
+	covername: (user) => ((user.firstname ? user.firstname.slice(0, 1) : '') + ' ' + (user.lastname ? user.lastname.slice(0, 1) : '').trim() || 'Anonim')
 };
 
 export default NameHelper;

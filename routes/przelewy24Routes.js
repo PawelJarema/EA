@@ -146,6 +146,12 @@ module.exports = app => {
 
 			if (buynowpayee) {
 				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(buyer._id));
+
+				if (auction.buynowpaid) {
+		            auction.buynowpaid.push(buyer._id);
+		        } else {
+		            auction.buynowpaid = [buyer._id];
+		        }
 			}
 
 			if (payee) {

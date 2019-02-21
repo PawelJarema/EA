@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as przelewy24Actions from '../../actions/przelewy24Actions';
 import * as otherUserActions from '../../actions/otherUserActions';
 import Modal from '../Modal';
-import { userName } from './functions';
+import { userName, isNotEmpty } from './functions';
 
 class Pay extends Component {
     constructor(props) {
@@ -74,7 +74,7 @@ class Pay extends Component {
                             <table>
                             <tbody>
                             {
-                                auction.deliveries.map((delivery, index) => (
+                                isNotEmpty(auction.deliveries) && auction.deliveries.map((delivery, index) => (
                                     <tr>
                                         <td>
                                             <input key={'delivery_' + index} name="delivery" type="radio" value={1} onChange={() => this.setState({ delivery_price: delivery.price, delivery_method: delivery.name })} />

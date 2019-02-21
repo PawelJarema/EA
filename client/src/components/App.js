@@ -54,7 +54,6 @@ class AuctionListSearch extends Component {
     }
 
     sortCallback(sort) {
-        console.log(sort);
         this.setState({ sort });
     }
 
@@ -72,6 +71,18 @@ class AuctionListSearch extends Component {
             </div>
         );
     }
+}
+
+class TopScroller extends Component {
+   componentDidUpdate(props) {
+        if (this.props.location !== props.location) {
+            window.scrollTo(0,0);
+        }
+   }
+
+   render() {
+        return null;
+   }
 }
 
 class CookieMessage extends Component {
@@ -173,6 +184,7 @@ class App extends Component {
                     </header>
             
                     <div className="main-container">
+                            <TopScroller />
                             <CookieMessage cookies={cookies} />
                             
                             <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } /> } categoryData={ category_filter_data } />
@@ -285,6 +297,7 @@ function mapAuctionCountStateToProps({ auction_count }) {
     return { auction_count };
 }
 
+TopScroller = withRouter(TopScroller);
 CookieMessage = connect(null, cookieActions)(CookieMessage);
 
 export default connect(mapUserFlashTechBreakAndCookiesStatesToProps, { ...userActions, ...categoryActions, ...flashActions, ...techBreakActions, ...cookieActions })(App);

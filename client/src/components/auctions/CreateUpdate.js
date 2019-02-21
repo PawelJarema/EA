@@ -525,7 +525,7 @@ class CreateUpdateAuction extends Component {
                         (
                             <fieldset>
                                 <legend><i className="material-icons">photo</i>Zdjęcia</legend>
-                                <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie</label></p>
+                                <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie.</label></p>
                                 <Dropzone className="drag-and-drop-images" 
                                     onDrop={ this.onDrop }
                                     onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
