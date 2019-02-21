@@ -44,8 +44,10 @@ class FilteredList extends Component {
                 this.props.setPages(props.auctions.pop());
                 applyToAuctions(auction => auction.style.opacity = 1);
 
-                if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
-                this.scrollTimeout = setTimeout(() => this.listRef.scrollIntoView({ block: 'start', behavior: 'smooth' }), 2100);
+                if (window.innerWidth < 1296) {
+                    if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+                    this.scrollTimeout = setTimeout(() => this.listRef.scrollIntoView({ block: 'start', behavior: 'smooth' }), 2100);
+                }
             }
         }
     }
