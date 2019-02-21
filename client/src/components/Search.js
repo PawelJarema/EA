@@ -64,13 +64,11 @@ class SearchField extends Component {
     lookFor() {
         const history = this.props.history;
 
-        if (this.inputTimeout) {
-            clearTimeout(this.inputTimeout);
-        }
+        if (this.inputTimeout) clearTimeout(this.inputTimeout);
+        if (this.closeTimeout) clearTimeout(this.closeTimeout);
 
         this.inputTimeout = setTimeout(() => {
             history.push(`/aukcje/szukaj/${this.state.category}/${this.state.query || '*'}`);
-            if (this.closeTimeout) clearTimeout(this.closeTimeout);
             this.closeTimeout = setTimeout(this.props.searchHandler, 4000);
         }, 300);
     }
