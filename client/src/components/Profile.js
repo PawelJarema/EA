@@ -369,6 +369,10 @@ class Settings extends Component {
         }
     }
     
+    // <button type="submit" onClick={this.submit}>Dodaj numer konta</button>
+    // <button type="submit" onClick={this.submit}>Zapisz</button>
+    // <button type="submit" onClick={this.submit}>Zapisz</button>
+
     render() {
         const state = this.state;
         const handleInput = this.handleInput;
@@ -447,7 +451,7 @@ class Settings extends Component {
                             <span className="validation-message">{ this.state.message[6] }</span>
                         </p>
 
-                        <button type="submit" onClick={this.submit}>Dodaj numer konta</button>
+                        
                     </fieldset>
                     <fieldset>
                         <legend><i className="material-icons">email</i>Dane kontaktowe</legend>
@@ -476,7 +480,7 @@ class Settings extends Component {
                                 <span className="label">Chcę otrzymywać powiadomienia</span>
                             </span>
                         </p>
-                        <button type="submit" onClick={this.submit}>Zapisz</button>
+                        
                     </fieldset>
                     <fieldset>
                         <legend><i className="material-icons">attachment</i>Rodo</legend>
@@ -494,7 +498,7 @@ class Settings extends Component {
                                 <span className="label">Zgadzam się na przetwarzanie moich danych zgodnie z RODO</span>
                             </span>
                         </p>
-                        <button type="submit" onClick={this.submit}>Zapisz</button>
+                        
                     </fieldset>
                     <fieldset>
                         <legend><i className="material-icons">security</i>Zmień hasło</legend>
@@ -504,7 +508,8 @@ class Settings extends Component {
                         <p>
                             <input name="confirm_password" type="password" placeholder="Powtórz hasło" />
                         </p>
-                        <button type="submit" onClick={this.submit}>Zapisz</button>
+                        <br />
+                        <button type="submit" onClick={this.submit}>Zapisz Ustawienia</button>
                     </fieldset>
                     
                     <fieldset>
