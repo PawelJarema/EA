@@ -1195,3 +1195,8 @@ form.disabled {
     padding-top: 10px; padding-left: 26px;
 
 }
+
+.label.secondary {
+    font-size: 10px !important;
+    opacity: .6;
+}

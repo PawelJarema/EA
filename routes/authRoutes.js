@@ -33,7 +33,7 @@ module.exports = app => {
             if (err) {
                 console.log(err);
             } else {
-                console.log('pass created, making admin');
+ 
                 const admin = new Admin({
                     login,
                     password: hash,
@@ -147,7 +147,7 @@ module.exports = app => {
 
         await bcrypt.compare(password, user.security.password, (err, success) => {
             if (err) {
-                req.session.error = "Brak hasła dla tego konta. Zaloguj się przez media społecznościowe w panelu 'Zarejestruj się'";
+                req.session.error = "Brak hasła dla tego konta. Zaloguj się przez media społecznościowe.";
                 console.log(err);
                 res.redirect('/konto/zaloguj');
             } else {
@@ -155,7 +155,7 @@ module.exports = app => {
                     req.login(user, function(err) {
                         if (err) {
                             req.session.error = "Nastąpił błąd";
-                            console.log('err');
+                            console.log(err);
                             res.redirect('/konto/zaloguj');
                         } else {
                             req.session.message = "Zalogowano pomyślnie";
@@ -180,6 +180,13 @@ module.exports = app => {
         let email = req.body.email;
         let password = req.body.password;
         let confirm_password = req.body.confirm_password;
+
+        const users = await User.countDocuments({ 'contact.email': email });
+        if (users) {
+            req.session.error = 'Konto o podanym adresie E-mail już istnieje';
+            res.redirect('/konto/zarejestruj');
+            return;
+        }
         
         bcrypt.hash(password, saltRounds, async (err, hash) => {
             if (err) {

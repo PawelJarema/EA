@@ -16,6 +16,7 @@ import { arrayMove } from 'react-sortable-hoc';
 import ThumbnailPreview from './ThumbnailPreview';
 import ImageEditor from './ImageEditor';
 
+import { UserHelper } from '../../helpers/UserHelper';
 import { isSet, isNotEmpty, concatUnique } from './functions';
 
 
@@ -399,14 +400,16 @@ class CreateUpdateAuction extends Component {
     }
     
    render() {
-       const { user, update, categories, auctions } = this.props;
-       const userDataComplete = user && user.firstname && user.lastname && user.address;
-       const deliveries = user.deliveries && user.deliveries.length;
-       const bids = auctions && auctions.bids && auctions.bids.length > 0;
-       const { categoryData, propertyData } = this.state;
-
-       const blockBuyNowPriceChange = auctions && isNotEmpty(auctions.buynowpayees);
-       const blockAllChanges = auctions && isNotEmpty(auctions.bids);
+       const 
+            { user, update, categories, auctions } = this.props,
+            { categoryData, propertyData } = this.state,
+            userDataComplete = user && user.firstname && user.lastname && user.address,
+            deliveries = user.deliveries && user.deliveries.length,
+            bids = auctions && auctions.bids && auctions.bids.length > 0,
+            is18 = UserHelper.is18(user),
+            isVerified = Boolean((user.security ? user.security.verified : false)),
+            blockBuyNowPriceChange = auctions && isNotEmpty(auctions.buynowpayees),
+            blockAllChanges = auctions && isNotEmpty(auctions.bids);
 
        // if (!update && !user.balance.credits) {
        //      return (
@@ -435,6 +438,12 @@ class CreateUpdateAuction extends Component {
                 <ProfileLinks active="addauction" />
                 <div>
                     {
+                        !is18 && <p className="warn">Osoba poniżej 18 lat nie może wystawiać aukcji</p>
+                    }
+                    {
+                        !isVerified && <p className="warn">Aby dodać ogłoszenie, zweryfikuj adres email.</p>
+                    }
+                    {
                         blockAllChanges && <p className="warn">Nie można edytować aukcji. Ktoś już licytuje.</p>
                     }
                     {
@@ -443,7 +452,7 @@ class CreateUpdateAuction extends Component {
                     {
                         !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
                     }
-                <form ref={ e => this.formRef = e } className={"user-settings" + (!userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
+                <form ref={ e => this.formRef = e } className={"user-settings" + (!is18 || !isVerified || !userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
                     <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
         
                     <fieldset>

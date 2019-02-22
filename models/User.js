@@ -48,6 +48,16 @@ const userSchema = new Schema({
     firm: {
         firm_name: String,
         nip: String
+    },
+    freebies: {
+        auctions: {
+            type: Number,
+            default: 500
+        },
+        promos:{
+            type: Number,
+            default: 5
+        }
     }
 });
 

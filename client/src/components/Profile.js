@@ -15,6 +15,8 @@ import Progress from './Progress';
 import { Pagination } from './Pagination';
 import RegexHelper from '../helpers/regexHelper';
 
+import { UserHelper } from '../helpers/UserHelper';
+
 moment.updateLocale('pl', {
    months: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
    monthsShort: ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'],
@@ -282,6 +284,7 @@ class Settings extends Component {
     
     validate() {
         const state = this.state;
+        const is18 = UserHelper.is18({ birthdate: this.state.birthdate.valueOf()});
         let message = [];
         
         if (!state.firstname) {
@@ -299,8 +302,8 @@ class Settings extends Component {
         if (!state.city) {
             message[4] = 'Wpisz miasto';
         }
-        if (!state.birthdate) {
-            message[5] = 'Wprowadź datę urodzenia';
+        if (!is18) {
+            message[5] = 'Musisz mieć 18 lat aby korzystać z serwisu eaukcje.pl';
         }
         if (state.account_number && !RegexHelper.account.test(state.account_number)) {
             message[6] = 'Wpisz numer konta, na które będziesz otrzymywał wpłaty';
@@ -376,7 +379,7 @@ class Settings extends Component {
     render() {
         const state = this.state;
         const handleInput = this.handleInput;
-        
+
         return (
             <div className="Profile ProfileSettings">
                 <ProfileLinks active="settings" />
@@ -393,12 +396,12 @@ class Settings extends Component {
                         {
                             state.firm && (<span>
                                 <p>
-                                    <label for="firm_name" className="required">Nazwa</label>
+                                    <label htmlFor="firm_name" className="required">Nazwa</label>
                                     <input name="firm_name" type="text" value={state.firm_name} onChange={handleInput} />
                                     <span className="validation-message">{ this.state.message[11] }</span>
                                 </p>
                                 <p>
-                                    <label for="nip" className="required">NIP</label>
+                                    <label htmlFor="nip" className="required">NIP</label>
                                     <input name="nip" type="text" value={state.nip} onChange={handleInput} />
                                     <span className="validation-message">{ this.state.message[12] }</span>
                                 </p>
@@ -435,10 +438,10 @@ class Settings extends Component {
                         
                         <p>
 
-                            <span style={{ marginTop: 10 }} >
+                            <span style={{ marginTop: 10, width: '100%' }} >
                                 <div className="label">Data urodzenia</div>
                                 <DatePicker dateFormat="DD/MM/YYYY" locale="pl" selected={this.state.birthdate} onChange={this.handleDate} showYearDropdown dropdownMode="select" />
-                                <input name="birthdate" type="hidden" value={ this.state.birthdate.valueOf() } />
+                                <input name="birthdate" type="hidden" value={ this.state.birthdate.valueOf() } style={{ display: 'inline-block' }}/>
                                 <span className="validation-message">{ this.state.message[5] }</span>
                             </span>
                         </p>
