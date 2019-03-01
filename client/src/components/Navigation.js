@@ -113,8 +113,6 @@ class Breadcrumbs extends Component {
     }
 
     componentDidUpdate() {
-        window.scrollTo(0, 0);
-
         const { current_url } = this.state;
         if (current_url !== window.location.href) {
             this.getPath();

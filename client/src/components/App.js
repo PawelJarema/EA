@@ -64,7 +64,7 @@ class AuctionListSearch extends Component {
         return (
             <div className="AuctionListSearch">
                 <Filters match={ this.props.match } page={ page } pages={ pages } per_page={ per_page } query={ query } category={ category } user={ user } categories={ categories } categoryData={ categoryData } categoryCallback={ categoryCallback } sort={ sort }/>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                <div className="list-search-with-categories">
                     <CategoryFilters categories={ categories } categoryCallback={ categoryCallback } category={ category } categoryData={ categoryData } />
                     <FilteredList page={ page } pages={ pages } per_page={ per_page } sort={ sort } setPage={ this.setPage } setPages={ this.setPages } perPageCallback={ this.perPageCallback } sortCallback={ this.sortCallback } />
                 </div>
@@ -76,8 +76,6 @@ class AuctionListSearch extends Component {
 class TopScroller extends Component {
    componentDidUpdate(prevProps, prevState) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            console.log('scroll to top');
-            console.log(this.props.location.pathname, prevProps.location.pathname);
             window.scrollTo(0,0);
         }
    }
@@ -193,7 +191,7 @@ class App extends Component {
             }
             <BrowserRouter>
                 <div>
-                    <header className="App-header" style={{ marginBottom: 30 }}>
+                    <header className="App-header">
                         <Navi socket={ socket } callback={ this.callback } setQuery={ this.setQuery } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } />
                         <Breadcrumbs />
                     </header>

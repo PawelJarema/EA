@@ -74,7 +74,7 @@ class CategoryNavigation extends Component {
 		return(
 			<div className={ "CategoryTree " + nextLevel }>
 				{
-					data.map((cat, i) => <a key={ "cat_" + i } href="#" className={ squirtle + cat.name } onClick={ () => callback(nextLevel, cat.name, i) }>{ cat.name }</a>)
+					data.map((cat, i) => <a key={ "cat_" + i } className={ squirtle + cat.name } onClick={ () => callback(nextLevel, cat.name, i) }>{ cat.name }</a>)
 				}
 			</div>
 		);
@@ -89,9 +89,9 @@ class Breadcrumbs extends Component {
 
 		return (
 			<div className="breadcrumb-navigation">
-				<span><a href="#" onClick={ () => navigateBack('home')}>Wszystkie</a></span>
-				{ category && <span><a href="#" onClick={ subcategory ? () => navigateBack('category') : null }>{ category }</a></span> }
-				{ subcategory && <span><a href="#" onClick={ subsubcategory ? () => navigateBack('subcategory') : null }>{ subcategory }</a></span> }
+				<span><a onClick={ () => navigateBack('home')}>Wszystkie</a></span>
+				{ category && <span><a onClick={ subcategory ? () => navigateBack('category') : null }>{ category }</a></span> }
+				{ subcategory && <span><a onClick={ subsubcategory ? () => navigateBack('subcategory') : null }>{ subcategory }</a></span> }
 				{ subsubcategory && <span>{ subsubcategory }</span> }
 			</div>
 		);

@@ -45,6 +45,7 @@ body {
 a {
     text-decoration: none;
     color: black;
+    cursor: pointer;
 }
 
 i {
@@ -725,4 +726,14 @@ margin-bottom: 10px;
 
 .position-relative {
     position: relative;
+}
+
+.App-header {
+    margin-bottom: 30px;
+}
+
+.list-search-with-categories {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
