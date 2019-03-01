@@ -66,13 +66,15 @@
 
 .input .hints li {
 	font-size: 13px;
+	word-break: normal;
 	cursor: pointer;
 }
 
 .input .hints li input[type="checkbox"] {
 	display: inline; 
 	height: 13px;
-	margin-right: 5px;
+	width: 12px;
+	margin: 0; margin-right: 5px;
 	cursor: pointer;
 }
 
@@ -82,9 +84,7 @@
 
 .CategoryFilters .input-multiple input[type="checkbox"] {
 	position: absolute;
-
-	width: 100%;
-	top: 3px; left: -3px;
+	top: 3px; left: 0px;
 }
 .CategoryFilters .input-multiple .hints li {
 	position: relative;

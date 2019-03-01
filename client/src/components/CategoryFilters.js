@@ -39,13 +39,14 @@ class PropertyInputs extends Component {
 			<div className="Properties">
 				{
 					props.map((prop, i) => {
+						const key = prop.name + '_' + i;
 						switch(prop.type) {
 							case 'Range':
-								return <InputRange property={ prop } callback={ callback } focus={ focus } setFocus={ this.focus } />
+								return <InputRange key={ key } property={ prop } callback={ callback } focus={ focus } setFocus={ this.focus } />
 							case 'Multiple':
-								return <InputMultiple property={ prop } callback={ callback } marka={ prop.name === 'Model' ? marka : null } focus={ focus } setFocus={ this.focus } />
+								return <InputMultiple key={ key } property={ prop } callback={ callback } marka={ prop.name === 'Model' ? marka : null } focus={ focus } setFocus={ this.focus } />
 							case 'Singular':
-								return <InputSingular property={ prop } callback={ callback } focus={ focus } setFocus={ this.focus } />
+								return <InputSingular key={ key } property={ prop } callback={ callback } focus={ focus } setFocus={ this.focus } />
 						}
 					})
 				}
@@ -71,7 +72,7 @@ class CategoryNavigation extends Component {
 		if (!isNotEmpty(data)) return null;
 
 		return(
-			<div className="CategoryTree">
+			<div className={ "CategoryTree " + nextLevel }>
 				{
 					data.map((cat, i) => <a key={ "cat_" + i } href="#" className={ squirtle + cat.name } onClick={ () => callback(nextLevel, cat.name, i) }>{ cat.name }</a>)
 				}

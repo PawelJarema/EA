@@ -323,7 +323,7 @@ const carWheelCatProps = [{
 const vehicleProps = [{
     name: 'Pojazd',
     type: 'Multiple',
-    values: ['Osobowe', 'Dostawcze', 'Motocykle', 'Terenowe', 'Ciężarowe', 'Samochody na części','Pozostałe']
+    values: ['Osobowe', 'Dostawcze', 'Motocykle', 'Terenowe', 'Ciężarowe', 'Samochody na części', 'Pozostałe']
 }];
 
 const motorcyclePartKindProps = [{
@@ -441,25 +441,208 @@ const steeringWheelProps = [{
 
 const priceAndStateProps = [...priceProps, ...stateProps];
 
+//
+// NOWE:
+//
+
+const carPartAggregatedProps = [...vehicleProps, ...priceAndStateProps];
+
+
+const carTireVehicleKinds = [{
+    name: 'Pojazd',
+    type: 'Singular',
+    values: ['Osobowe', '4x4/SUV', 'Dostawcze', 'Ciężarowe', 'Do motocykli i skuterów', 'Do maszyn rolniczych', 'Do maszyn budowlanych', 'Do gokartów', 'Do quadów', 'Pozostałe']
+}];
+
+const carFelgiKinds = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Aluminiowe', 'Stalowe', 'Do motocykli i skuterów', 'Felgi pozostałe']
+}];
+
+ const carKolaKinds = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Do samochodów', 'Koła dojazdowe', 'Do motocykli i skuterów', 'Pozostałe']
+}];
+
+const carAkcesoriaDoOponIFelgKinds = [{
+    name: 'Kategoria',
+    type: 'Singular',
+    values: ['Kołpaki', 'Czujniki ciśnienia i programatory', 'Dekielki do felg', 'Dystanse do felg', 'Pierścienie centrujące do felg', 'Nakrętki do felg', 'Śruby do kół', 'Szpilki do kół', 'Dętki i ochraniacze', 'Wentyle', 'Pompki i kompresory 12V', 'Łańcuchy śniegowe', 'Pozostałe']
+}];
+
+const olejeSilnikoweKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Mineralne', 'Półsyntetyczne', 'Syntetyczne', 'Pozostałe']
+}];
+
+const mycieIPielegnacjaKindsProps = [{
+    name: 'Kategoria',
+    type: 'Singular',
+    values: ['Akcesoria do mycia i pielęgnacji', 'Chemia dla myjni', 'Środki do mycia felg i opon', 'Nadwozie', 'Wnętrze samochodu', 'Pozostałe']
+}];
+
+const plynyEksploatacyjneKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['AdBlue', 'Dodatki do olejów i paliw', 'Lubryfikatory LPG', 'Oleje do klimatyzacji', 'Oleje do zawieszenia', 'Oleje filtrów powietrza', 'Oleje hydrauliczne', 'Oleje przekładniowe', 'Oleje sprężarkowe', 'Płyny chłodnicze', 'Płyny do spryskiwaczy', 'Płyny do wspomagania', 'Płyny hamulcowe', 'Woda destylowana', 'Pozostałe']
+}];
+
+const chemiaBlacharskoLakierniczaProps = [{
+    name: 'Kategoria',
+    type: 'Singular',
+    values: ['Lakiery', 'Maty szklane', 'Mleczka i pasty polerskie', 'Odtłuszczacze', 'Podkłady i grunty', 'Rozcieńczalniki', 'Rozpuszczalniki', 'Szpachlówki', 'Usuwanie rys z lakieru', 'Utwardzacze', 'Środki antykorozyjne', 'Żywice', 'Pozostałe']
+}];
+
+const srodkiDoNaprawKindsProps = [{
+    name: 'Kategoria',
+    type: 'Singular',
+    values: ['Czyszczenie części', 'Kleje', 'Montaż i naprawa wydechu', 'Naprawa opon', 'Odrdzewiacze i penetratory', 'Odstraszacze zwierząt', 'Pasty do hamulców', 'Pasty do rąk', 'Pasty zaworowe', 'Płukanki silnika', 'Samostarty', 'Silikony, masy uszczelniające', 'Smary', 'Testery szczelności', 'Uszczelnianie i czyszczenie chłodnic', 'Środki do usuwania uszczelek', 'Pozostałe']
+}];
+
+const czesciMotocykloweKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Nadwozie', 'Filtry', 'Oświetlenie', 'Silniki', 'Tuning', 'Układ elektryczny, zapłon', 'Układ hamulcowy', 'Układ napędowy', 'Układ paliwowy', 'Układ wydechowy', 'Układ zawieszenia', 'Zabytkowe', 'Pozostałe']
+}];
+
+const odziezMotocyklowaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Kaski', 'Chusty', 'Czapki', 'Gogle', 'Kamizelki', 'Kombinezony', 'Kominiarki', 'Koszulki i bluzy', 'Kurtki', 'Obuwie', 'Ochraniacze', 'Pasy nerkowe', 'Rękawice', 'Skarpety', 'Slidery', 'Spodnie', 'Konserwacja odzieży', 'Pozostałe']
+}];
+
+const akcesoriaMotocykloweKindsProps = [{
+    name: 'Kategoria',
+    kind: 'Singular',
+    values: ['Alarmy', 'Bagażniki', 'Blokady', 'Crash pady', 'Gmole', 'Gniazda zapalniczki', 'Interkomy', 'Kufry', 'Lokalizatory i nawigacje', 'Oparcia', 'Osłony chłodnicy', 'Plecaki', 'Pokrowce', 'Ramki tablic', 'Sakwy i torby motocyklowe', '﻿Saszetki', 'Siatki bagażowe', 'Stelaże', 'Stojaki, podnośniki', 'Torby na bak', 'Uchwyty', 'Pozostałe']
+}];
+
+const czesciDoQuadowKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Elementy nadwozia', 'Filtry', 'Koła, felgi', 'Oświetlenie', 'Silniki i osprzęt', 'Układ elektryczny, zapłon', 'Układ hamulcowy', 'Układ napędowy', 'Układ paliwowy', 'Układ wydechowy', 'Układ zawieszenia', 'Pozostałe']
+}];
+
+const akcesoriaDoQuadowProps = [{
+    name: 'Kategoria',
+    kind: 'Singular',
+    values: ['Kufry', 'Osłony', 'Pługi', 'Wyciągarki', 'Pozostałe']
+}];
+
 const categoryTree = {
     'Motoryzacja': {
-        'Samochody osobowe': [...carMakeProps, ...carModelProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...gearBoxProps, ...productionYearProps, ...cabinTypeProps, ...makeCountryProps, ...engineVolumeProps, ...colorProps, ...steeringWheelProps, ...courseDistanceProps, ...workingOrderProps],
+        'Części samochodowe': {
+            'Części karoserii': carPartAggregatedProps,
+            'Filtry': carPartAggregatedProps,
+            'Oświetlenie': carPartAggregatedProps,
+            'Silniki i osprzęt': carPartAggregatedProps,
+            'Układ chłodzenia silnika': carPartAggregatedProps,
+            'Układ elektryczny, zapłon': carPartAggregatedProps,
+            'Układ hamulcowy': carPartAggregatedProps,
+            'Układ kierowniczy': carPartAggregatedProps,
+            'Układ klimatyzacji': carPartAggregatedProps,
+            'Układ napędowy': carPartAggregatedProps,
+            'Układ paliwowy': carPartAggregatedProps,
+            'Układ wentylacji': carPartAggregatedProps,
+            'Układ wydechowy': carPartAggregatedProps,
+            'Układ zawieszenia': carPartAggregatedProps,
+            'Wycieraczki i spryskiwacze': carPartAggregatedProps,
+            'Wyposażenie wnętrza': carPartAggregatedProps,
+            'Ogrzewanie postojowe i chłodnictwo samochodowe': carPartAggregatedProps,
+            'Tuning mechaniczny': carPartAggregatedProps,
+            'Pozostałe': priceAndStateProps
+        },
 
-        'Motocykle i Skutery': [...motorbikeCatProps, ...motorbikeMakeProps, ...priceProps, ...productionYearProps, ...motorbikeEngineVolumeProps, ...workingOrderProps, ...makeCountryProps],
+        'Opony i Felgi': {
+            'Opony': [...carTireVehicleKinds, ...priceAndStateProps],
+            'Felgi': [...carFelgiKinds, ...priceAndStateProps],
+            'Koła (felgi z oponami)': [...carKolaKinds, ...priceAndStateProps],
+            'Akcesoria do opon i felg': [...carAkcesoriaDoOponIFelgKinds, ...priceAndStateProps]
+        },
 
-        'Dostawcze i Ciężarowe': [...truckCatProps, ...workingOrderProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...engineVolumeProps, ...gearBoxProps, ...productionYearProps, ...makeCountryProps, ...courseDistanceProps],
+        'Narzędzia i sprzęt warsztatowy': {
+            'Blacharstwo i lakiernictwo': priceAndStateProps,
+            'Diagnostyka i pomiary': priceAndStateProps,
+            'Kompresory i akcesoria': priceAndStateProps,
+            'Narzędzia do mycia i czyszczenia': priceAndStateProps,
+            'Narzędzia elektryczne': priceAndStateProps,
+            'Narzędzia pneumatyczne': priceAndStateProps,
+            'Narzędzia ręczne': priceAndStateProps,
+            'Normalia': priceAndStateProps,
+            'Obsługa akumulatorów i układu elektrycznego': priceAndStateProps,
+            'Obsługa klimatyzacji': priceProps,
+            'Obsługa kół i ogumienia': priceProps,
+            'Obsługa olejów, paliw i smarów': priceProps,
+            'Obsługa silnika': priceProps,
+            'Obsługa układu hamulcowego': priceProps,
+            'Obsługa układu napędowego': priceProps,
+            'Obsługa zawieszenia': priceProps,
+            'Odzież i obuwie robocze': priceAndStateProps,
+            'Wyposażenie warsztatu': priceAndStateProps,
+            'Pozostałe': priceProps
+        },
 
-        'Przyczepy i Pojazdy Użytkowe': [...trailerCatProps, ...workingOrderProps, ...priceProps, ...productionYearProps],
+        'Akcesoria samochodowe': {
+            'Akcesoria do tuningu': priceAndStateProps,
+            'Apteczki, gaśnice, kamizelki, trójkąty': priceAndStateProps,
+            'Bagażniki': priceAndStateProps,
+            'Chlapacze': priceAndStateProps,
+            'Czujniki i kamery cofania': priceAndStateProps,
+            'Dywaniki': priceAndStateProps,
+            'Elektronika samochodowa': priceAndStateProps,
+            'Emblematy': priceAndStateProps,
+            '﻿Foteliki samochodowe': priceAndStateProps,
+            'Gadżety motoryzacyjne': priceAndStateProps,
+            'Holowanie': priceAndStateProps,
+            'Kanistry, lejki i pompki do paliwa': priceAndStateProps,
+            'Literatura motoryzacyjna': priceAndStateProps,
+            'Off-road': priceAndStateProps,
+            'Organizery i siatki do bagażnika': priceAndStateProps,
+            '﻿Osłony na szyby': priceAndStateProps,
+            'Pióra wycieraczek': priceAndStateProps,
+            'Pokrowce': priceAndStateProps,
+            'Prostowniki i kable rozruchowe': priceAndStateProps,
+            'Ramki do tablic rejestracyjnych': priceAndStateProps,
+            'Skrobaczki do szyb': priceAndStateProps,
+            'Tachografy i czytnini tachografów': priceAndStateProps,
+            'Uchwyty, wieszaki': priceAndStateProps,
+            'Zabezpieczenia': priceAndStateProps,
+            'Żarówki': priceAndStateProps,
+            'Pozostałe': priceProps
+        },
 
-        'Części samochodowe': [...vehicleProps, ...carPartKindProps, ...priceAndStateProps],
+        'Chemia': {
+            'Oleje silnikowe': [...olejeSilnikoweKindsProps, ...priceProps],
+            'Mycie i pielęgnacja': [...mycieIPielegnacjaKindsProps, ...priceProps],
+            'Płyny eksploatacyjne': [...plynyEksploatacyjneKindsProps, ...priceProps],
+            'Chemia blacharsko-lakiernicza': [...chemiaBlacharskoLakierniczaProps, ...priceProps],
+            'Środki do napraw i zabezpieczania': [...srodkiDoNaprawKindsProps, ...priceProps]
+        },
 
-        'Części motocyklowe': [...motorcyclePartKindProps, ...stateProps, ...priceProps],
+        'Części i akcesoria motocyklowe': {
+            'Części motocyklowe': [...czesciMotocykloweKindsProps, ...priceAndStateProps],
+            'Odzież motocyklowa': [...odziezMotocyklowaKindsProps, ...priceAndStateProps],
+            'Akcesoria motocyklowe': [...akcesoriaMotocykloweKindsProps, ...priceAndStateProps],
+            'Części do quadów': [...czesciDoQuadowKindsProps, ...priceAndStateProps],
+            'Akcesoria do quadów': [...akcesoriaDoQuadowProps, ...priceAndStateProps]
+        }
 
-        'Opony i Felgi': [...carWheelCatProps, ...stateProps, ...priceProps, ...vehicleProps],
+        // 'Samochody osobowe': [...carMakeProps, ...carModelProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...gearBoxProps, ...productionYearProps, ...cabinTypeProps, ...makeCountryProps, ...engineVolumeProps, ...colorProps, ...steeringWheelProps, ...courseDistanceProps, ...workingOrderProps],
 
-        'Sprzęt car audio': priceAndStateProps,
+        // 'Motocykle i Skutery': [...motorbikeCatProps, ...motorbikeMakeProps, ...priceProps, ...productionYearProps, ...motorbikeEngineVolumeProps, ...workingOrderProps, ...makeCountryProps],
 
-        'Pozostała motoryzacja': priceProps
+        // 'Dostawcze i Ciężarowe': [...truckCatProps, ...workingOrderProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...engineVolumeProps, ...gearBoxProps, ...productionYearProps, ...makeCountryProps, ...courseDistanceProps],
+
+        // 'Przyczepy i Pojazdy Użytkowe': [...trailerCatProps, ...workingOrderProps, ...priceProps, ...productionYearProps],
+
+        // 'Części motocyklowe': [...motorcyclePartKindProps, ...stateProps, ...priceProps],
+
+        // 'Sprzęt car audio': priceAndStateProps,
+
+        // 'Pozostała motoryzacja': priceProps
     },
 
     'Nieruchomości': {
@@ -673,6 +856,242 @@ const categoryTree = {
 }
 
 // LEGACY CAATEGORIES
+
+
+// const categoryTree = {
+//     'Motoryzacja': {
+//         'Samochody osobowe': [...carMakeProps, ...carModelProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...gearBoxProps, ...productionYearProps, ...cabinTypeProps, ...makeCountryProps, ...engineVolumeProps, ...colorProps, ...steeringWheelProps, ...courseDistanceProps, ...workingOrderProps],
+
+//         'Motocykle i Skutery': [...motorbikeCatProps, ...motorbikeMakeProps, ...priceProps, ...productionYearProps, ...motorbikeEngineVolumeProps, ...workingOrderProps, ...makeCountryProps],
+
+//         'Dostawcze i Ciężarowe': [...truckCatProps, ...workingOrderProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...engineVolumeProps, ...gearBoxProps, ...productionYearProps, ...makeCountryProps, ...courseDistanceProps],
+
+//         'Przyczepy i Pojazdy Użytkowe': [...trailerCatProps, ...workingOrderProps, ...priceProps, ...productionYearProps],
+
+//         'Części samochodowe': [...vehicleProps, ...carPartKindProps, ...priceAndStateProps],
+
+//         'Części motocyklowe': [...motorcyclePartKindProps, ...stateProps, ...priceProps],
+
+//         'Opony i Felgi': [...carWheelCatProps, ...stateProps, ...priceProps, ...vehicleProps],
+
+//         'Sprzęt car audio': priceAndStateProps,
+
+//         'Pozostała motoryzacja': priceProps
+//     },
+
+//     'Nieruchomości': {
+//         'Mieszkania': [...realEstateCatProps, ...realEstateFlatBuildingTypeProps, ...priceProps, ...realEstateAreaProps, ...realEstateFlatLevelProps, ...roomFurnitureProps, ...realEstateFlatRoomCountProps],
+
+//         'Domy': [...realEstateCatProps, ...realEstateBuildingTypeProps, ...priceProps, ...realEstateAreaProps, ...realEstatePlotAreaProps, ...realEstateLevelCount],
+
+//         'Działki': [...realEstateCatProps, ...realEstatePlotKindProps, ...priceProps, ...realEstateAreaProps],
+
+//         'Biura i Lokale': [...realEstateCatProps, ...realEstateUseCaseProps, ...priceProps, ...realEstateAreaProps, ...realEstateLevelProps],
+
+//         'Garaże i Parkingi': [...realEstateCatProps, ...priceProps, ...realEstateAreaProps],
+
+//         'Noclegi': [...priceProps, ...boardingTypeProps, ...numberOfPersonsProps],
+
+//         'Stancje i Pokoje': [...priceProps, ...roomFurnitureProps, ...roomKindProps, ...roomPrefProps],
+
+//         'Hale i Magazyny': [...realEstateCatProps, ...priceProps, ...realEstateAreaProps],
+
+//         'Pozostałe nieruchomości': [...realEstateCatProps, ...priceProps]
+//     },
+
+//     'Dom i ogród': {
+//         'Meble': [...furnitureKindProps, ...priceAndStateProps],
+
+//         'Zdrowie': priceAndStateProps,
+
+//         'Sprzęt AGD': [...AGDKindProps, ...priceAndStateProps],
+
+//         'Ogród': priceAndStateProps,
+
+//         'Narzędzia': priceAndStateProps,
+
+//         'Materiały budowlane': priceAndStateProps,
+
+//         'Ogrzewanie': priceAndStateProps,
+
+//         'Wyposażenie wnętrz': [...indoorAccessoriesProps, ...stateProps, ...priceProps],
+
+//         'Pozostałe dom i ogród': priceProps
+
+//     },
+
+//     'Elektronika': {
+//         'Telefony komórkowe': [...phoneMakeProps, ...priceAndStateProps, ...workingOrderProps],
+
+//         'Akcesoria telefoniczne': priceAndStateProps,
+
+//         'Komputery': [...computerKindsProps, ...stateProps, ...priceProps],
+
+//         'Tablety': priceAndStateProps,
+
+//         'Telewizory': priceAndStateProps,
+
+//         'Gry i Konsole': priceAndStateProps,
+
+//         'Fotografia': priceAndStateProps,
+
+//         'Sprzęt audio': priceAndStateProps,
+
+//         'Pozostała elektronika': priceAndStateProps
+//     },
+
+//     'Moda': {
+//         'Ubrania': [...clothesKindProps, ...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps ],
+
+//         'Buty': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
+
+//         'Bielizna': [...priceAndStateProps, ...genderProps],
+
+//         'Odzież ciążowa': [...priceAndStateProps, ...clothesSizeLettersProps],
+
+//         'Dodatki': [...priceAndStateProps, ...genderWithUnisexProps],
+
+//         'Biżuteria': [...priceAndStateProps, ...genderProps],
+
+//         'Torebki': priceAndStateProps,
+
+//         'Zegarki': [...priceAndStateProps, ...genderWithUnisexProps],
+
+//         'Kosmetyki i perfumy': [...priceAndStateProps, ...genderWithUnisexProps],
+
+//         'Pozostała moda': priceAndStateProps
+//     },
+
+//     'Rolnictwo': {
+//         'Ciągniki': [...priceProps, ...powerProps, ...motorHoursProps, productionYearProps],
+
+//         'Maszyny rolnicze': [...priceProps, ...ruralMachineKindProps , ...productionYearProps],
+
+//         'Przyczepy': [...priceProps, ...productionYearProps],
+
+//         'Części do maszyn rolniczych': priceProps,
+
+//         'Opony rolnicze': priceProps,
+
+//         'Produkty rolne': priceProps,
+
+//         'Giełda zwierząt': [...priceProps, ...ruralAnimalProps],
+
+//         'Ryneczek': priceProps,
+
+//         'Pozostałe rolnicze': priceProps
+//     },
+
+//     'Zwierzęta': {
+//         'Psy': [...dogRaceProps, ...priceProps],
+
+//         'Koty': [...catRaceProps, ...priceProps],
+
+//         'Ptaki': priceProps,
+
+//         'Gryzonie i króliki': priceProps,
+
+//         'Konie': priceProps,
+
+//         'Akwarystyka': [...subnauticaProps, ...priceAndStateProps],
+
+//         'Akcesoria dla zwierząt': priceProps,
+
+//         'Pozostałe zwierzęta': priceProps
+//     },
+
+//     'Dla dzieci': {
+//         'Zabawki': priceAndStateProps,
+
+//         'Wózki dziecięce': priceAndStateProps,
+
+//         'Foteliki - Nosidełka': priceAndStateProps,
+
+//         'Ubranka': [...priceAndStateProps, ...childGenderProps, ...childClothesSizeProps],
+
+//         'Buciki': [...priceAndStateProps, ...childGenderProps, ...childShoeSizeProps],
+
+//         'Meble dla dziecka': priceAndStateProps,
+
+//         'Pozostałe dla dzieci': priceProps
+//     },
+
+//     'Sport i hobby': {
+//         'Kolekcje': priceProps,
+
+//         'Militaria': [...priceProps, ...stateProps],
+
+//         'Rowery': priceAndStateProps,
+
+//         'Fitness': priceAndStateProps,
+
+//         'Sporty zimowe': priceAndStateProps,
+
+//         'Odzież sportowa': [...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps],
+
+//         'Obuwie sportowe': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
+
+//         'Pozostały sport i hobby': priceProps
+//     },
+
+//     'Muzyka i edukacja': {
+//         'Ksiązki': [...bookKindProps, ...stateProps, ...priceProps, ...publishYearProps],
+
+//         'Muzyka': priceAndStateProps,
+
+//         'Filmy': priceAndStateProps,
+
+//         'Instrumenty': priceAndStateProps,
+
+//         'Sprzęt muzyczny': priceAndStateProps,
+
+//         'Materiały językowe': priceAndStateProps,
+
+//         'Pozostała muzyka i edukacja': priceProps
+//     },
+
+//     'Ślub i Wesele': {
+//         'Moda ślubna' : {
+//             'Biżuteria ślubna': [...priceProps, ...stateProps, ...genderProps],
+
+//             'Buty ślubne': [...priceProps, ...stateProps, ...genderProps, ...shoeSizeProps],
+
+//             'Skunie ślubne': [...priceProps, ...stateProps, ...dressSizeProps],
+
+//             'Garnitury ślubne': priceAndStateProps,
+
+//             'Obrączki': priceAndStateProps,
+
+//             'Pozostałe': priceAndStateProps
+//         },
+
+//         'Usługi ślubne': {
+//             'Fotografia i filmowanie': null,
+
+//             'Dekorowanie': null,
+
+//             'Oprawa muzyczna': null,
+
+//             'Pojazdy do ślubu': null,
+
+//             'Torty i Catering': null,
+
+//             'Pozostałe': null
+//         },
+
+//         'Akcesoria ślubne': {
+//             'Zaproszenia ślubne': priceProps,
+
+//             'Dekoracje ślubne': priceAndStateProps,
+
+//             'Pozostałe': priceProps
+//         }
+//     }
+// }
+
+
+//
+//
 // const seedData = {
 //     'Eletkronika': ['RTV i AGD', 'Komputery', 'Mac', 'PC', 'Konsole', 'Telefony i akcesoria', 'Fotografia cyfrowa'],
 //     'Moda': ['Obuwie', 'Odzież', 'Biżuteria', 'Zegarki'],

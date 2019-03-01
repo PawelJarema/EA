@@ -74,8 +74,8 @@ class AuctionListSearch extends Component {
 }
 
 class TopScroller extends Component {
-   componentDidUpdate(props) {
-        if (this.props.location !== props.location) {
+   componentDidUpdate(prevProps, prevState) {
+        if (this.props.location.pathname !== prevProps.location.pathname) {
             window.scrollTo(0,0);
         }
    }

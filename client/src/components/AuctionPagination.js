@@ -33,7 +33,7 @@ class AuctionPagination extends Component {
                         <span><i className={ "material-icons clickable" + (page > 1 ? '' : ' off') } onClick={ () => clickHandler(+this.pageRef.value - 1) }>chevron_left</i></span>
                         <span>
                             strona
-                            <input ref={ (e) => this.pageRef = e } className="no-spinners" type="number" min="1" max={pages} step="1" onChange={ () => { clickHandler(this.pageRef.value) }} value={ page } />
+                            <input ref={ (e) => this.pageRef = e } className="no-spinners" type="number" min="1" max={pages} step="1" onChange={ () => { clickHandler(this.pageRef.value) }} value={ page || 1 } />
                             <span className="word">na</span>
                             <span className="word">
                                 { pages }

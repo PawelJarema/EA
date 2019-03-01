@@ -101,6 +101,7 @@ class InputMultiple extends Component {
 		this.hints  = this.hints.bind(this);
 		this.hintsOff = this.hintsOff.bind(this);
 		this.select = this.select.bind(this);
+		this.select2 = this.select2.bind(this);
 		this.selectAll = this.selectAll.bind(this);
 		this.callback = this.callback.bind(this);
 	}
@@ -141,6 +142,22 @@ class InputMultiple extends Component {
 			name 		= target.name,
 			checked 	= target.checked,
 			allKey 		= this.allKey();
+
+		delete data[allKey];
+
+		if (checked) {
+			data[name] = checked;
+		} else {
+			if (data[name]) delete data[name];
+		}
+
+		this.setState({ data, checkedString: this.makeString(data) }, this.callback);
+	}
+
+	select2(name, checked) {
+		const
+			{ data } = this.state, 
+			allKey = this.allKey();
 
 		delete data[allKey];
 
@@ -199,14 +216,19 @@ class InputMultiple extends Component {
 					{
 						isFocused && isNotEmpty(hints) && (
 							<ul className="hints">
-								<li>
-									<input type="checkbox" name={ this.allKey() } onChange={ this.selectAll } checked={ data[this.allKey()] || false } />
+								<li onClick={ this.selectAll }>
+									<input type="checkbox" name={ this.allKey() } checked={ data[this.allKey()] || false } />
 									<span className="label"> Wszystkie...</span>
 								</li>
 								{
 									hints.map((hint, i) => (
-										<li key={ "check_hint_" + i }>
-											<input type="checkbox" name={ `${property.name}_${hint}` } onChange={ this.select } checked={ data[`${property.name}_${hint}`] || false } />
+										<li 
+											key={ "check_hint_" + i } 
+											onClick={ () => {
+												let name = `${property.name}_${hint}`;
+												this.select2(name, !data[name]);
+											}}>
+											<input type="checkbox" name={ `${property.name}_${hint}` } checked={ data[`${property.name}_${hint}`] || false } />
 											<span className="label"> { hint }</span>
 										</li>
 									))
