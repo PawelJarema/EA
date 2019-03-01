@@ -55,43 +55,43 @@
 	flex: 0 0 auto;
 }
 
-a[class*="Motoryzacja"]:before {
+.category a[class*="Motoryzacja"]:before {
 	content: 'directions_car' !important;
 }
 
-a[class*="Nieruchomości"]:before {
+.category a[class*="Nieruchomości"]:before {
 	content: 'domain' !important;
 }
 
-a[class*="Dom i Ogród"]:before {
+.category a[class*="Dom i Ogród"]:before {
 	content: 'local_florist' !important;
 }
 
-a[class*="Dom i ogród"]:before {
+.category a[class*="Dom i ogród"]:before {
 	content: 'home' !important;
 }
 
-a[class*="Elektronika"]:before {
+.category a[class*="Elektronika"]:before {
 	content: 'sd_storage' !important;
 }
 
-a[class="main-cat Moda"]:before {
+.category a[class="main-cat Moda"]:before {
 	content: 'local_mall' !important;
 }
 
-a[class*="Rolnictwo"]:before {
+.category a[class*="Rolnictwo"]:before {
 	content: 'local_florist' !important;
 }
 
-a[class*="Zwierzęta"]:before {
+.category a[class*="Zwierzęta"]:before {
 	content: 'pets' !important;
 }
 
-a[class*="Dla dzieci"]:before {
+.category a[class*="Dla dzieci"]:before {
 	content: 'child_friendly' !important;
 }
 
-a[class*="Sport i hobby"]:before {
+.category a[class*="Sport i hobby"]:before {
 	content: 'pool' !important;
 }
 
