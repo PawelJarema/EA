@@ -128,6 +128,11 @@ class AuctionDetails extends Component {
     }
 
     buyNow() {
+        if (!this.props.user) {
+            alert('Zaloguj się, aby kupić przedmiot');
+            return;
+        }
+        
         const auction = this.state.auction;
         const reply = window.confirm(`Czy chcesz kupić ${auction.title} za ${auction.price.buy_now_price} zł ?`);
         if (reply) {

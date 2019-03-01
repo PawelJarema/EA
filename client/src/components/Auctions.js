@@ -46,7 +46,10 @@ class FilteredList extends Component {
 
                 if (window.innerWidth < 1296) {
                     if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
-                    this.scrollTimeout = setTimeout(() => this.listRef.scrollIntoView({ block: 'start', behavior: 'smooth' }), 2100);
+                    this.scrollTimeout = setTimeout(() => {
+                        if (this.listRef)
+                            this.listRef.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                    }, 2100);
                 }
             }
         }

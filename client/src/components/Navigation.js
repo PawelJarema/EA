@@ -8,10 +8,12 @@ import Chat from './Chat';
 
 class UserLinks extends Component {
     render() {
-        const { user, open, searchHandler, toggleMenu, callback } = this.props;
-        const className = "user-links" + (open ? ' open' : '');
+        const 
+            { user, open, searchHandler, toggleMenu, callback } = this.props,
+            className = "user-links" + (open ? ' open' : '');
 
-        const Search = <span className="link search-mobile" onClick={() => {searchHandler(); toggleMenu();}}><i className="material-icons">search</i></span>;
+        const 
+            Search = <span className="link search-mobile" onClick={() => {searchHandler(); toggleMenu();}}><i className="material-icons">search</i></span>;
         
         if (user !== false && user !== null) {
             return (
@@ -20,6 +22,7 @@ class UserLinks extends Component {
                     { Search }
                     <Chat socket={ this.props.socket } id={user._id} callback={callback} onClick={toggleMenu} />
                     <span className="link" onClick={toggleMenu}>
+                        { user.firstname && <span className="orange navigation-welcome">{ user.firstname }</span> }
                         <img src="/assets/icons/user.png" />
                         <div className="dropdown">
                             <Link to="/konto/ustawienia" className="account">Konto</Link>

@@ -119,12 +119,18 @@ class App extends Component {
         category_filter_data: {},
         endpoint: process.env.REACT_APP_CHAT_URL, 
         socket: null,
-        chatBox: null
+        chatBox: null,
+        windowWidth: window.innerWidth
     };
 
     this.setQuery = this.setQuery.bind(this);
     this.callback = this.callback.bind(this);
     this.categoryFilterCallback = this.categoryFilterCallback.bind(this);
+    this.onResize = this.onResize.bind(this);
+  }
+
+  onResize(e) {
+    this.setState({ windowWidth: window.innerWidth });
   }
   
   setQuery(search_query) {
@@ -155,6 +161,12 @@ class App extends Component {
       this.props.fetchCategories();
       this.props.fetchUser();
       this.props.fetchMessage();
+
+      window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
   }
 
   callback(chatBox) {
@@ -168,7 +180,8 @@ class App extends Component {
 
     const 
         message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null,
-        w_width = window.innerWidth;
+        windowWidth = this.state.windowWidth,
+        onMobile = windowWidth <= 1024;
 
     if (tech_break && tech_break.techbreak === false) {
         return (
@@ -187,7 +200,7 @@ class App extends Component {
                             <TopScroller />
                             <CookieMessage cookies={cookies} />
                             
-                            <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } /> } categoryData={ category_filter_data } />
+                            <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } windowWidth={ windowWidth } onMobile={ onMobile } /> } />
                             <Route exact path="/aukcje" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/szukaj/:category/:query" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" render={props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
@@ -216,37 +229,41 @@ class App extends Component {
 
                     <div className="Chat">{ chatBox }</div>
 
-                    <section className="advertising">
-                        <div className="four-column">
-                            <div className="column">
-                                <Ads />
-                            </div>
-
-                            {
-                                w_width > 1000 && (
+                    {
+                        true && (
+                            <section className="advertising">
+                                <div className="four-column">
                                     <div className="column">
                                         <Ads />
                                     </div>
-                                )
-                            }
 
-                            {
-                                w_width > 1250 && (
-                                    <div className="column">
-                                        <Ads />
-                                    </div>
-                                )
-                            }
+                                    {
+                                        windowWidth > 1000 && (
+                                            <div className="column">
+                                                <Ads />
+                                            </div>
+                                        )
+                                    }
 
-                            {
-                                w_width > 1500 && (
-                                    <div className="column">
-                                        <Ads />
-                                    </div>
-                                )
-                            }
-                        </div>
-                    </section>
+                                    {
+                                        windowWidth > 1250 && (
+                                            <div className="column">
+                                                <Ads />
+                                            </div>
+                                        )
+                                    }
+
+                                    {
+                                        windowWidth > 1500 && (
+                                            <div className="column">
+                                                <Ads />
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            </section>
+                        )
+                    }
 
                     <footer>
                         <CategoryLinks categoryCallback={ this.categoryFilterCallback } />

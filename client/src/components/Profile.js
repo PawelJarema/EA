@@ -80,8 +80,12 @@ class ProfileLinks extends Component {
             cn.indexOf(' open') === -1 ? a.className += ' open' : a.className = cn.replace(' open', '');
         };
         
-        const { user } = this.props;
-        const { credits } = user.balance || 0;
+        const 
+            { user } = this.props,
+            { credits } = user.balance || 0,
+            userHasFreebies = user.freebies ? Boolean(user.freebies.auctions) : false;
+
+        // console.log(user.freebies);
 
         return (
             <div className="links">
@@ -94,7 +98,7 @@ class ProfileLinks extends Component {
                 <a href="#" className={(active.indexOf('auction') !== -1 || !(user && user.deliveries && user.deliveries.length) ? ' open' : '')} onClick={toggleOpen}>Moje aukcje</a>
                 <div className="dropdown">
                     <Link className={ (active === 'auctiondelivery' ? 'active' : null) } to="/konto/aukcje/dostawa">Dostawa { user && (!user.deliveries || !user.deliveries.length) ? <i className="material-icons orange">warning</i> : ''  }</Link>
-                    <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję<span className="badge" title={`możesz dodać jeszcze ${credits}`}>{ credits }</span></Link>
+                    <Link className={ (active === 'addauction' ? 'active' : null) } to="/konto/aukcje/dodaj">Dodaj aukcję { !userHasFreebies && <span className="badge" title={`możesz dodać jeszcze ${credits}`}>{ credits }</span> }</Link>
                     <Link className={ (active === 'current_auctions' ? 'active' : null) } to="/moje-aukcje">Bieżące</Link>
                     <Link className={ (active === 'ended_auctions' ? 'active' : null) } to='/moje-aukcje/zakonczone'>Zakończone</Link>
                 </div>

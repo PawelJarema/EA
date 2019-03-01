@@ -404,6 +404,7 @@ class CreateUpdateAuction extends Component {
             { user, update, categories, auctions } = this.props,
             { categoryData, propertyData } = this.state,
             userDataComplete = user && user.firstname && user.lastname && user.address,
+            userHasFreebies = user.freebies ? Boolean(user.freebies.auctions) : false,
             deliveries = user.deliveries && user.deliveries.length,
             bids = auctions && auctions.bids && auctions.bids.length > 0,
             is18 = UserHelper.is18(user),

@@ -13,9 +13,7 @@
 .pagination-sort, .pagination-pages {
 	display: block;
 }
-.pagination-pages > span:last-child {
-	margin-left: 30px;
-}
+
 .pagination input, .pagination select {
 	font-size: 14px; color: rgba(0,0,0,.7);
 	height: 26px; 
@@ -34,4 +32,20 @@
 
 .pagination .pagination-pages {
 	white-space: pre-line;
+}
+
+.pagination-pages .clickable {
+	color: var(--link-blue);
+}
+.pagination-pages span:first-child {
+	margin-right: 5px;
+}
+
+.pagination-pages span:last-child {
+	margin-left: 5px;
+}
+
+.clickable.off {
+	opacity: 0;
+	pointer-events: none;
 }

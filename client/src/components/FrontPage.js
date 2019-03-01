@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
 
+import FrontPageCategories from './FrontPageCategories';
 import Auction from './auctions/Auction';
 import Progress from './Progress';
+
+import './FrontPage.css';
 
 class FrontPage extends Component {
 
@@ -17,12 +20,15 @@ class FrontPage extends Component {
     }
 
     render() {
-        const { categories, categoryCallback } = this.props;
+        const { categories, categoryCallback, onMobile, windowWidth } = this.props;
 
         return (
             <div className="FrontPage">
                 {
                     (!this.props.auctions || !this.props.auctions.popular) && <Progress />
+                }
+                {
+                    this.props.auctions && <FrontPageCategories categoryCallback={ categoryCallback } onMobile={ onMobile } windowWidth={ windowWidth } />
                 }
                 {
                     this.props.auctions && this.props.auctions.popular && (

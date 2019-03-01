@@ -263,10 +263,10 @@ schedule.scheduleJob('59 23 * * *', async () => {
 	// not paid TODO
 
 	// not rated
-	await remindToRateEndedAuctions();
+	// await remindToRateEndedAuctions();
 
 	// unread messages
-	await notifyAboutPendingChatMessages();
+	// await notifyAboutPendingChatMessages();
 });
 schedulePendingAuctions();
 console.log('CRON JOB SCHEDULED');

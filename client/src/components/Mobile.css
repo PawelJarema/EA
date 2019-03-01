@@ -157,6 +157,10 @@ nav .user-links .search-mobile {
 		display: flex;
 	}
 
+	.navigation-welcome {
+		display: none;
+	}
+
 	nav {
 		flex-wrap: wrap;
 	}

@@ -4,7 +4,8 @@ import './Pagination.css';
 
 class AuctionPagination extends Component {
     render() {
-        const { page, pages, per_page, sort, clickHandler, sortCallback, perPageCallback } = this.props;
+        const 
+            { page, pages, per_page, sort, clickHandler, sortCallback, perPageCallback } = this.props;
 
         if (pages < 1)
             return null;
@@ -29,14 +30,16 @@ class AuctionPagination extends Component {
                         </span>
                     </span>
                     <span className="pagination-pages">
+                        <span><i className={ "material-icons clickable" + (page > 1 ? '' : ' off') } onClick={ () => clickHandler(+this.pageRef.value - 1) }>chevron_left</i></span>
                         <span>
                             strona
-                            <input type="number" min="1" max={pages} step="1" onChange={ (e) => { clickHandler(e.target.value) }} value={ page } />
+                            <input ref={ (e) => this.pageRef = e } className="no-spinners" type="number" min="1" max={pages} step="1" onChange={ () => { clickHandler(this.pageRef.value) }} value={ page } />
                             <span className="word">na</span>
                             <span className="word">
                                 { pages }
                             </span>
                         </span>
+                        <span><i className={ "material-icons clickable" + (page < pages ? '' : ' off') } onClick={ () => clickHandler(+this.pageRef.value + 1) }>chevron_right</i></span>
                     </span>
                 </div>
             </div>
