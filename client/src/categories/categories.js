@@ -504,127 +504,127 @@ const srodkiDoNaprawKindsProps = [{
 
 const czesciMotocykloweKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Nadwozie', 'Filtry', 'Oświetlenie', 'Silniki', 'Tuning', 'Układ elektryczny, zapłon', 'Układ hamulcowy', 'Układ napędowy', 'Układ paliwowy', 'Układ wydechowy', 'Układ zawieszenia', 'Zabytkowe', 'Pozostałe']
 }];
 
 const odziezMotocyklowaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Kaski', 'Chusty', 'Czapki', 'Gogle', 'Kamizelki', 'Kombinezony', 'Kominiarki', 'Koszulki i bluzy', 'Kurtki', 'Obuwie', 'Ochraniacze', 'Pasy nerkowe', 'Rękawice', 'Skarpety', 'Slidery', 'Spodnie', 'Konserwacja odzieży', 'Pozostałe']
 }];
 
 const akcesoriaMotocykloweKindsProps = [{
     name: 'Kategoria',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Alarmy', 'Bagażniki', 'Blokady', 'Crash pady', 'Gmole', 'Gniazda zapalniczki', 'Interkomy', 'Kufry', 'Lokalizatory i nawigacje', 'Oparcia', 'Osłony chłodnicy', 'Plecaki', 'Pokrowce', 'Ramki tablic', 'Sakwy i torby motocyklowe', '﻿Saszetki', 'Siatki bagażowe', 'Stelaże', 'Stojaki, podnośniki', 'Torby na bak', 'Uchwyty', 'Pozostałe']
 }];
 
 const czesciDoQuadowKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Elementy nadwozia', 'Filtry', 'Koła, felgi', 'Oświetlenie', 'Silniki i osprzęt', 'Układ elektryczny, zapłon', 'Układ hamulcowy', 'Układ napędowy', 'Układ paliwowy', 'Układ wydechowy', 'Układ zawieszenia', 'Pozostałe']
 }];
 
 const akcesoriaDoQuadowProps = [{
     name: 'Kategoria',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Kufry', 'Osłony', 'Pługi', 'Wyciągarki', 'Pozostałe']
 }];
 
 const meskaBieliznaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Kalesony', 'Majtki', 'Piżamy', 'Podkoszulki', 'Skarpetki', 'Stroje kąpielowe', 'Szlafroki', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const meskaOdziezKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Bluzy', 'Dresy', 'Garnitury i Marynarki', 'Kamizelki', 'Koszule', 'Koszulki', 'Kurtki i płaszcze', 'Spodenki', 'Spodnie', 'Swetry', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const meskieObuwieKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Domowe', 'Espadryle', 'Glany i trapery', 'Kalosze', 'Klapki', 'Kowbojki', 'Mokasyny', 'Półbuty', 'Sandały', 'Sportowe', 'Sztyblety', 'Śniegowce', 'Tenisówki', 'Trekkingowe', 'Akcesoria obuwnicze', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const meskaGalanteriaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Breloki', 'Chusty i apaszki', 'Czapki/Nakrycia głowy', 'Etui i pokrowce', 'Krawaty i muszki', 'Nesesery i aktówki', 'Okulary przeciwsłoneczne', 'Parasole', 'Paski', 'Plecaki', 'Portfele', 'Poszetki', 'Rękawiczki', 'Saszetki i nerki', 'Szaliki i szale', 'Szelki', 'Torby i torebki', 'Walizki', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const meskaBizuteriaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Akcesoria do biżuterii', 'Akcesoria do zegarków', 'Biżuteria męska', 'Dewocjonalia', 'Ozdoby do włosów', 'Piercing', 'Tatuaże zmywalne', 'Zegarki', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const meskiePrzebraniaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Akcesoria i gadżety', 'Kostiumy męskie', 'Maski', 'Peruki', 'Pozostałe']
 }];
 
 const meskiSlubKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Dekoracje ślubne', 'Dodatki męskie', 'Galanteria papiernicza', 'Pozostałe']
 }];
 
 const damskaBieliznaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Bielizna wyszczuplająca', 'Biustonosze', 'Body i Gorsety', 'Halki', 'Kombinezony', 'Komplety', 'Koszulki nocne i Piżamy', 'Podkoszulki', 'Pończochy i pasy do pończoch', 'Rajstopy', 'Skarpetki i kolanówki', 'Stroje kąpielowe', 'Szlafroki', 'Topy', 'Wszystkie produkty']
 }];
 
 const damskaOdziezKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Bluzki', 'Bluzy', 'Body', 'Bolerka', 'Dresy', 'Getry', 'Kamizelki', 'Kombinezony', 'Komplety', 'Koszule', 'Legginsy', 'Marynarki i żakiety', 'Okrycia wierzchnie', 'Spodnie', 'Spódnice i spódniczki', 'Sukienki', 'Suknie wieczorowe', 'Swetry', 'T-shirty', 'Topy', 'Tuniki', 'Wszystkie produkty']
 }];
 
 const damskieObuwieKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Akcesoria obuwnicze', 'Balerinki', 'Botki', 'Creepersy', 'Czółenka', 'Domowe', 'Espadryle', 'Glany', 'Kalosze', 'Klapki', 'Kozaki', 'Mokasyny', 'Półbuty', 'Sandały', 'Sportowe', 'Śniegowce', 'Tenisówki', 'Trekkingowe', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const damskaGalanteriaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Breloki', 'Chusty i apaszki', 'Etui i pokrowce', 'Krawaty', 'Muszki', 'Nakrycia głowy', 'Nesesery i aktówki', 'Okulary przeciwsłoneczne', 'Parasole', 'Paski', 'Plecaki', 'Portfele', 'Poszetki', 'Rękawiczki', 'Saszetki i nerki', 'Szaliki i szale', 'Szelki', 'Torby', 'Torebki', 'Walizki', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const damskaBizuteriaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Akcesoria do biżuterii', 'Akcesoria do zegarków', 'Biżuteria damska', 'Biżuteria ślubna', 'Dewocjonalia', 'Ozdoby do włosów', 'Piercing', 'Tatuaże zmywalne', 'Zegarki', 'Pozostałe', 'Wszystkie produkty']
 }];
 
 const ciazaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Biustonosze', 'Bluzki', 'Koszule nocne', 'Legginsy', 'Rajstopy', 'Spodnie', 'Sukienki', 'Pozostałe']
 }];
 
 const damskiSlubKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Dekoracje ślubne', 'Dodatki damskie', 'Galanteria papiernicza', 'Obuwie ślubne', 'Suknie ślubne', 'Pozostałe']
 }];
 
 const damskiePrzebraniaKindsProps = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular',
     values: ['Kostiumy damskie', 'Maski', 'Peruki', 'Pozostałe']
 }];
 
 const balblaNazwa = [{
     name: 'Rodzaj',
-    kind: 'Singular',
+    type: 'Singular', // !
     values: []
 }];
 
