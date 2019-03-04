@@ -654,8 +654,8 @@ const categoryTree = {
     'Moda': {
         'Męska': {
             'Odzież': [...meskaOdziezKindsProps, ...priceAndStateProps, ...clothesSizeLettersProps],
-            'Obuwie': [...meskieObuwieKindsProps, ...adultShoeSizeProps],
-            'Bielizna': [...meskaBieliznaKindsProps, ...clothesSizeLettersProps],
+            'Obuwie': [...meskieObuwieKindsProps, ...priceAndStateProps, ...adultShoeSizeProps],
+            'Bielizna': [...meskaBieliznaKindsProps, ...priceAndStateProps, ...clothesSizeLettersProps],
             'Galanteria i Dodatki': [...meskaGalanteriaKindsProps, ...priceAndStateProps],
             'Biżuteria i Zegarki': [...meskaBizuteriaKindsProps, ...priceAndStateProps],
             'Przebrania, kostiumy': [...meskiePrzebraniaKindsProps, ...priceAndStateProps],
