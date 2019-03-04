@@ -222,11 +222,12 @@ class Seller extends Component {
 
 	render() {
 		const 
-			user 	= this.props.other_user,
+			user 	= this.props.stub || this.props.other_user,
 			auction = this.props.auction,
 			withUs 	= user ? SinceHelper(new Date().getTime() - user.joindate) : null,
 			showAllData = this.props.showAllData;
 
+		console.log('Seller', user );
 		// TODO wystaw opinie tylko jeśli user znajduje się na liście raters
 		// <button className="rate standard-button">Wystaw opinie</button> 
 		return (
@@ -272,9 +273,8 @@ class Seller extends Component {
 								</div>
 								<div className="column actions">
 									{
-										auction._user !== this.props.user._id && (<div>
+										!this.props.stub && auction._user !== this.props.user._id && (<div>
 											<button className="message standard-button" onClick={this.openModal}><i className="material-icons">mail_outline</i> Zapytaj o przedmiot</button>
-											
 										</div>)
 									}
 								</div>

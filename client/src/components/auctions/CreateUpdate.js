@@ -19,6 +19,7 @@ import ImageEditor from './ImageEditor';
 import { UserHelper } from '../../helpers/UserHelper';
 import { isSet, isNotEmpty, concatUnique } from './functions';
 
+import AuctionPreview from './AuctionPreview';
 
 class CreateUpdateAuction extends Component {
    constructor(props) {
@@ -29,7 +30,8 @@ class CreateUpdateAuction extends Component {
         subcategories: [], images: [], richText: emptyValue, description: emptyValue.toString('html'), message: [],
         categoryData: null, propertyData: null,
         editPhotoIndex: null,
-        buyNowOption: false
+        buyNowOption: false,
+        preview: null
        };
        
        this.addAttribute = this.addAttribute.bind(this);
@@ -43,6 +45,7 @@ class CreateUpdateAuction extends Component {
        this.saveEditedPhoto = this.saveEditedPhoto.bind(this);
        this.editPhoto = this.editPhoto.bind(this);
        this.onSortEnd = this.onSortEnd.bind(this);
+       this.preview = this.preview.bind(this);
    }
     
    componentWillMount() {
@@ -316,6 +319,16 @@ class CreateUpdateAuction extends Component {
         return message.length === 0;
     }
     
+    preview() {
+        const 
+            photos = this.state.images.map(item => item.preview),
+            auction = makeAuction(new FormData(this.formRef));
+
+        this.setState({ preview: { auction, photos } });
+
+        window.scrollTo(0, 0);
+    }
+
     submit(event) {
         event.preventDefault();
 
@@ -402,7 +415,7 @@ class CreateUpdateAuction extends Component {
    render() {
        const 
             { user, update, categories, auctions } = this.props,
-            { categoryData, propertyData } = this.state,
+            { categoryData, propertyData, preview } = this.state,
             userDataComplete = user && user.firstname && user.lastname && user.address,
             userHasFreebies = user.freebies ? Boolean(user.freebies.auctions) : false,
             deliveries = user.deliveries && user.deliveries.length,
@@ -435,160 +448,202 @@ class CreateUpdateAuction extends Component {
         // </p>
 
        return (
-            <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction')}>
-                <ProfileLinks active="addauction" />
-                <div>
-                    {
-                        !is18 && <p className="warn">Osoba poniżej 18 lat nie może wystawiać aukcji</p>
-                    }
-                    {
-                        !isVerified && <p className="warn">Aby dodać ogłoszenie, zweryfikuj adres email.</p>
-                    }
-                    {
-                        blockAllChanges && <p className="warn">Nie można edytować aukcji. Ktoś już licytuje.</p>
-                    }
-                    {
-                        !userDataComplete && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</span></p>
-                    }
-                    {
-                        !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
-                    }
-                <form ref={ e => this.formRef = e } className={"user-settings" + (!is18 || !isVerified || !userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
-                    <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
-        
-                    <fieldset>
-                        <legend><i className="material-icons">title</i>Tytuł</legend>
-                        <p>
-                            <label htmlFor="title" className="required">Tytuł aukcji</label>
-                            <input name="title" type="string" onInput={this.validate} />
-                            <span className="validation-message">{ this.state.message[0] }</span>
-                        </p>
-                    </fieldset>
-       
-                    <fieldset>
-                        <legend><i className="material-icons">category</i>Kategorie i Cechy</legend>
-                        <CategoryPicker categories={categories} update={ update } categoryData={ categoryData } propertyData={ propertyData } />
-                    </fieldset>
-       
-                    <fieldset>
-                        <legend><span className="lettr-icon">PLN</span>Cena</legend>
-                        <p>
-                            <span className="label add-horizontal-margin">
-                                <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: false }) } checked={ !this.state.buyNowOption } />
-                                <span className="label"> Czysta licytacja</span>
-                        
-                                <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: true }) } checked={ this.state.buyNowOption } />
-                                <span className="label"> Z opcją "Kup Teraz"</span>
-                            </span>
-                        </p>
-                        <p>
-                            <label htmlFor="start_price" className="required">Cena wywoławcza</label>
-                            <span className="price-input-wrapper"><input name="start_price" type="number" step="0.01" onInput={this.validate} /></span>
-                            <span className="validation-message">{ this.state.message[1] }</span>
-                        </p>
+            <div>
+                {
+                    preview && (
+                        <div className="AuctionPreview">
+                            <h1><i className="material-icons clickable" onClick={ () => this.setState({ preview: null }) }>close</i> Podgląd ogłoszenia: </h1> 
+                            <br />
+                            <AuctionPreview user={ user } auction={ preview && preview.auction } photos={ preview && preview.photos } />
+                        </div>
+                    )
+                }
+                <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction') + (preview ? ' display-none' : '')}>
+                    <ProfileLinks active="addauction" />
+                    <div>
                         {
-                            this.state.buyNowOption && 
+                            !is18 && <p className="warn">Osoba poniżej 18 lat nie może wystawiać aukcji</p>
+                        }
+                        {
+                            !isVerified && <p className="warn">Aby dodać ogłoszenie, zweryfikuj adres email.</p>
+                        }
+                        {
+                            blockAllChanges && <p className="warn">Nie można edytować aukcji. Ktoś już licytuje.</p>
+                        }
+                        {
+                            !userDataComplete && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, uzupełnij dane w "<Link to="/konto/ustawienia">Ustawieniach konta</Link>" !</span></p>
+                        }
+                        {
+                            !deliveries && <p className="warn"><i className="material-icons">warning</i> <span className="block">Zanim dodasz aukcję, wprowadź metody dostawy towaru w zakładce "<Link to="/konto/aukcje/dostawa">Dostawa</Link>" !</span></p>
+                        }
+                    <form ref={ e => this.formRef = e } className={"user-settings" + (!is18 || !isVerified || !userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
+                        <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
+            
+                        <fieldset>
+                            <legend><i className="material-icons">title</i>Tytuł</legend>
+                            <p>
+                                <label htmlFor="title" className="required">Tytuł aukcji</label>
+                                <input name="title" type="string" onInput={this.validate} />
+                                <span className="validation-message">{ this.state.message[0] }</span>
+                            </p>
+                        </fieldset>
+           
+                        <fieldset>
+                            <legend><i className="material-icons">category</i>Kategorie i Cechy</legend>
+                            <CategoryPicker categories={categories} update={ update } categoryData={ categoryData } propertyData={ propertyData } />
+                        </fieldset>
+           
+                        <fieldset>
+                            <legend><span className="lettr-icon">PLN</span>Cena</legend>
+                            <p>
+                                <span className="label add-horizontal-margin">
+                                    <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: false }) } checked={ !this.state.buyNowOption } />
+                                    <span className="label"> Czysta licytacja</span>
+                            
+                                    <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: true }) } checked={ this.state.buyNowOption } />
+                                    <span className="label"> Z opcją "Kup Teraz"</span>
+                                </span>
+                            </p>
+                            <p>
+                                <label htmlFor="start_price" className="required">Cena wywoławcza</label>
+                                <span className="price-input-wrapper"><input name="start_price" type="number" step="0.01" onInput={this.validate} /></span>
+                                <span className="validation-message">{ this.state.message[1] }</span>
+                            </p>
+                            {
+                                this.state.buyNowOption && 
+                                (
+                                    <p>
+                                        <label htmlFor="buy_now_price">Cena "Kup Teraz" <span style={{ opacity: 0.3 }}>{ (blockBuyNowPriceChange ? '- nie można zmienić ceny, ponieważ ktoś już kupił przedmiot' : null) }</span></label>
+                                        <span className="price-input-wrapper"><input name="buy_now_price" type="number" step="0.01" className={ (blockBuyNowPriceChange ? 'disabled' : '') } /></span>
+                                    </p>
+                                )
+                            }
+                            <p>
+                                <label htmlFor="min_price">Cena minimalna</label>
+                                <span className="price-input-wrapper"><input name="min_price" type="number" step="0.01" /></span>
+                            </p>
+                            <p className="checkbox">
+                                <span>
+                                    <input name="hide_min_price" type="checkbox" />
+                                    <span className="checkbox-value"></span>
+                                    <span className="label">Ukryj cenę minimalną</span>
+                                </span>
+                            </p>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i className="material-icons">access_time</i>Czas trwania</legend>
+                            <p>
+                                <label htmlFor="duration" className="required">Ilość dni</label>
+                                <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
+                                <span className="validation-message">{ this.state.message[2] }</span>
+                            </p>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i className="material-icons">exposure_plus_1</i>Ilość sztuk</legend>
+                            <p>
+                                <label htmlFor="quantity" className="required">Ilość sztuk</label>
+                                <input name="quantity" type="number" min="1" onInput={this.validate} />
+                                <span className="validation-message">{ this.state.message[3] }</span>
+                            </p>
+                        </fieldset>
+                        {
+                            isSet(this.state.editPhotoIndex)
+                            ? 
                             (
-                                <p>
-                                    <label htmlFor="buy_now_price">Cena "Kup Teraz" <span style={{ opacity: 0.3 }}>{ (blockBuyNowPriceChange ? '- nie można zmienić ceny, ponieważ ktoś już kupił przedmiot' : null) }</span></label>
-                                    <span className="price-input-wrapper"><input name="buy_now_price" type="number" step="0.01" className={ (blockBuyNowPriceChange ? 'disabled' : '') } /></span>
-                                </p>
+                                <ImageEditor src={ this.state.images[this.state.editPhotoIndex].preview } callback={ this.saveEditedPhoto } />
+                            )
+                            :
+                            (
+                                <fieldset>
+                                    <legend><i className="material-icons">photo</i>Zdjęcia</legend>
+                                    <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie.</label></p>
+                                    <Dropzone className="drag-and-drop-images" 
+                                        onDrop={ this.onDrop }
+                                        onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
+                                        accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
+                                        multiple={ true }
+                                        onDropRejected={ this.onDropRejected }
+                                    >
+                                        <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } editPhoto={ this.editPhoto } /> 
+                                    </Dropzone>
+                                </fieldset>
                             )
                         }
-                        <p>
-                            <label htmlFor="min_price">Cena minimalna</label>
-                            <span className="price-input-wrapper"><input name="min_price" type="number" step="0.01" /></span>
-                        </p>
-                        <p className="checkbox">
+
+                        <fieldset>
+                            <legend><i className="material-icons">description</i>Opis</legend>
+                            <p>
+                                <label htmlFor="shortdescription" className="required">Opis skrócony</label>
+                                <input name="shortdescription" type="text" onInput={this.validate}/>
+                                <span className="validation-message">{ this.state.message[4] }</span>
+                            </p>
+                            <RichTextEditor
+                                className="rich-text-editor"
+                                value={ this.state.richText }
+                                onChange={ this.handleRichText }
+                                placeholder="Opis szczegółowy"
+                            />
+                            <input name="description" type="hidden" value={this.state.description} />
+                        </fieldset>
+
+                        <fieldset>
+                            <legend><i className="material-icons">local_shipping</i>Dostawa</legend>
+                            <p><label className="required" style={{ marginBottom: 4 }}>Wybierz chociaż 1 sposób dostawy towaru</label></p>
+                            <p className="auction-deliveries">
+                                {
+                                    concatUnique(user.deliveries, (auctions ? auctions.deliveries : null)).map((delivery, i) => (
+                                        <span>
+                                            <input type="checkbox" name={ "delivery_" + `${delivery.name}_${delivery.price}` } />
+                                            <span className="checkbox-value"></span>
+                                            <span className="label">{delivery.name} <span className="d-price">{delivery.price} zł</span></span>
+                                        </span>
+                                    ))
+                                }
+                            </p>
+                            <br />
                             <span>
-                                <input name="hide_min_price" type="checkbox" />
-                                <span className="checkbox-value"></span>
-                                <span className="label">Ukryj cenę minimalną</span>
+                                <span className="standard-button" onClick={ this.preview }>Podgląd ogłoszenia</span>
+                                <button type="submit" onClick={this.submit}><i className="material-icons">save</i> Zapisz</button>
                             </span>
-                        </p>
-                    </fieldset>
+                        </fieldset>
+                        <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />   
+                    </form>
 
-                    <fieldset>
-                        <legend><i className="material-icons">access_time</i>Czas trwania</legend>
-                        <p>
-                            <label htmlFor="duration" className="required">Ilość dni</label>
-                            <input name="duration" type="number" max="30" min="1" onInput={this.validate} />
-                            <span className="validation-message">{ this.state.message[2] }</span>
-                        </p>
-                    </fieldset>
-
-                    <fieldset>
-                        <legend><i className="material-icons">exposure_plus_1</i>Ilość sztuk</legend>
-                        <p>
-                            <label htmlFor="quantity" className="required">Ilość sztuk</label>
-                            <input name="quantity" type="number" min="1" onInput={this.validate} />
-                            <span className="validation-message">{ this.state.message[3] }</span>
-                        </p>
-                    </fieldset>
-                    {
-                        isSet(this.state.editPhotoIndex)
-                        ? 
-                        (
-                            <ImageEditor src={ this.state.images[this.state.editPhotoIndex].preview } callback={ this.saveEditedPhoto } />
-                        )
-                        :
-                        (
-                            <fieldset>
-                                <legend><i className="material-icons">photo</i>Zdjęcia</legend>
-                                <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie.</label></p>
-                                <Dropzone className="drag-and-drop-images" 
-                                    onDrop={ this.onDrop }
-                                    onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
-                                    accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
-                                    multiple={ true }
-                                    onDropRejected={ this.onDropRejected }
-                                >
-                                    <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } editPhoto={ this.editPhoto } /> 
-                                </Dropzone>
-                            </fieldset>
-                        )
-                    }
-
-                    <fieldset>
-                        <legend><i className="material-icons">description</i>Opis</legend>
-                        <p>
-                            <label htmlFor="shortdescription" className="required">Opis skrócony</label>
-                            <input name="shortdescription" type="text" onInput={this.validate}/>
-                            <span className="validation-message">{ this.state.message[4] }</span>
-                        </p>
-                        <RichTextEditor
-                            className="rich-text-editor"
-                            value={ this.state.richText }
-                            onChange={ this.handleRichText }
-                            placeholder="Opis szczegółowy"
-                        />
-                        <input name="description" type="hidden" value={this.state.description} />
-                    </fieldset>
-
-                    <fieldset>
-                        <legend><i className="material-icons">local_shipping</i>Dostawa</legend>
-                        <p><label className="required" style={{ marginBottom: 4 }}>Wybierz chociaż 1 sposób dostawy towaru</label></p>
-                        <p className="auction-deliveries">
-                            {
-                                concatUnique(user.deliveries, (auctions ? auctions.deliveries : null)).map((delivery, i) => (
-                                    <span>
-                                        <input type="checkbox" name={ "delivery_" + `${delivery.name}_${delivery.price}` } />
-                                        <span className="checkbox-value"></span>
-                                        <span className="label">{delivery.name} <span className="d-price">{delivery.price} zł</span></span>
-                                    </span>
-                                ))
-                            }
-                        </p>
-                        <br />
-                        <button type="submit" onClick={this.submit}>Zapisz</button>
-                    </fieldset>
-                    <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />   
-                </form>
-
+                    </div>
                 </div>
             </div>
        );
    }
+}
+
+function makeAuction(formData) {
+    const 
+        data = [...formData],
+        auction = {};
+        auction.deliveries = [];
+        auction.properties = [];
+        auction.int_properties = [];
+
+    for (let i = 0; i < data.length; i++) {
+        const 
+            keyValuePair = data[i],
+            key = String(keyValuePair[0]),
+            value = String(keyValuePair[1]);
+
+        if (key.startsWith('delivery_')) {
+            const split = key.split('_');
+            auction.deliveries.push({ name: split[1], price: split[2] })
+        } if (key.startsWith('property_')) {
+            const split = key.split('_');
+            auction.properties.push({ name: split[1].replace('%', ''), value });
+        } else {
+            auction[key] = value;
+        }
+    }
+
+    return auction;
 }
 
 function deliveryInAuction(delivery, auction) {

@@ -7,6 +7,8 @@ const attributeSchema = require('./Attribute');
 const intAttributeSchema = require('./AttributeInt');
 const bidSchema = require('./Bid');
 
+const sevenDays = () => Date.now() + 7 * 24 * 60 * 60 * 1000;
+
 const auctionSchema = new Schema({
     _user: ObjectId,
     title: String,
@@ -33,6 +35,11 @@ const auctionSchema = new Schema({
         subsub: String
     },
     bids: [bidSchema],
+    premium: { 
+        isPremium: { type: Boolean, default: false },
+        unlimited: { type: Boolean, default: false },
+        endDate: { type: Date, default: sevenDays }
+    },
     verified: Boolean,
     ended: Boolean,
     prepaid: Boolean,

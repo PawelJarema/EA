@@ -10,6 +10,11 @@ button {
     background: white;
 }
 
+button i {
+    opacity: 0.3;
+    user-select: none;
+}
+
 :root {
     --orange: rgb(252,133,10);
     --hot-orange: rgb(249,65,18);
@@ -31,7 +36,9 @@ button {
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Roboto', sans-serif;
 }
-
+* {
+    font-family: 'Roboto', sans-serif;
+}
 body {
     padding-top: calc(var(--nav-h) + 20px);
     font-family: sans-serif;
@@ -39,7 +46,7 @@ body {
     background: #fcfcfc;
 
     
-    font-family: 'Roboto Slab', serif;
+   
 }
 
 a {
@@ -62,7 +69,17 @@ select {
     background: white;
 }
 
-button.standard-button, .link-button {
+span.standard-button {
+    display: inline-block;
+    line-height: 38px;
+    font-size: 11px; font-weight: 400;
+}
+span.standard-button:hover {
+    background: #eee; border: 1px solid #fff;
+}
+button.standard-button, 
+span.standard-button,
+.link-button {
     margin: 0 5px;
     min-height: 37px;
     padding: 0 40px;
@@ -71,17 +88,21 @@ button.standard-button, .link-button {
     border: 1px solid #ccc;
     vertical-align: middle;
     background: white;
+    user-select: none;
 }
 
-button.standard-button:hover, .link-button:hover {
+button.standard-button:hover, 
+.link-button:hover {
     background: var(--orange);
     border: 1px solid white;
     color: white;
 }
-button.standard-button:hover i, .link-button:hover i {
+button.standard-button:hover i, 
+.link-button:hover i {
     color: white;
 }
-button.standard-button i, .link-button i {
+button.standard-button i, 
+.link-button i {
     position: relative;
     top: -1.5px;
     font-size: 16px;
@@ -736,4 +757,8 @@ margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+
+.display-none {
+    display: none !important;
 }

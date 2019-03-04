@@ -532,7 +532,150 @@ const akcesoriaDoQuadowProps = [{
     values: ['Kufry', 'Osłony', 'Pługi', 'Wyciągarki', 'Pozostałe']
 }];
 
+const meskaBieliznaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Kalesony', 'Majtki', 'Piżamy', 'Podkoszulki', 'Skarpetki', 'Stroje kąpielowe', 'Szlafroki', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const meskaOdziezKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Bluzy', 'Dresy', 'Garnitury i Marynarki', 'Kamizelki', 'Koszule', 'Koszulki', 'Kurtki i płaszcze', 'Spodenki', 'Spodnie', 'Swetry', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const meskieObuwieKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Domowe', 'Espadryle', 'Glany i trapery', 'Kalosze', 'Klapki', 'Kowbojki', 'Mokasyny', 'Półbuty', 'Sandały', 'Sportowe', 'Sztyblety', 'Śniegowce', 'Tenisówki', 'Trekkingowe', 'Akcesoria obuwnicze', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const meskaGalanteriaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Breloki', 'Chusty i apaszki', 'Czapki/Nakrycia głowy', 'Etui i pokrowce', 'Krawaty i muszki', 'Nesesery i aktówki', 'Okulary przeciwsłoneczne', 'Parasole', 'Paski', 'Plecaki', 'Portfele', 'Poszetki', 'Rękawiczki', 'Saszetki i nerki', 'Szaliki i szale', 'Szelki', 'Torby i torebki', 'Walizki', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const meskaBizuteriaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Akcesoria do biżuterii', 'Akcesoria do zegarków', 'Biżuteria męska', 'Dewocjonalia', 'Ozdoby do włosów', 'Piercing', 'Tatuaże zmywalne', 'Zegarki', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const meskiePrzebraniaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Akcesoria i gadżety', 'Kostiumy męskie', 'Maski', 'Peruki', 'Pozostałe']
+}];
+
+const meskiSlubKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Dekoracje ślubne', 'Dodatki męskie', 'Galanteria papiernicza', 'Pozostałe']
+}];
+
+const damskaBieliznaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Bielizna wyszczuplająca', 'Biustonosze', 'Body i Gorsety', 'Halki', 'Kombinezony', 'Komplety', 'Koszulki nocne i Piżamy', 'Podkoszulki', 'Pończochy i pasy do pończoch', 'Rajstopy', 'Skarpetki i kolanówki', 'Stroje kąpielowe', 'Szlafroki', 'Topy', 'Wszystkie produkty']
+}];
+
+const damskaOdziezKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Bluzki', 'Bluzy', 'Body', 'Bolerka', 'Dresy', 'Getry', 'Kamizelki', 'Kombinezony', 'Komplety', 'Koszule', 'Legginsy', 'Marynarki i żakiety', 'Okrycia wierzchnie', 'Spodnie', 'Spódnice i spódniczki', 'Sukienki', 'Suknie wieczorowe', 'Swetry', 'T-shirty', 'Topy', 'Tuniki', 'Wszystkie produkty']
+}];
+
+const damskieObuwieKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Akcesoria obuwnicze', 'Balerinki', 'Botki', 'Creepersy', 'Czółenka', 'Domowe', 'Espadryle', 'Glany', 'Kalosze', 'Klapki', 'Kozaki', 'Mokasyny', 'Półbuty', 'Sandały', 'Sportowe', 'Śniegowce', 'Tenisówki', 'Trekkingowe', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const damskaGalanteriaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Breloki', 'Chusty i apaszki', 'Etui i pokrowce', 'Krawaty', 'Muszki', 'Nakrycia głowy', 'Nesesery i aktówki', 'Okulary przeciwsłoneczne', 'Parasole', 'Paski', 'Plecaki', 'Portfele', 'Poszetki', 'Rękawiczki', 'Saszetki i nerki', 'Szaliki i szale', 'Szelki', 'Torby', 'Torebki', 'Walizki', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const damskaBizuteriaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Akcesoria do biżuterii', 'Akcesoria do zegarków', 'Biżuteria damska', 'Biżuteria ślubna', 'Dewocjonalia', 'Ozdoby do włosów', 'Piercing', 'Tatuaże zmywalne', 'Zegarki', 'Pozostałe', 'Wszystkie produkty']
+}];
+
+const ciazaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Biustonosze', 'Bluzki', 'Koszule nocne', 'Legginsy', 'Rajstopy', 'Spodnie', 'Sukienki', 'Pozostałe']
+}];
+
+const damskiSlubKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Dekoracje ślubne', 'Dodatki damskie', 'Galanteria papiernicza', 'Obuwie ślubne', 'Suknie ślubne', 'Pozostałe']
+}];
+
+const damskiePrzebraniaKindsProps = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: ['Kostiumy damskie', 'Maski', 'Peruki', 'Pozostałe']
+}];
+
+const balblaNazwa = [{
+    name: 'Rodzaj',
+    kind: 'Singular',
+    values: []
+}];
+
 const categoryTree = {
+    // 'Moda': {
+    //     'Ubrania': [...clothesKindProps, ...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps ],
+
+    //     'Buty': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
+
+    //     'Bielizna': [...priceAndStateProps, ...genderProps],
+
+    //     'Odzież ciążowa': [...priceAndStateProps, ...clothesSizeLettersProps],
+
+    //     'Dodatki': [...priceAndStateProps, ...genderWithUnisexProps],
+
+    //     'Biżuteria': [...priceAndStateProps, ...genderProps],
+
+    //     'Torebki': priceAndStateProps,
+
+    //     'Zegarki': [...priceAndStateProps, ...genderWithUnisexProps],
+
+    //     'Kosmetyki i perfumy': [...priceAndStateProps, ...genderWithUnisexProps],
+
+    //     'Pozostała moda': priceAndStateProps
+    // },
+
+    'Moda': {
+        'Męska': {
+            'Odzież': [...meskaOdziezKindsProps, ...priceAndStateProps, ...clothesSizeLettersProps],
+            'Obuwie': [...meskieObuwieKindsProps, ...adultShoeSizeProps],
+            'Bielizna': [...meskaBieliznaKindsProps, ...clothesSizeLettersProps],
+            'Galanteria i Dodatki': [...meskaGalanteriaKindsProps, ...priceAndStateProps],
+            'Biżuteria i Zegarki': [...meskaBizuteriaKindsProps, ...priceAndStateProps],
+            'Przebrania, kostiumy': [...meskiePrzebraniaKindsProps, ...priceAndStateProps],
+            'Ślub i wesele': [...meskiSlubKindsProps, ...priceAndStateProps]
+        },
+
+        'Damska': {
+            'Odzież': [...damskaOdziezKindsProps, ...clothesKindProps, ...priceAndStateProps, ...clothesSizeLettersProps],
+            'Obuwie': [...damskieObuwieKindsProps, ...priceAndStateProps, ...adultShoeSizeProps],
+            'Bielizna': [...damskaBieliznaKindsProps, ...damskaBieliznaKindsProps, ...priceAndStateProps, ...clothesSizeLettersProps],
+            'Galanteria i Dodatki': [...damskaGalanteriaKindsProps, ...priceAndStateProps],
+            'Biżuteria i Zegarki': [...damskaBizuteriaKindsProps, ...priceAndStateProps],
+            'Ciąża i macierzyństwo': [...ciazaKindsProps, ...priceAndStateProps, ...clothesSizeLettersProps],
+            'Ślub i wesele': [...damskiSlubKindsProps, ...priceAndStateProps],
+            'Przebrania, kostiumy': [...damskiePrzebraniaKindsProps, ...priceAndStateProps],
+        },
+
+        'Dziecięca': [...clothesKindProps, ...priceAndStateProps, ...childClothesSizeProps]
+    },
+
     'Motoryzacja': {
         'Części samochodowe': {
             'Części karoserii': carPartAggregatedProps,
@@ -704,28 +847,6 @@ const categoryTree = {
         'Sprzęt audio': priceAndStateProps,
 
         'Pozostała elektronika': priceAndStateProps
-    },
-
-    'Moda': {
-        'Ubrania': [...clothesKindProps, ...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps ],
-
-        'Buty': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
-
-        'Bielizna': [...priceAndStateProps, ...genderProps],
-
-        'Odzież ciążowa': [...priceAndStateProps, ...clothesSizeLettersProps],
-
-        'Dodatki': [...priceAndStateProps, ...genderWithUnisexProps],
-
-        'Biżuteria': [...priceAndStateProps, ...genderProps],
-
-        'Torebki': priceAndStateProps,
-
-        'Zegarki': [...priceAndStateProps, ...genderWithUnisexProps],
-
-        'Kosmetyki i perfumy': [...priceAndStateProps, ...genderWithUnisexProps],
-
-        'Pozostała moda': priceAndStateProps
     },
 
     'Rolnictwo': {

@@ -64,6 +64,7 @@
 	z-index: 5;
 }
 
+.input-hints,
 .input .hints li {
 	font-size: 13px;
 	word-break: normal;
