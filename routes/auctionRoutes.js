@@ -9,11 +9,13 @@ require('../models/Auction');
 require('../models/Category');
 require('../models/Rate');
 require('../models/Like');
+require('../models/Views');
 const User                  = mongoose.model('user');
 const Auction               = mongoose.model('auction');
 const Category              = mongoose.model('category');
 const Rate                  = mongoose.model('rate');
 const Like                  = mongoose.model('like');
+const Views                 = mongoose.model('views');
 
 const Imagemin              = require('imagemin');
 const imageminPngquant      = require('imagemin-pngquant');
@@ -413,11 +415,9 @@ module.exports = app => {
     app.get('/auction/get_front_page_auctions', async (req, res) => {
         const user_id = currentUserId(req);
 
-        const popular = await Auction.find(
-            { ended: { $ne: true } }, 
-            { title: 1, shortdescription: 1, price: 1, likes: 1 }, //photos: { $slice: 1 },
-            { limit: 8, sort: { 'premium.isPremium': -1 } }
-        );
+        const popular = await rotatePremium();
+
+
         const newest = await Auction.find(
             { ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, date: 1 }, // photos: { $slice: 1 },
@@ -956,6 +956,30 @@ async function checkIfLiked(auctions, req) {
             return auction;
         });
     }
+}
+
+function sortByViews(a, b) {
+    if (a.views > b.views) return 1;
+    if (a.views < b.views) return -1;
+    return 0;
+} 
+
+async function rotatePremium() {
+    let 
+        premiums = await Auction.find(
+            { ended: { $ne: true }, 'premium.isPremium': true }, 
+            { title: 1, shortdescription: 1, price: 1, date: 1 }, //photos: { $slice: 1 },
+        ).lean();
+
+    for (let i = 0; i < premiums.length; i++) {
+        const 
+            auction = premiums[i],
+            views = await Views.findOne({ _auction: auction._id });
+
+        auction.views = views.views || 0;
+    }
+
+    return premiums.sort(sortByViews).slice(0, 8);
 }
 
 async function addBidders(auction) {
