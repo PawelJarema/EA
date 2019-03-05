@@ -57,7 +57,8 @@ class FilteredList extends Component {
     }
 
     render() {
-        const { user, page, pages, per_page, sort, setPage, perPageCallback, sortCallback } = this.props,
+        const 
+            { user, page, pages, per_page, sort, setPage, perPageCallback, sortCallback } = this.props,
             auctions = this.props.auctions;
 
         const pagination = <AuctionPagination page={page} pages={pages} per_page={ per_page } sort={ sort } clickHandler={setPage} sortCallback={ sortCallback } perPageCallback={ perPageCallback }/>;
@@ -85,10 +86,14 @@ class FilteredList extends Component {
                     )
                     :
                     auctions.map((auction, i) => {
-                        const own = String(auction._user) === String(user._id);
+                        const 
+                            own = String(auction._user) === String(user._id),
+                            promo = typeof auction.premium === 'object',
+                            isPremium = promo ? auction.premium.isPremium : false,
+                            isQuality = promo ? auction.premium.forever : false;
 
                         return (
-                            <div key={ auction.title + '_' + i } className={ "auction"  + ( auction.premium.isPremium ? ' premium' : '' ) + ( auction.premium.forever ? ' quality' : '' ) }>
+                            <div key={ auction.title + '_' + i } className={ "auction"  + ( isPremium ? ' premium' : '' ) + ( isQuality ? ' quality' : '' ) }>
                                 <div className="image-wrapper">
                                     {
                                         <Link to={auctionPath(auction)}><RawImage link={auction} /></Link>

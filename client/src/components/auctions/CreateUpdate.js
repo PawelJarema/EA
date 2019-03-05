@@ -482,7 +482,6 @@ class CreateUpdateAuction extends Component {
                 <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction') + (preview ? ' display-none' : '')}>
                     <ProfileLinks active="addauction" />
                     <div>
-                        <button className="standard-button" onClick={ this.promote }>Test dodania</button>
                         {
                             !is18 && <p className="warn">Osoba poniżej 18 lat nie może wystawiać aukcji</p>
                         }

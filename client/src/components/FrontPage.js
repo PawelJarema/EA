@@ -33,7 +33,7 @@ class FrontPage extends Component {
                 {
                     this.props.auctions && this.props.auctions.popular && (
                         <div className="most-popular">
-                            <h1><i className="material-icons">trending_up</i> Popularne</h1>
+                            <h1><i className="material-icons">trending_up</i> Polecane</h1>
                             <div className="two-column">
                                 <div className="column">
                                     <Auction auction={this.props.auctions.popular[0]} />
