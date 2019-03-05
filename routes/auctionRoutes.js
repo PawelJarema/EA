@@ -416,7 +416,7 @@ module.exports = app => {
         const popular = await Auction.find(
             { ended: { $ne: true } }, 
             { title: 1, shortdescription: 1, price: 1, likes: 1 }, //photos: { $slice: 1 },
-            { limit: 8, sort: { 'premium.isPremium': -1, 'date.start_date': 1 } }
+            { limit: 8, sort: { 'premium.isPremium': -1 } }
         );
         const newest = await Auction.find(
             { ended: { $ne: true } },
