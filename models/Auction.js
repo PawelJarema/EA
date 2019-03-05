@@ -37,7 +37,7 @@ const auctionSchema = new Schema({
     bids: [bidSchema],
     premium: { 
         isPremium: { type: Boolean, default: false },
-        unlimited: { type: Boolean, default: false },
+        forever: { type: Boolean, default: false },
         endDate: { type: Date, default: sevenDays }
     },
     verified: Boolean,

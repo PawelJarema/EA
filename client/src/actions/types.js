@@ -19,3 +19,4 @@ export const FETCH_INVOICES = 'fetch_invoices';
 export const EXPORTED_AUCTION = 'exported_auction';
 export const FETCH_COOKIES = 'fetch_cookies';
 export const FETCH_PHOTOS = 'fetch_photos';
+export const NOTE_LAST_AUCTION = 'last_auction';

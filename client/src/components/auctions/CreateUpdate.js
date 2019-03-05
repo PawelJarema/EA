@@ -20,6 +20,7 @@ import { UserHelper } from '../../helpers/UserHelper';
 import { isSet, isNotEmpty, concatUnique } from './functions';
 
 import AuctionPreview from './AuctionPreview';
+import PromoteAuction from './PromoteAuction';
 
 class CreateUpdateAuction extends Component {
    constructor(props) {
@@ -31,7 +32,8 @@ class CreateUpdateAuction extends Component {
         categoryData: null, propertyData: null,
         editPhotoIndex: null,
         buyNowOption: false,
-        preview: null
+        preview: null,
+        promote: null
        };
        
        this.addAttribute = this.addAttribute.bind(this);
@@ -46,6 +48,7 @@ class CreateUpdateAuction extends Component {
        this.editPhoto = this.editPhoto.bind(this);
        this.onSortEnd = this.onSortEnd.bind(this);
        this.preview = this.preview.bind(this);
+       this.promote = this.promote.bind(this);
    }
     
    componentWillMount() {
@@ -371,13 +374,19 @@ class CreateUpdateAuction extends Component {
                 this.props.showSpinner();
                 this.props.updateAuction(formData)
                     .then(
-                        () => this.props.postPhotos(photoData)
+                        () => {
+                            this.props.postPhotos(photoData);
+                            this.promote(this.props.last_auction);
+                        }
                     );
             } else {
                 this.props.showSpinner();
                 this.props.newAuction(formData)
                     .then(
-                        () => this.props.postPhotos(photoData)
+                        () => { 
+                            this.props.postPhotos(photoData);
+                            this.promote(this.props.last_auction);
+                        }
                     );
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -410,6 +419,16 @@ class CreateUpdateAuction extends Component {
         this.setState(({images}) => ({
             images: arrayMove(images, oldIndex, newIndex)
         }));
+    }
+
+    promote(auction) {
+        // zostanie wywołana po dodaniu ogłoszenia
+        if (auction) {
+            this.setState({ promote: auction });
+        } else {
+            // test
+            this.setState({ promote: true });
+        }
     }
     
    render() {
@@ -447,6 +466,8 @@ class CreateUpdateAuction extends Component {
         //     <span className="label add" onClick={this.addAttribute}><i className="material-icons">add_circle_outline</i>Dodaj atrybut</span>
         // </p>
 
+        if (this.state.promote) return <PromoteAuction user={ user } auction={ this.state.promote } close={ () => this.setState({ promote: null }) } />;
+
        return (
             <div>
                 {
@@ -461,6 +482,7 @@ class CreateUpdateAuction extends Component {
                 <div className={ "Profile Auction" + ( update ? ' UpdateAuction' : ' CreateAuction') + (preview ? ' display-none' : '')}>
                     <ProfileLinks active="addauction" />
                     <div>
+                        <button className="standard-button" onClick={ this.promote }>Test dodania</button>
                         {
                             !is18 && <p className="warn">Osoba poniżej 18 lat nie może wystawiać aukcji</p>
                         }
@@ -656,8 +678,8 @@ function deliveryChecked() {
     return deliveries && deliveries.length > 0;
 }
 
-function mapAuctionsUserAndCategoryStateToProps({ auctions, user, categories }) {
-    return { auctions, user, categories };
+function mapAuctionsUserAndCategoryStateToProps({ auctions, user, categories, last_auction }) {
+    return { auctions, user, categories, last_auction };
 }
 
 CreateUpdateAuction = connect(mapAuctionsUserAndCategoryStateToProps, {...profileActions, ...auctionActions})(CreateUpdateAuction);

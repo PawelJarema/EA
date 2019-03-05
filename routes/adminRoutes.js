@@ -282,10 +282,10 @@ module.exports = app => {
 	app.get('/api/tech_break', async (req, res) => {
 		const admin = await Admin.findOne({}, { techbreak: 1, provision: 1 });		
 		if (admin) {
-			res.send({ techbreak: admin.techbreak || false, provision: admin.provision });
+			res.send({ techbreak: admin.techbreak || false, provision: admin.provision, premium7daysPrice: admin.premium7daysPrice, premiumForeverPrice: admin.premiumForeverPrice });
 			return;
 		} else {
-			res.send({ techbreak: false, provision: 5 });
+			res.send({ techbreak: false, provision: 5, premium7daysPrice: 6, premiumForeverPrice: 12 });
 		}
 	});
 

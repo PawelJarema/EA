@@ -9,6 +9,7 @@ import * as przelewy24Actions from '../actions/przelewy24Actions';
 import * as importExportActions from '../actions/importExportActions';
 
 import './Auctions.css';
+import './auctions/Auction.css';
 
 import { Link } from 'react-router-dom';
 import { Pagination } from './Pagination';
@@ -87,7 +88,7 @@ class FilteredList extends Component {
                         const own = String(auction._user) === String(user._id);
 
                         return (
-                            <div key={ auction.title + '_' + i } className="auction">
+                            <div key={ auction.title + '_' + i } className={ "auction"  + ( auction.premium.isPremium ? ' premium' : '' ) + ( auction.premium.forever ? ' quality' : '' ) }>
                                 <div className="image-wrapper">
                                     {
                                         <Link to={auctionPath(auction)}><RawImage link={auction} /></Link>

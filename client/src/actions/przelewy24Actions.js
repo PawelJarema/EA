@@ -22,3 +22,12 @@ export const buyCredits = data => async dispatch => {
 	
 	window.location.href = P24url.data;
 }
+
+export const promoteAuction = data => async dispatch => {
+	const P24url = await axios.post('/przelewy24/promoteAuction', data);
+	const message = await axios.get('/api/flash_message');
+
+	dispatch({ type: FETCH_MESSAGE, payload: message.data });
+
+	window.location.href = P24url.data;
+}

@@ -10,6 +10,8 @@ function applyToAuctions(funct) {
 }
 
 function auctionPath(auction) {
+    if (!auction || !auction.title) return '/';
+
     const title = 
         auction.title.toLowerCase()
         .replace(/[żź]/g, 'z')

@@ -17,6 +17,7 @@ import adminDocumentReducer from './adminDocumentReducer';
 import importExportReducer from './importExportReducer';
 import cookieReducer from './cookieReducer';
 import photosReducer from './photosReducer';
+import lastAuctionReducer from './lastAuctionReducer';
 
 export default combineReducers({
    admin: adminReducer,
@@ -36,5 +37,6 @@ export default combineReducers({
    documents: adminDocumentReducer,
    exported: importExportReducer,
    cookies: cookieReducer,
-   photos: photosReducer
+   photos: photosReducer,
+   last_auction: lastAuctionReducer
 });

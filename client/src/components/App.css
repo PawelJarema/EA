@@ -584,6 +584,9 @@ strong {
 .orange {
     color: var(--orange);
 }
+.hot-orange {
+    color: var(--hot-orange);
+}
 
 .transparent {
     opacity: .5;

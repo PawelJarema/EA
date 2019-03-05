@@ -499,26 +499,36 @@ module.exports = app => {
 
         switch(sort) {
             case 'najnowsze':
-                sort = { 'date.start_date': -1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'date.start_date': -1 };
+                //sort = [[ 'date.start_date', -1 ]];
                 break;
             case 'alfabetycznie':
-                sort = { 'title': 1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'title': 1 };
+                //sort = [[ 'title', 1 ]];
                 break;
             case 'najtańsze':
-                sort = { 'price.start_price': 1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'price.start_price': 1 };
+                //sort = [[ 'price.start_price', 1 ]];
                 break;
             case 'najdroższe':
-                sort = { 'price.start_price': -1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'price.start_price': -1 };
+                //sort = [[ 'price.start_price', -1 ]];
                 break;
             case 'najpopularniejsze':
-                sort = { 'likes': -1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'likes': -1 };
+                //sort = [[ 'likes', -1 ]];
                 break;
             case 'kończące się':
-                sort = { 'date.duration': 1, 'date.start_date': 1 };
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1, 'date.duration': 1, 'date.start_date': 1 };
+                //sort = [[ 'date.duration', 1 ], [ 'date.start_date', 1 ]];
                 break;
             default:
-                sort = null;
+                sort = { 'premium.forever': -1, 'premium.isPremium': -1 };
+                //sort = [];
         }
+
+        // sort.unshift([ 'premium.isPremium', 1 ]);
+        // sort.unshift([ 'premium.forever', 1 ]);
 
         const mongo_query = {
             title: { 
@@ -537,7 +547,7 @@ module.exports = app => {
             mongo_query['$and'] = property_$and;
         }
         
-        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1 }; // photos:{ $slice: 1 }
+        const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1, premium: 1 }; // photos:{ $slice: 1 }
         const options = { skip: (page-1) * per_page, limit: per_page };
         
         if (sort) {
@@ -545,7 +555,7 @@ module.exports = app => {
         }
 
         const count = await Auction.countDocuments(mongo_query);
-        const auctions = await Auction.find(mongo_query, projection,options).lean();
+        const auctions = await Auction.find(mongo_query, projection, options).lean();
 
         await checkIfLiked(auctions, req);
         auctions.push(Math.ceil(count / per_page));
@@ -766,7 +776,7 @@ module.exports = app => {
                 name  = key.replace('property_', ''),
                 value = data[key];
 
-            // znakujemy wartości liczbowe
+            // oznakowane wartości liczbowe
             if (name.startsWith('%')) {
                 int_properties.push({ name: name.slice(1), value: parseInt(value) });
             } else {
@@ -784,10 +794,6 @@ module.exports = app => {
                 deliveries.push({ name, price });
             } 
         });
-
-        // console.log(properties);
-        // console.log('\n');
-        // console.log(int_properties);
 
         let auction = new Auction({
             _user: ObjectId(req.user._id),
@@ -843,14 +849,13 @@ module.exports = app => {
                 if (err) {
                     console.log('error', err); 
                     req.session.error = 'Edycja aukcji nie powiodła się';
-                    res.send({});
+                    res.send(false);
                     return;
                 }  
 
                 if (doc) {
                     req.session.message = 'Pomyślnie dokonano edycji aukcji';
-
-                    res.send({});
+                    res.send(doc);
                 }
             });
         } else {
@@ -859,15 +864,14 @@ module.exports = app => {
                 .then(
                     async doc => { 
                         req.session.message = 'Pomyślnie dodano aukcję';
-
+                        
                         // const user = req.user;
                         // const { credits } = user.balance;
                         // user.balance.credits = credits ? (+credits - 1) : 4;
                         // user.save();
-               
-                        res.send({}); 
+                        res.send(doc);
                     },
-                    (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send({}); return;}
+                    (err) => { console.log(err); req.session.error = 'Utworzenie aukcji nie powiodło się'; res.send(false); return;}
                 );
         }
     });

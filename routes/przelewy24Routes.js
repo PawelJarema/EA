@@ -40,6 +40,83 @@ module.exports = app => {
 		res.send(true);
 	});
 
+	app.post('/przelewy24/promoteAuction', requireLogin, async (req, res) => {
+		const
+			qty = 1,
+			date = Date.now(),
+			buyer = req.user,
+			{ auction_id, auction_title, auction_url, promoCode, price } = req.body,
+			option = promoCode === '1' ? 'Premium 7 dni' : 'Premium Forever',
+			title = `Promocja ogłoszenia ${ auction_title } w opcji ${ option }`,
+			transaction_id = TransactionId('promote auction', +promoCode * +price, req.user, date);
+
+		let data = {
+			p24_merchant_id: keys.przelewy24Id,
+			p24_pos_id: keys.przelewy24Id,
+			p24_session_id: transaction_id,
+			p24_amount: +price * 100, 
+			p24_currency: 'PLN',
+			p24_description: title,
+			p24_email: buyer.contact.email,
+			p24_client: `${buyer.firstname || ''} ${buyer.lastname || buyer.firstname ? '' : 'Anonim'}`,
+			p24_address: buyer.address ? buyer.address.street : '',
+			p24_zip: buyer.address ? buyer.address.postal : '',
+			p24_city: buyer.address ? buyer.address.city : '',
+			p24_country: 'PL',
+			p24_phone: buyer.contact.phone ? buyer.contact.phone : '',
+			p24_url_return: business.host + auction_url,
+			p24_url_status: business.host + 'przelewy24/promoStatus',
+			p24_wait_for_result: 0,
+			p24_time_limit: 0,
+			p24_channel: 16,
+			p24_transfer_label: 'Ogloszenie PREMIUM eaukcje.pl',
+			p24_api_version: '3.2',
+			p24_regulation_accept: true
+		};
+
+		const token = await P24.registerTransaction(data);
+		const transaction = new CreditTransaction({
+			date,
+			_user: ObjectId(req.user._id),
+			_auction: ObjectId(auction_id),
+			promoCode,
+			p24_session_id: transaction_id,
+			token,
+			done: false
+		});
+		await transaction.save();
+
+		req.session.message = 'Za chwilę zostaniesz przekierowany na stronę Przelewy24. Proszę czekać...';
+		res.send(P24.requestTransactionUrl(token));
+	});
+
+	app.post('/przelewy24/promoStatus', async (req, res) => {
+		const 
+			{ p24_session_id } = req.body,
+			transaction = await CreditTransaction.findOne({ p24_session_id }),
+			auction = await Auction.findOne({ _id: ObjectId(transaction._auction) }),
+			forever = parseInt(transaction.promoCode) >= 2;
+
+		auction.premium.isPremium = true;
+		auction.premium.forever = forever;
+		auction.premium.endDate = forever ? Date.now() + 365 * 24 * 60 * 60 * 1000 : Date.now() + 7 * 24 * 60 * 60 * 1000;
+
+		transaction.done = true;
+
+		auction.save();
+		transaction.save();
+
+		if (req.session) req.session.message = "Pomyślnie wypromowano ogłoszenie";
+
+		if (P24.verifyTransaction(req.body)) {
+			console.log('pomyślnie zweryfikowano promocję');
+		} else {
+			console.log('promocja niezweryfikowana');
+		}
+
+		res.send(true);
+	});
+
 	app.post('/przelewy24/buyCredits', requireLogin, async (req, res) => {
 		const buyer = req.user;
 		const { qty, cost } = req.body;

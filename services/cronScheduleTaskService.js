@@ -164,6 +164,28 @@ const endAuction = async (auction_id) => {
 		);
 };
 
+const disablePremiums = async () => {
+	let 
+		date = Date.now(),
+		auctions = await Auction.find({ ended: { $ne: true }, 'premium.isPremium': true, 'premium.forever': false });
+
+	if (auctions) {
+		for (let i = 0; i < auctions.length; i++) {
+			const 
+				auction = auctions[i],
+				endDate = new Date(auction.premium.endDate).getTime();
+
+			if (endDate <= date) {
+				auction.premium.isPremium = false;
+				await auction.save();
+				console.log('End of premium for ' + auction.title);
+			} else {
+				console.log(auction.title + ' still has some premium time to go.');
+			}
+		}
+	}
+}
+
 const schedulePendingAuctions = async () => {
 	let auctions = await Auction.find({ ended: { $ne: true }, 'date.start_date': { $gt: lastAuctionListed }}, { _id: 1, date: 1 }, { sort: { 'date.start_date': -1 } });
 	const count = auctions.length;
@@ -256,7 +278,7 @@ const remindToRateEndedAuctions = async () => {
 schedule.scheduleJob('59 23 * * *', async () => {
 	// current auctions
 	await schedulePendingAuctions();
-	
+	await disablePremiums();
 	// not prepaid
 	//await remindToPrepayEndedAuctions();
 
@@ -272,6 +294,13 @@ schedulePendingAuctions();
 console.log('CRON JOB SCHEDULED');
 
 module.exports = app => {
+	app.get('/api/premiums', async(req, res) => {
+		req.setTimeout(0);
+		await disablePremiums();
+
+		res.send(true);
+	});
+
 	app.get('/api/pendingmessages', async (req, res) => {
 		req.setTimeout(0);
 		await notifyAboutPendingChatMessages();

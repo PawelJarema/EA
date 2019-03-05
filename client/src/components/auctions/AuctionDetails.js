@@ -214,6 +214,8 @@ class AuctionDetails extends Component {
 
         const extended_view = true || window.innerWidth > 1579;
         const iAmBidder = isBidder(user);
+        const isPremium = auction ? auction.premium.isPremium : false;
+        const premiumForever = auction ? auction.premium.forever : false;
 
         const 
             viewers = this.state.activeViews,
@@ -247,6 +249,7 @@ class AuctionDetails extends Component {
 
                                 <div className="text">
                                     <div className="content">
+                                        { isPremium && <h1 className="premium-tag">Aukcja PREMIUM</h1> }
                                         <h1>{ auction.title }</h1>
                                         <p>{auction.shortdescription}<LikeAuction user={user} auction={auction} /></p>
                                         <p className="attribute-tags">

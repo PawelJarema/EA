@@ -1,0 +1,28 @@
+.auction.premium {
+	position: relative;
+}
+
+.auction.premium:before,
+.auction.quality .text:after {
+	position: absolute;
+	padding: 5px 10px;
+	font-size: 10px; color: white; font-weight: 400; letter-spacing: 1px;
+	border-radius: 3px;
+	z-index: 5; opacity: 0.9;
+}
+.auction.premium:before {
+	bottom: -5px; left: -5px;
+	content: 'WYRÓŻNIENIE';
+	background: var(--good);
+}
+
+.auction.quality .text:after {
+	bottom: 17px; left: -5px;
+	content: 'WYSOKA JAKOŚĆ';
+	background: var(--hot-orange);
+}
+
+.auction.premium:hover:before,
+.auction.premium:hover .text:after {
+	opacity: 1;
+}
