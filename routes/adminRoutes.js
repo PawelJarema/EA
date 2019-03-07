@@ -263,7 +263,7 @@ module.exports = app => {
 	});
 
 	app.post('/api/provision', async (req, res) => {
-		const { admin_id, provision } = req.body;
+		const { admin_id, provision, premium7daysPrice, premiumForeverPrice } = req.body;
 
 		const admin = await Admin.findOne({ _id: ObjectId(admin_id) });
 		if (!admin) {
@@ -271,6 +271,9 @@ module.exports = app => {
 		}
 
 		admin.provision = parseInt(provision);
+		admin.premium7daysPrice = parseInt(premium7daysPrice);
+		admin.premiumForeverPrice = parseInt(premiumForeverPrice);
+
 		admin
 			.save()
 			.then(
@@ -280,7 +283,7 @@ module.exports = app => {
 	});
 
 	app.get('/api/tech_break', async (req, res) => {
-		const admin = await Admin.findOne({}, { techbreak: 1, provision: 1 });		
+		const admin = await Admin.findOne({});		
 		if (admin) {
 			res.send({ techbreak: admin.techbreak || false, provision: admin.provision, premium7daysPrice: admin.premium7daysPrice, premiumForeverPrice: admin.premiumForeverPrice });
 			return;

@@ -622,6 +622,12 @@ const damskiePrzebraniaKindsProps = [{
     values: ['Kostiumy damskie', 'Maski', 'Peruki', 'Pozostałe']
 }];
 
+const consoleKindsProps = [{
+    name: 'Kategoria',
+    type: 'Singular',
+    values: ['PS4', 'PS3', 'XBox One', 'XBox 360', 'Nintendo', 'Pozostałe']
+}];
+
 const balblaNazwa = [{
     name: 'Rodzaj',
     type: 'Singular', // !
@@ -674,6 +680,332 @@ const categoryTree = {
         },
 
         'Dziecięca': [...clothesKindProps, ...priceAndStateProps, ...childClothesSizeProps]
+    },
+
+    // 'Dom i ogród': {
+    //     'Meble': [...furnitureKindProps, ...priceAndStateProps],
+
+    //     'Zdrowie': priceAndStateProps,
+
+    //     'Sprzęt AGD': [...AGDKindProps, ...priceAndStateProps],
+
+    //     'Ogród': priceAndStateProps,
+
+    //     'Narzędzia': priceAndStateProps,
+
+    //     'Materiały budowlane': priceAndStateProps,
+
+    //     'Ogrzewanie': priceAndStateProps,
+
+    //     'Wyposażenie wnętrz': [...indoorAccessoriesProps, ...stateProps, ...priceProps],
+
+    //     'Pozostałe dom i ogród': priceProps
+
+    // },
+
+    'Dom i ogród': {
+
+        'Meble': {
+            'Akcesoria meblowe': [...priceAndStateProps],
+            'Biuro': [...priceAndStateProps],
+            'Kuchnia': [...priceAndStateProps],
+            'Łazienka i toaleta': [...priceAndStateProps],
+            'Meble do sypialni': [...priceAndStateProps],
+            'Piwnica i garaż': [...priceAndStateProps],
+            'Pokoje': [...priceAndStateProps],
+            'Pokój dziecęcy': [...priceAndStateProps],
+            'Pracownia': [...priceAndStateProps],
+            'Przedpokój': [...priceAndStateProps],
+            'Salon': [...priceAndStateProps],
+            'Pozostałe': [...priceAndStateProps]
+        },
+
+        'Wyposażenie': {
+            'Akcesoria do łazienki': [...priceAndStateProps],
+            'Dekoracje i ozdoby': [...priceAndStateProps],
+            'Dywany i dywaniki': [...priceAndStateProps],
+            'Koszyki': [...priceAndStateProps],
+            'Lustra': [...priceAndStateProps],
+            'Obrusy, serwetki, podkładki': [...priceAndStateProps],
+            'Oświetlenie': [...priceAndStateProps],
+            'Pościel i koce': [...priceAndStateProps],
+            'Przybory kuchenne': [...priceAndStateProps],
+            'Pudełka, Szkatułki i Kuferki': [...priceAndStateProps],
+            'Ręczniki': [...priceAndStateProps],
+            'Sauny i akcesoria': [...priceAndStateProps],
+            'Wentylatory domowe': [...priceAndStateProps],
+            'Wystrój okien': [...priceAndStateProps],
+            'Zabawne gadżety': [...priceAndStateProps],
+            'Zastawa stołowa': [...priceAndStateProps],
+            'Zegary': [...priceAndStateProps],
+            'Świeczki, woski, olejki i akcesoria': [...priceAndStateProps],
+            'Inteligentny dom': [...priceAndStateProps],
+            'Ozdoby świąteczne i okolicznościowe': [...priceAndStateProps],
+            'Pozostałe': [...priceAndStateProps]
+        },
+
+        'Budownictwo i Akcesoria': {
+            'Dachy': [...priceAndStateProps],
+            'Drabiny': [...priceAndStateProps],
+            'Drzwi i bramy': [...priceAndStateProps],
+            'Elektryka i akcesoria': [...priceAndStateProps],
+            'Garaże': [...priceAndStateProps],
+            'Hydraulika i armatura': [...priceAndStateProps],
+            'Klimatyzacja i wentylacja': [...priceAndStateProps],
+            'Kominki i akcesoria': [...priceAndStateProps],
+            'Odkurzacze centralne': [...priceAndStateProps],
+            'Ogrodzenia i bramy': [...priceAndStateProps],
+            'Ogrzewanie': [...priceAndStateProps],
+            'Okna i parapety': [...priceAndStateProps],
+            'Podłogi': [...priceAndStateProps],
+            'Schody': [...priceAndStateProps],
+            'Sprzęt budowlany': [...priceAndStateProps],
+            'Ściany i elewacje': [...priceAndStateProps],
+            'Pozostałe': [...priceAndStateProps]
+        },
+        
+        'Narzędzia': {
+            'Agregaty prądotwórcze': [...priceAndStateProps],
+            'Akcesoria i osprzęt': [...priceAndStateProps],
+            'Bruzdownice': [...priceAndStateProps],
+            'Frezarki': [...priceAndStateProps],
+            'Gwoździarki': [...priceAndStateProps],
+            'Imadła': [...priceAndStateProps],
+            'Klucze': [...priceAndStateProps],
+            'Lutownice': [...priceAndStateProps],
+            'Mieszarki': [...priceAndStateProps],
+            'Myjki ciśnieniowe': [...priceAndStateProps],
+            'Młotki, przecinaki i dłuta': [...priceAndStateProps],
+            'Młoty udarowe i wyburzeniowe': [...priceAndStateProps],
+            'Nożyce do blachy': [...priceAndStateProps],
+            'Odkurzacze piorące': [...priceAndStateProps],
+            'Odkurzacze przemysłowe': [...priceAndStateProps],
+            'Opalarki': [...priceAndStateProps],
+            'Ostrzałki': [...priceAndStateProps],
+            'Pistolety do kleju': [...priceAndStateProps],
+            'Pistolety do pianki': [...priceAndStateProps],
+            'Pistolety do silikonu': [...priceAndStateProps],
+            'Pistolety malarskie': [...priceAndStateProps],
+            'Piły i pilarki': [...priceAndStateProps],
+            'Przecinarki do glazury': [...priceAndStateProps],
+            'Przyrządy miernicze': [...priceAndStateProps],
+            'Radia budowlane': [...priceAndStateProps],
+            'Spawarki': [...priceAndStateProps],
+            'Sprężarki i kompresory': [...priceAndStateProps],
+            'Strugi': [...priceAndStateProps],
+            'Szczypce, nożyce, obcęgi': [...priceAndStateProps],
+            'Szlifierki i polerki': [...priceAndStateProps],
+            'Wciągarki': [...priceAndStateProps],
+            'Wiertarki i młotowiertarki': [...priceAndStateProps],
+            'Wiertnice': [...priceAndStateProps],
+            'Wkrętaki': [...priceAndStateProps],
+            'Wkrętarki': [...priceAndStateProps],
+            'Wyrzynarki': [...priceAndStateProps],
+            'Zakrętarki udarowe': [...priceAndStateProps],
+            'Zgrzewarki': [...priceAndStateProps],
+            'Zszywacze': [...priceAndStateProps],
+            '﻿Ściski': [...priceAndStateProps],
+            'Zestawy narzędzi': [...priceAndStateProps],
+            'Odzież ochronna': [...priceAndStateProps],
+            '﻿Pozostałe': [...priceAndStateProps]
+        },
+
+        'Ogród': {
+            'Agrowłókniny i agrotkaniny': [...priceAndStateProps],
+            'Akcesoria pszczelarskie': [...priceAndStateProps],
+            'Architektura ogrodowa': [...priceAndStateProps],
+            'Baseny i akcesoria': [...priceAndStateProps],
+            'Doniczki i pojemniki': [...priceAndStateProps],
+            'Grillowanie': [...priceAndStateProps],
+            'Kompostowniki': [...priceAndStateProps],
+            'Markizy, osłony, maty': [...priceAndStateProps],
+            'Meble ogrodowe': [...priceAndStateProps],
+            'Narzędzia ogrodnicze': [...priceAndStateProps],
+            'Nawadnianie': [...priceAndStateProps],
+            'Nawozy i preparaty': [...priceAndStateProps],
+            'Oczka wodne': [...priceAndStateProps],
+            'Odstraszacze owadów': [...priceAndStateProps],
+            'Odstraszacze zwierząt': [...priceAndStateProps],
+            'Oświetlenie': [...priceAndStateProps],
+            'Podłoża': [...priceAndStateProps],
+            'Przedmioty dekoracyjne': [...priceAndStateProps],
+            'Rośliny': [...priceAndStateProps],
+            'Szamba i oczyszczalnie': [...priceAndStateProps],
+            'Literatura': [...priceAndStateProps],
+            'Pozostałe': [...priceAndStateProps]
+        }
+    },
+
+    'Uroda': {
+        'Makijaż': {
+            'Baza pod cienie': [ ...priceProps ],
+            'Cienie do powiek': [ ...priceProps ],
+            'Eyelinery i kredki do oczy': [ ...priceProps ],
+            'Kredki i pomady do brwi': [ ...priceProps ],
+            'Tusze do rzęs': [ ...priceProps ],
+            'Sztuczne rzęsy': [ ...priceProps ],
+            'Błyszczyki': [ ...priceProps ],
+            'Balsamy i scruby do ust': [ ...priceProps ],
+            'Konturówki': [ ...priceProps ],
+            'Szminki i pomadki': [ ...priceProps ],
+            'Baza pod makijaż': [ ...priceProps ],
+            'Korektory': [ ...priceProps ],
+            'Kremy BB i CC': [ ...priceProps ],
+            'Kremy tonizujące': [ ...priceProps ],
+            'Podkłady': [ ...priceProps ],
+            'Pudry': [ ...priceProps ],
+            'Rozświetlacze i bronzery': [ ...priceProps ],
+            'Róże': [ ...priceProps ],
+            'Spraye utrwalające makijaż': [ ...priceProps ],
+            'Palety do makijażu': [ ...priceProps ],
+            'Kuferki kosmetyczne': [ ...priceProps ],
+            'Pędzle i akcesoria': [ ...priceProps ],
+            'Samoopalacze': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Manicure i pedicure': {
+            'Akcesoria i przybory': [ ...priceAndStateProps ],
+            'Akryle i żele': [ ...priceProps ],
+            'Lakiery do paznokci': [ ...priceProps ],
+            'Lakiery hybrydowe': [ ...priceProps ],
+            'Lampy UV i LED': [ ...priceProps ],
+            'Frezarki do paznokci': [ ...priceProps ],
+            'Manicure japoński': [ ...priceProps ],
+            'Nabłyszczacze, utrwalacze': [ ...priceProps ],
+            'Odżywki do paznokci i skórek': [ ...priceProps ],
+            'Ozdoby i przyrządy do zdobień': [ ...priceProps ],
+            'Podkłady, bazy': [ ...priceProps ],
+            'Sztuczne paznokcie, tipsy': [ ...priceProps ],
+            'Urządzenia': [ ...priceAndStateProps ],
+            'Zmywacze, odtłuszczacze, kleje': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Perfumy': {
+            'Perfumy damskie': [ ...priceProps ],
+            'Perfumy męskie': [ ...priceProps ],
+            'Testery': [ ...priceProps ],
+            'Dezodoranty dla kobiet': [ ...priceProps ],
+            'Dezodoranty dla mężczyzn': [ ...priceProps ],
+            'Zestawy perfum': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Pielęgnacja ciała': {
+            'Balsamy do ciała': [ ...priceProps ],
+            'Kąpiel i prysznic': [ ...priceProps ],
+            'Kosmetyki do opalania': [ ...priceProps ],
+            'Kremy na rozstępy': [ ...priceProps ],
+            'Dłonie i stopy': [ ...priceProps ],
+            'Golenie i depilacja': [ ...priceProps ],
+            'Zestawy kosmetyków': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Pielęgnacja twarzy': {
+            'Kremy do twarzy': [ ...priceProps ],
+            'Kremy pod oczy': [ ...priceProps ],
+            'Serum do twarzy': [ ...priceProps ],
+            'Maseczki do twarzy': [ ...priceProps ],
+            'Oczyszczanie i demakijaż': [ ...priceProps ],
+            'Kolagen': [ ...priceProps ],
+            'Kwasy, peelingi chemiczne': [ ...priceProps ],
+            'Olejki do twarzy': [ ...priceProps ],
+            'Peelingi i scruby': [ ...priceProps ],
+            'Toniki, hydrolaty, wody termalne': [ ...priceProps ],
+            'Urządzenia kosmetyczne': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Pielęgnacja włosów': {
+            'Szampony': [ ...priceProps ],
+            'Odżywki i maski do włosów': [ ...priceProps ],
+            'Koloryzacja': [ ...priceProps ],
+            'Keratynowe prostowanie włosów': [ ...priceProps ],
+            'Lakiery do włosów': [ ...priceProps ],
+            'Modelowanie': [ ...priceProps ],
+            'Olejki do włosów': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Dla mężczyzny': {
+            'Perfumy męskie': [ ...priceProps ],
+            'Dezodoranty dla mężczyzn': [ ...priceProps ],
+            'Golenie': [ ...priceProps ],
+            'Pielęgnacja zarostu': [ ...priceProps ],
+            'Kosmetyki dla mężczyzn': [ ...priceProps ],
+            'Kosmetyki do włosów': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        }
+    },
+
+    'Kultura i rozrywka': {
+        'Gry': {
+            'Gry na konsole': [ ...consoleKindsProps, ...priceAndStateProps ],
+            'Komputerowe PC': [ ...priceAndStateProps ],
+            'Gry online (MMO)': [ ...priceAndStateProps ],
+            'Poradniki': [ ...priceAndStateProps ],
+            'Gry planszowe': [ ...priceAndStateProps ],
+            'Gry karciane': [ ...priceAndStateProps ],
+            'Gadżety': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Instrumenty': {
+            'Gitary i akcesoria': [ ...priceAndStateProps ],
+            'Instrumenty dęte': [ ...priceAndStateProps ],
+            'Instrumenty klawiszowe i MIDI': [ ...priceAndStateProps ],
+            'Instrumenty perkusyjne': [ ...priceAndStateProps ],
+            'Instrumenty smyczkowe': [ ...priceAndStateProps ],
+            'Miksery i powermiksery': [ ...priceAndStateProps ],
+            'Wzmacniacze i nagłośnienie': [ ...priceAndStateProps ],
+            'Kursy gry, nuty, śpiewniki': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Książki i komiksy': {
+            'Audiobooki - mp3': [ ...priceProps ],
+            'Literatura piękna, popularna i faktu': [ ...priceAndStateProps ],
+            'Książki naukowe i popularnonaukowe': [ ...priceAndStateProps ],
+            'Książki dla dzieci i młodzieży': [ ...priceAndStateProps ],
+            'Książki do nauki języka obcego': [ ...priceAndStateProps ],
+            'Książki obcojęzyczne': [ ...priceAndStateProps ],
+            'Mapy, przewodniki, książki podróżnicze': [ ...priceAndStateProps ],
+            'Poradniki i albumy': [ ...priceAndStateProps ],
+            'Czasopisma i gazety': [ ...priceAndStateProps ],
+            'Komiksy': [ ...priceAndStateProps ],
+            'Podręczniki do szkół podst. i średnich': [ ...priceAndStateProps ],
+            'Audiobooki': [ ...priceProps ],
+            'Ebooki': [ ...priceProps ],
+            'Kalendarze, gadżety i akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Filmy': {
+            'Filmy 3D': [ ...priceAndStateProps ],
+            'Płyty DVD': [ ...priceAndStateProps ],
+            'Filmy na Blu-Ray': [ ...priceAndStateProps ],
+            'Płyty VCD': [ ...priceAndStateProps ],
+            'Kasety wideo': [ ...priceAndStateProps ],
+            'Gadżety, akcesoria': [ ...priceAndStateProps ]
+        },
+
+        'Muzyka': {
+            'Płyty CD': [ ...priceAndStateProps ],
+            'Płyty winylowe': [ ...priceAndStateProps ],
+            'Kasety audio': [ ...priceAndStateProps ],
+            'Gadżety muzyczne': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Bilety': {
+            'Bilety': [ ...priceProps ],
+            'Kupony, vouchery': [ ...priceProps ],
+            'Opaski': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        }
     },
 
     'Motoryzacja': {
@@ -806,27 +1138,6 @@ const categoryTree = {
         'Hale i Magazyny': [...realEstateCatProps, ...priceProps, ...realEstateAreaProps],
 
         'Pozostałe nieruchomości': [...realEstateCatProps, ...priceProps]
-    },
-
-    'Dom i ogród': {
-        'Meble': [...furnitureKindProps, ...priceAndStateProps],
-
-        'Zdrowie': priceAndStateProps,
-
-        'Sprzęt AGD': [...AGDKindProps, ...priceAndStateProps],
-
-        'Ogród': priceAndStateProps,
-
-        'Narzędzia': priceAndStateProps,
-
-        'Materiały budowlane': priceAndStateProps,
-
-        'Ogrzewanie': priceAndStateProps,
-
-        'Wyposażenie wnętrz': [...indoorAccessoriesProps, ...stateProps, ...priceProps],
-
-        'Pozostałe dom i ogród': priceProps
-
     },
 
     'Elektronika': {

@@ -23,7 +23,7 @@
 	margin-bottom: 30px;
 }
 .AdminPanel h3 {
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 }
 .AdminPanel h3 i {
 	margin-right: 10px;
@@ -426,6 +426,19 @@ i.layers {
 
 .anim-loading-text {
 	animation: blink 0.4s ease-in-out infinite;
+}
+
+.Admin .row {
+	display: flex;
+	margin-bottom: 20px;
+}
+
+.Admin .row .col {
+	flex: 1 1 50%;
+}
+.Admin .row .col:first-child {
+	max-width: 500px;
+	padding-right: 20px;
 }
 
 @keyframes blink {

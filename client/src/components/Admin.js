@@ -347,7 +347,7 @@ class UserList extends Component {
 class Provision extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { provision: 3 }
+		this.state = { provision: 3, premium7daysPrice: 6, premiumForeverPrice: 12 };
 	}
 
 	componentWillMount() {
@@ -358,28 +358,58 @@ class Provision extends Component {
 
 	componentWillReceiveProps(props) {
 		if (props.admin) {
-			const { provision } = props.admin;
-			this.setState({ provision });
+			const { provision, premium7daysPrice, premiumForeverPrice } = props.admin;
+			this.setState({ provision, premium7daysPrice, premiumForeverPrice });
 		}
 	}
 
 	render() {
 		const { admin } = this.props;
-		const { provision } = this.state;
+		const { provision, premium7daysPrice, premiumForeverPrice } = this.state;
 
 		if (!admin)
 			return <Redirect to="/admin" />;
 
 		return (
 			<div className="Provision">
-				<h1>Opłaty</h1>
-				<h3><i className="material-icons">attach_money</i>Koszt wystawienia aukcji</h3>
-				<p>Ustaw koszt, który poniesie sprzedawca wystawiając aukcję w serwisie</p>
-				<p>
-					<input name="provision" type="range" min="1" max="60" step="1" value={provision} onChange={(e) => this.setState({ provision: e.target.value })}/>
-					<span>{provision} zł</span>
-				</p>
-				<button className="standard-button" onClick={() => this.props.postProvision({ admin_id: admin._id, provision })}>Zapisz</button>
+				<h1><i className="material-icons">attach_money</i> Opłaty</h1>
+
+				<div className="row">
+					<div className="col">
+						<h3>Koszt wystawienia aukcji</h3>
+						<p>Ustaw koszt, który poniesie sprzedawca wystawiając aukcję w serwisie</p>
+					</div>
+					<div className="col">
+						<p>
+							<input name="provision" type="range" min="0" max="30" step="1" value={ provision } onChange={(e) => this.setState({ provision: e.target.value })}/>
+							<span>{ provision } zł</span>
+						</p>
+					</div>
+				</div>
+
+				<div className="row">
+					<div className="col">
+						<h3>Koszt PREMIUM 7 dni</h3>
+						<p>Ustaw koszt, który sprzedawca poniesie przy standardowym wyróżnieniu ogłoszenia</p>
+					</div>
+					<div className="col">
+						<input name="premium7days" type="range" min="1" max="60" step="1" value={ premium7daysPrice } onChange={(e) => this.setState({ premium7daysPrice: e.target.value })}/>
+						<span>{ premium7daysPrice } zł</span>
+					</div>
+				</div>
+
+				<div className="row">
+					<div className="col">
+						<h3>Koszt PREMIUM FOREVER</h3>
+						<p>Ustaw koszt, który sprzedawca poniesie przy wyróżnieniu ogłoszenia do końca jego istnienia przy jednoczesnym oznaczeniu go metką jakości w wynikach wyszukiwania</p>
+					</div>
+					<div className="col">
+						<input name="premiumForever" type="range" min="1" max="100" step="1" value={ premiumForeverPrice } onChange={(e) => this.setState({ premiumForeverPrice: e.target.value })}/>
+						<span>{ premiumForeverPrice } zł</span>
+					</div>
+				</div>
+
+				<button className="standard-button" onClick={() => this.props.postProvision({ admin_id: admin._id, provision, premium7daysPrice, premiumForeverPrice })}>Zapisz</button>
 			</div>
 		);
 	}

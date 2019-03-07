@@ -466,7 +466,12 @@ class CreateUpdateAuction extends Component {
         //     <span className="label add" onClick={this.addAttribute}><i className="material-icons">add_circle_outline</i>Dodaj atrybut</span>
         // </p>
 
-        if (this.state.promote) return <PromoteAuction user={ user } auction={ this.state.promote } close={ () => this.setState({ promote: null }) } />;
+        if (this.state.promote) return (
+            <PromoteAuction 
+                user={ user } 
+                auction={ this.state.promote } 
+                close={ () => this.setState({ promote: null }) } />
+        );
 
        return (
             <div>

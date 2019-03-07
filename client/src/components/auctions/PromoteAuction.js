@@ -70,7 +70,7 @@ class PromoteAuction extends Component {
                                         <span><h2 className="heading">Oferta Premium 7 dni</h2></span>
                                         <span className="top subheading">Twoje ogłoszenie będzie promowane przez 7 dni</span>
                                         <span className="middle price absolute-center">{ tech_break.premium7daysPrice || 6 } zł</span>
-                                        <span className="bottom">Chcę optymalnie zwiększyć szansę sprzedaży wszystkich towarów</span>
+                                        <span className="bottom">Chcę optymalnie zwiększyć szansę sprzedaży towaru.</span>
                                         <input type="radio" name="promo" value="1" onChange={ this.select }/>
                                         <span className="input-value absolute-center"></span>
                                     </div>
@@ -78,7 +78,7 @@ class PromoteAuction extends Component {
                                         <span><h2 className="heading">Oferta Premium Forever <i className="material-icons hot-orange">whatshot</i></h2></span>
                                         <span className="top subheading">Promocja trwa aż do końca aukcji, w wynikach wyszukiwania aukcja będzie oznaczona znaczkiem jakości</span>
                                         <span className="middle price absolute-center">{ tech_break.premiumForeverPrice || 12 } zł</span>
-                                        <span className="bottom">Chcę znacznie podnieść sprzedaż lub potrzebuję sprzedać towar niszowy</span>
+                                        <span className="bottom">Chcę znacznie podnieść sprzedaż lub potrzebuję sprzedać towar niszowy.</span>
                                         <input type="radio" name="promo" value="2" onChange={ this.select } />
                                         <span className="input-value absolute-center"></span>
                                     </div>

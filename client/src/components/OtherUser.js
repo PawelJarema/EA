@@ -227,7 +227,6 @@ class Seller extends Component {
 			withUs 	= user ? SinceHelper(new Date().getTime() - user.joindate) : null,
 			showAllData = this.props.showAllData;
 
-		console.log('Seller', user );
 		// TODO wystaw opinie tylko jeśli user znajduje się na liście raters
 		// <button className="rate standard-button">Wystaw opinie</button> 
 		return (
