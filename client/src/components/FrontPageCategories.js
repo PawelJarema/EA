@@ -105,6 +105,7 @@ class FrontPageCategories extends Component {
 				{ onMobile && <div className={ "control left" + (this.state.left ? '' : ' disabled') } onClick={ this.left }><i className="material-icons">arrow_left</i></div> }
 				<Swipeable 
 					trackMouse
+					preventDefaultTouchmoveEvent
 					onSwipedLeft={ this.right }
 					onSwipedRight={ this.left } >
 
