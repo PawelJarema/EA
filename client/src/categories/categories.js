@@ -628,6 +628,168 @@ const consoleKindsProps = [{
     values: ['PS4', 'PS3', 'XBox One', 'XBox 360', 'Nintendo', 'Pozostałe']
 }];
 
+const elektronikaTVkindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['4K UHD', 'OLED', 'Smart TV', 'Curved', 'QLED', 'Akcesoria', 'Nagrywarki DVD/HDD', 'Odtwarzacze Blu-ray', 'Odtwarzacze DVD', 'Odtwarzacze HDD i multimedialne', 'Projektory', 'Sprzęt naziemny', 'Telewizja przemysłowa', 'Kino domowe', 'Pozostałe']
+}];
+
+const elektronikaAudioKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Amplitunery', 'Części i podzespoły', 'DAC', 'DIY', 'Elementy wygłuszające', 'Gramofony i akcesoria', 'Głośniki', 'Kolumny głośnikowe', 'Korektory graficzne', 'Magnetofony i nośniki', 'Odtwarzacze CD i MD', 'Radia', 'Sprzęt estradowy, studyjny i DJ-ski', 'Tunery radiowe', 'Wieże i miniwieże', 'Wzmacniacze i pokrewne', 'Zestawy stereo', 'Literatura i instrukcje', 'Pozostałe', 'Dyktafony', 'Miniradio', 'MP3 i MP4', 'Odtwarzacze CD, MD i kasetowe', 'Radioodtwarzacze', 'Głośniki przenośne', 'Sprzęt do karaoke', 'Ładowarki', 'Pokrowce i etui', 'Pozostałe']
+}];
+
+const elektronikaCarAudioKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Akcesoria montażowe', 'Anteny', 'Elementy wygłuszające', 'Głośniki', 'Kondensatory, filtry', 'Panele i etui', 'Panele LCD/TV', 'Piloty i joysticki', 'Procesory dźwięku', 'Radioodtwarzacze', 'Transmitery', 'Wzmacniacze', 'Zmieniarki CD', 'Pozostałe']
+}];
+
+const elektronikaFotografiaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Aparaty cyfrowe', 'Aparaty analogowe', 'Akcesoria fotograficzne', 'Drony', 'Kamery sportowe', 'Kamery na karty pamięci', 'Lampy błyskowe i oświetlenie', 'Literatura i instrukcje', 'Obiektywy', 'Sprzęt optyczny', 'Wideorejestratory', 'Wyposażenie studia', 'Zasilanie aparatów', 'Pozostałe']
+}];
+
+const agdLodowkiKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Lodówki', 'Zamrażarki', 'Chłodziarki', 'Części i akcesoria', 'Pozostałe']
+}];
+
+const agdPralkiKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Pralki', 'Pralki wirnikowe', 'Pralko-suszarki', 'Suszarki do ubrań', 'Części i akcesoria', 'Pozostałe']
+}];
+
+const agdKuchnieKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Kuchnie', 'Kuchenki przenośne', 'Piekarniki', 'Okapy', 'Zmywarki', 'Kuchenki mikrofalowe', 'Sprzęt AGD', 'Części i akcesoria', 'Pozostałe']
+}];
+
+const agdDoKuchniKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Blendery', 'Czajniki elektryczne', 'Ekspresy do kawy', 'Filtry do wody', 'Frytkownice', 'Gofrownice', 'Grille elektryczne', 'Jajowary', 'Kawiarki', 'Kostkarki do lodu', 'Krajalnice', 'Maszynki do mielenia mięsa', 'Miksery ręczne', 'Mini piekarniki', 'Multicookery i garnki elektryczne', 'Młynki elektryczne', 'Opiekacze', 'Parowary i kombiwary', 'Prodiże', 'Roboty kuchenne', 'Sokowirówki', 'Spieniacze do mleka', 'Suszarki spożywcze', 'Szatkownice i rozdrabniacze', 'Tostery', 'Urządzenia do czekolady', 'Urządzenia do lodów i jogurtów', 'Urządzenia do popcornu', 'Urządzenia do waty cukrowej', 'Wagi kuchenne', 'Wypiekacze do chleba', 'Zgrzewarki', 'Części i akcesoria', 'Pozostałe']
+}];
+
+const agdDoDomuKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Golarki do ubrań', 'Grzejniki', 'Klimatyzacja', 'Maszyny do szycia', 'Nawilżacze i oczyszczacze powietrza', 'Odkurzacze', 'Osuszacze powietrza', 'Parownice i stacje parowe', 'Stacje parowe', 'Termowentylatory', 'Żelazka', 'Części i akcesoria', 'Pozostałe']
+}];
+
+const agdHigienaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Akcesoria fryzjerskie', 'Depilatory', 'Golarki', 'Lokówki', 'Maszynki do strzyżenia', 'Prostownice i karbownice', 'Suszarki do włosów', 'Szczoteczki do twarzy', 'Szczoteczki elektryczne', 'Trymery', 'Wagi łazienkowe', 'Pozostałe']
+}];
+
+const telAkcSmartfonyKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Apple', 'Huawei', 'Samsung', 'Xiaomi', 'LG', 'Sony', 'Nokia', 'Motorola', 'myPhone', 'Meizu', 'Flagowce', 'Pozostałe']
+}];
+
+const telAkcTabletyKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Apple', 'Huawei', 'Samsung', 'Lenovo', 'Akcesoria', 'Pozostałe']
+}];
+
+const telAkcCzytnikiKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['inkBook', 'Kindle', 'PocketBook', 'Akcesoria', 'Pozostałe']
+}];
+
+const telAkcSmartwatcheKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Apple', 'Samsung', 'Xiaomi', 'Sony', 'Overmax', 'Garett', 'Goclever', 'Paski i bransolety', 'Pozostałe']
+}];
+
+const telAkcAkcesoriaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Etui i pokrowce', 'Folie i szkła ochronne', 'Ładowarki', 'Baterie', 'Uchwyty', 'Przewody', 'Zestawy słuchawkowe', 'Karty pamięci', 'Powerbanki', 'Pozostałe']
+}];
+
+const telAkcMultimediaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Głośniki', 'Słuchawki', 'VR/AR', 'Zestawy głośnomówiące', 'Pozostałe']
+}];
+
+const telAkcTelefonyKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Telefony przewodowe', 'Telefony bezprzewodowe', 'Pozostałe']
+}];
+
+const telAkcRadiokomunikacjaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Krótkofalówki i Walkie Talkie', 'Sprzet CB', 'Sprzęt krótkofalarski', 'Sprzęt profesjonalny', 'Pozostałe']
+}];
+
+const laptopyKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Acer', 'Apple', 'Asus', 'Dell', 'HP', 'Lenovo', 'Microsoft', 'MSI', 'Torby i pokrowce', 'Podstawki chłodzące', 'Stacje dokujące', 'Pamięci RAM', 'Części do laptopów', 'Inne akcesoria', 'Pozostałe']
+}];
+
+const komputeryPCKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Zestawy', 'Kryptowaluty', 'Systemy operacyjne', 'Oprogramowanie biurowe', 'Antywirusy i bezpieczeństwo', 'Mikrokomputery', 'Serwery', 'Pozostałe']
+}];
+
+const gamingKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Laptopy', 'Komputery stacjonarne', 'Monitory', 'Myszki', 'Klawiatury', 'Słuchawki', 'Fotele Gamingowe', 'Kierownice', 'Kontrolery', 'Karty graficzne', 'Procesory', 'Płyty główne', 'Pamięci RAM', 'Pozostałe']
+}];
+
+const komponentyPCKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Karty graficzne', 'Procesory', 'Płyty główne', 'Pamięci RAM', 'Dyski SSD i M.2', 'Dyski HDD', 'Obudowy', 'Zasilacze', 'Napędy optyczne', 'Karty dźwiękowe', 'Chłodzenie i tuning', 'Karty sieciowe', 'Przewody i taśmy', 'Pozostałe']
+}];
+
+const peryferiaKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Monitory', 'Gogle VR', 'Głośniki', 'Słuchawki', 'Myszki', 'Klawiatury', 'Dyski zewnętrzne', 'Pendrivy', 'Dyski NAS', 'Routery WiFi', 'Zasilacze UPS', 'Listwy zasilające', 'Grabbery', 'Kamery internetowe', 'Pozostałe']
+}];
+
+const drukarkiKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Drukarki atramentowe', 'Drukarki laserowe', 'Urządzenia wielofunkcyjne', 'Druk 3D', 'Skanery', 'Plotery', 'Drukarki igłowe', 'Drukarki etykiet', 'Tonery', 'Tusze', 'Bębny', 'Taśmy barwiące', 'Części i akcesoria', 'Papiery i folie', 'Pozostałe']
+}];
+
+const sonyPlaystationKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Konsole Playstation 4', 'Konsole Playstation 3', 'Konsole Playstation 2', 'Konsole Playstation', 'Kontrolery', 'Playstation VR', 'Playstation Camera', 'Kody do PSN', 'Gry dla Playstation 4', 'Pozostałe akcesoria Playstation']
+}];
+
+const xboxKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Konsole Xbox One S', 'Konsole Xbox One X', 'Konsole Xbox One', 'Konsole Xbox 360', 'Kontrolery', 'Kinect', 'Kody do Xbox One', 'Gry do Xbox One', 'Pozostałe akcesoria Xbox One']
+}];
+
+const nintendoKindsProps = [{
+    name: 'Rodzaj',
+    type: 'Singular',
+    values: ['Konsole Nintendo', 'Kontrolery', 'Akcesoria Nintendo', 'Gry do Nintendo', 'Pozostałe']
+}];
+
 const balblaNazwa = [{
     name: 'Rodzaj',
     type: 'Singular', // !
@@ -1005,6 +1167,176 @@ const categoryTree = {
             'Kupony, vouchery': [ ...priceProps ],
             'Opaski': [ ...priceProps ],
             'Pozostałe': [ ...priceProps ]
+        }
+    },
+
+    'Zdrowie': {
+        'Dermokosmetyki': {
+            'Makijaż': [ ...priceProps ],
+            'Maseczki': [ ...priceProps ],
+            'Kremy pod oczy': [ ...priceProps ],
+            'Olejki do twarzy': [ ...priceProps ],
+            'Serum': [ ...priceProps ],
+            'Kąpiel i prysznic': [ ...priceProps ],
+            'Balsamy, kremy i masła': [ ...priceProps ],
+            'Kuracje do włosów': [ ...priceProps ],
+            'Inne': [ ...priceProps ]
+        },
+
+        'Higiena jamy ustnej': {
+            'Nici dentystyczne': [ ...priceProps ],
+            'Szczoteczki do zębów ': [ ...priceProps ],
+            'Czyściki i wykałaczki': [ ...priceProps ],
+            'Pielęgnacja protez i aparatów ortodontycznych': [ ...priceProps ],
+            'Końcówki do irygatorów': [ ...priceProps ],
+            'Akcesoria': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Korekcja wzroku': {
+            'Pojemniki na soczewki': [ ...priceAndStateProps ],
+            'Soczewki i szkła do okularów': [ ...priceAndStateProps ],
+            'Akcesoria i dodatki': [ ...priceAndStateProps ]
+        },
+
+        'Medycyna naturalna': {
+            'Akcesoria naturalne': [ ...priceProps ],
+            'Soki naturalne': [ ...priceProps ],
+            'Inne produkty naturalne': [ ...priceProps ],
+            'Spirulina': [ ...priceProps ],
+            'Chlorella': [ ...priceProps ],
+            'Bańki chińskie': [ ...priceAndStateProps ],
+            'Świece do uszu': [ ...priceProps ],
+            'Pozostałe': [ ...priceProps ]
+        },
+
+        'Sprzęt medyczny': {
+            'Balkoniki i podpórki': [ ...priceAndStateProps ],
+            'Masażery': [ ...priceAndStateProps ],
+            'Obówie ortopedyczne': [ ...priceAndStateProps ],
+            'Ochraniacze na buty': [ ...priceAndStateProps ],
+            'Ortezy': [ ...priceAndStateProps ],
+            'Sprzęt do ćwiczeń': [ ...priceAndStateProps ],
+            'Sprzęt ortopedyczny': [ ...priceAndStateProps ],
+            'Pozostały sprzęt medyczny': [ ...priceAndStateProps ]
+        },
+
+        'Suplementy diety': {
+            'Pamięć i układ nerwowy': [ ...priceProps ],
+            'Potencja i libido': [ ...priceProps ],
+            'Stawy, kości i mięśnie': [ ...priceProps ],
+            'Serce': [ ...priceProps ],
+            'Układ moczowy': [ ...priceProps ],
+            'Trawienie': [ ...priceProps ],
+            'Oczy': [ ...priceProps ],
+            'Pozostałe suplementy': [ ...priceProps ]
+        },
+
+        'Erotyka': {
+            'Akcesoria i gadżety erotyczne': [ ...priceAndStateProps ],
+            'Feromony i afrodyzjaki': [ ...priceProps ],
+            'Filmy erotyczne': [ ...priceAndStateProps ],
+            'Gry erotyczne': [ ...priceAndStateProps ],
+            'Halki i koszulki erotyczne': [ ...priceAndStateProps ],
+            'Literatura erotyczna': [ ...priceAndStateProps ],
+            'Pozostałe produkty erotyczne': [ ...priceProps ]
+        }
+    },
+
+    'Kolekcje i sztuka': {
+        'Antyki i sztuka': {
+            'Antyki': [ ...priceProps ],
+            'Antykwariat': [ ...priceAndStateProps ],
+            'Malarstwo': [ ...priceAndStateProps ],
+            'Meble': [ ...priceAndStateProps ],
+            'Porcelana': [ ...priceAndStateProps ],
+            'Rysunek': [ ...priceAndStateProps ],
+            'Sztuka współczesna': [ ...priceAndStateProps ],
+            'Tkaniny': [ ...priceAndStateProps ],
+            'Akcesoria plastyczne': [ ...priceAndStateProps ]
+        },
+
+        'Kolekcje': {
+            'Filatelistyka': [ ...priceAndStateProps ],
+            'Karty telefoniczne': [ ...priceAndStateProps ],
+            'Medale i odznaczenia': [ ...priceAndStateProps ],
+            'Militaria': [ ...priceAndStateProps ],
+            'Modelarstwo': [ ...priceAndStateProps ],
+            'Numizmatyka': [ ...priceAndStateProps ],
+            'Pamiątki PRL-u': [ ...priceAndStateProps ],
+            'Papiery wartościowe': [ ...priceAndStateProps ],
+            'Pieniądz papierowy': [ ...priceAndStateProps ],
+            'Pocztówki': [ ...priceAndStateProps ],
+            'Trafika i birofilistyka': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Rękodzieło': {
+            'Biżuteria - półprodukty': [ ...priceAndStateProps ],
+            'Decoupage i scrapbooking': [ ...priceAndStateProps ],
+            'Dziewiarstwo': [ ...priceAndStateProps ],
+            'Filcowanie': [ ...priceAndStateProps ],
+            'Masy do modelowania': [ ...priceAndStateProps ],
+            'Quilling': [ ...priceAndStateProps ],
+            'Szycie': [ ...priceAndStateProps ],
+            'Literatura': [ ...priceAndStateProps ],
+            'Przedmioty ręcznie wykonane': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Produkty inwestycyjne': {
+            'Kamienie szlachetne': [ ...priceAndStateProps ],
+            'Metale szlachetne': [ ...priceAndStateProps ],
+            'Monety kolekcjonerskie': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        }
+    },
+
+    'Elektronika': {
+        'RTV': {
+            'TV': [ ...elektronikaTVkindsProps, ...priceAndStateProps ],
+            'Audio': [ ...elektronikaAudioKindsProps, ...priceAndStateProps ],
+            'Car audio': [ ...elektronikaCarAudioKindsProps, ...priceAndStateProps ],
+            'Fotografia i kamery': [ ...elektronikaFotografiaKindsProps, ...priceAndStateProps ]
+        },
+
+        'AGD': {
+            'Lodówki i zamrażarki': [ ...agdLodowkiKindsProps, ...priceAndStateProps ],
+            'Pralki i suszarki': [ ...agdPralkiKindsProps, ...priceAndStateProps ],
+            'Kuchnie': [ ...agdKuchnieKindsProps, ...priceAndStateProps ]
+        },
+
+        'AGD drobne': {
+            'Do kuchni': [ ...agdDoKuchniKindsProps, ...priceAndStateProps ],
+            'Do domu': [ ...agdDoDomuKindsProps, ...priceAndStateProps ],
+            'Higiena i pielęgnacja': [ ...agdHigienaKindsProps, ...priceAndStateProps ]
+        },
+
+        'Telefony i akcesoria': {
+            'Smartfony': [ ...telAkcSmartfonyKindsProps, ...priceAndStateProps ],
+            'Tablety': [ ...telAkcTabletyKindsProps, ...priceAndStateProps ],
+            'Czytniki e-booków': [ ...telAkcCzytnikiKindsProps, ...priceAndStateProps ],
+            'Smartwatche': [ ...telAkcSmartwatcheKindsProps, ...priceAndStateProps ],
+            'Akcesoria GSM': [ ...telAkcAkcesoriaKindsProps, ...priceAndStateProps ],
+            'Multimedia': [ ...telAkcMultimediaKindsProps, ...priceAndStateProps ],
+            'Telefony stacjonarne': [ ...telAkcTelefonyKindsProps, ...priceAndStateProps ],
+            'Radiokomunikacja': [ ...telAkcRadiokomunikacjaKindsProps, ...priceAndStateProps ]
+        },
+
+        'Komputery i laptopy': {
+            'Laptopy': [ ...laptopyKindsProps, ...priceAndStateProps ],
+            'Komputery PC': [ ...komputeryPCKindsProps, ...priceAndStateProps ],
+            'Gaming': [ ...gamingKindsProps, ...priceAndStateProps ],
+            'Komponenty PC': [ ...komponentyPCKindsProps, ...priceAndStateProps ],
+            'Peryferia': [ ...peryferiaKindsProps, ...priceAndStateProps ],
+            'Drukarki skanery': [ ...drukarkiKindsProps, ...priceAndStateProps ]
+        },
+
+        'Konsole i automaty': {
+            'Sony Playstation': [ ...sonyPlaystationKindsProps, ...priceAndStateProps ],
+            'Microsoft Xbox': [ ...xboxKindsProps, ...priceAndStateProps ],
+            'Nintendo': [ ...nintendoKindsProps, ...priceAndStateProps ],
+            'Pozostałe konsole': [ ...priceAndStateProps ]
         }
     },
 
