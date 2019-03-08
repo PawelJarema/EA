@@ -7,6 +7,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	user-select: none;
 }
 
 .frontPageCategories .category-link {
@@ -54,7 +55,7 @@ figure.frontpage {
 	background: -webkit-linear-gradient(left, rgba(255,255,255,0.65) 0%,rgba(0,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to right, rgba(255,255,255,0.65) 0%,rgba(0,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6ffffff', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
-	left: 0; border: 1px solid #ddd; border-right: none; border-radius: 3px;
+	left: 4px; border: 1px solid #ddd; border-right: none; border-radius: 3px;
 }
 
 .carousel-control .control.right {
@@ -63,5 +64,5 @@ figure.frontpage {
 	background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(255,255,255,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(255,255,255,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6ffffff',GradientType=1 ); /* IE6-9 */
-	right: 0; border: 1px solid #ddd; border-left: none; border-radius: 3px;
+	right: 4px; border: 1px solid #ddd; border-left: none; border-radius: 3px;
 }

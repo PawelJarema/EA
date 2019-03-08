@@ -3,6 +3,8 @@ import { withRouter } from 'react-router-dom';
 import { frontPageCategories as categories } from '../constants/categories';
 import { stripPolish } from '../helpers/charHelper';
 
+import { Swipeable } from 'react-swipeable';
+
 const
 	iconWidth = 150, 
 	assetNames = categories.map(cat => cat.toLowerCase().replace(/\s+/g, '_') + '.png');
@@ -37,14 +39,16 @@ class FrontPageCategories extends Component {
 		this.right = this.right.bind(this);
 		this.disabled = this.disabled.bind(this);
 		this.animate = this.animate.bind(this);
+		this.width = this.width.bind(this);
+		this.clearAnimation = this.clearAnimation.bind(this);
 	}
 
 	left() {
-		this.animate(-iconWidth);
+		this.animate(-1 * this.width());
 	}
 	
 	right() {
-		this.animate(iconWidth);
+		this.animate(this.width());
 	}
 
 	animate(distance) {
@@ -59,13 +63,17 @@ class FrontPageCategories extends Component {
 			this.animation = setInterval(() => {
 				ref.scrollLeft += step;
 
-				if (ref.scrollLeft === endPosition) {
-					clearInterval(this.animation);
-					this.animation = null;
-					this.disabled();
+				if (ref.scrollLeft === endPosition || ref.scrollLeft === ref.scrollWidth - ref.offsetWidth || ref.scrollLeft === 0) {
+					this.clearAnimation();
 				}
 			}, Math.abs(step))
 		}
+	}
+
+	clearAnimation() {
+		clearInterval(this.animation);
+		this.animation = null;
+		this.disabled();
 	}
 
 	disabled(which) {
@@ -81,30 +89,43 @@ class FrontPageCategories extends Component {
 		}
 	}
 
-	render() {
+	width() {
 		const
-			{ onMobile, windowWidth } = this.props,
-			componentWidth = windowWidth <= 580 ? windowWidth - 40 : windowWidth - 240; // marginesy na stronie + kontrolki
+			{ windowWidth } = this.props,
+			componentWidth = windowWidth <= 580 ? windowWidth - 62 : windowWidth - 252;
+
+		return parseInt(componentWidth / iconWidth) * iconWidth;
+	}
+
+	render() {
+		const { onMobile } = this.props;
 
 		return (
 			<div className="carousel-control position-relative">
 				{ onMobile && <div className={ "control left" + (this.state.left ? '' : ' disabled') } onClick={ this.left }><i className="material-icons">arrow_left</i></div> }
-				<div ref={ (e) => this.containerRef = e } className={ "frontPageCategories" + (onMobile ? ' carousel' : '')} style={ (onMobile ? { width: parseInt(componentWidth / iconWidth) * iconWidth, margin: 'auto' } : {}) }>
-					
-					{
-						assetNames.map((asset, i) => {
-							const categoryName = categories[i];
-							return (
-								<CategoryLink key={ 'cat_' + i } to={ categoryName } categoryCallback={ this.props.categoryCallback }>
-									<figure className="frontpage category-icon">
-										<img src={ '/assets/icons/new/' + stripPolish(asset) } alt={ categoryName } />
-										<figcaption>{ categoryName }</figcaption>
-									</figure>
-								</CategoryLink>
-							);
-						})
-					}
-				</div>
+				<Swipeable 
+					trackMouse
+					onSwipedLeft={ this.right }
+					onSwipedRight={ this.left } >
+
+					<div ref={ (e) => this.containerRef = e } className={ "frontPageCategories" + (onMobile ? ' carousel' : '')} style={ (onMobile ? { width: this.width(), margin: 'auto' } : {}) }>
+						
+						{
+							assetNames.map((asset, i) => {
+								const categoryName = categories[i];
+								return (
+									<CategoryLink key={ 'cat_' + i } to={ categoryName } categoryCallback={ this.props.categoryCallback }>
+										<figure className="frontpage category-icon">
+											<img src={ '/assets/icons/new/' + stripPolish(asset) } alt={ categoryName } />
+											<figcaption>{ categoryName }</figcaption>
+										</figure>
+									</CategoryLink>
+								);
+							})
+						}
+					</div>
+
+				</Swipeable>
 				{ onMobile && <div className={ "control right" + (this.state.right ? '' : ' disabled') } onClick={ this.right }><i className="material-icons">arrow_right</i></div> }
 			</div>
 		);
