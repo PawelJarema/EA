@@ -122,7 +122,9 @@ const endAuction = async (auction_id) => {
 					auction.title, 
 					i === 0 ? auction.price.current_price : auction.bids[i].price
 				));
+				
 				winMailer.send();
+
 				console.log('winner notification sent to ' + emails[i]);
 
 				helpers.sendChatMessagesOnAuctionEnd(winners[i]._id, owner._id, auction, auction.bids[i].price);

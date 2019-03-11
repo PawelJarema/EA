@@ -24,6 +24,8 @@ import Filters from './Filters';
 import Progress from './Progress';
 import Ads from './Ads';
 
+import ProfileSendAndRateBuyer from './ProfileSendAndRateBuyer';
+
 import socketIOClient from 'socket.io-client';
 
 class AuctionListSearch extends Component {
@@ -223,6 +225,7 @@ class App extends Component {
                                     <Route path="/konto/aukcje/dodaj" component={ CreateUpdateAuction } />
                                     <Route path="/edytuj-aukcje/:title/:id" render={ (props) => <CreateUpdateAuction {...props} update={true} /> } />
                                     <Route path="/konto/aukcje/dostawa" component={ Delivery } />
+                                    <Route path="/konto/wyslij-i-ocen" render={ (props) => <ProfileSendAndRateBuyer { ...props } user={ user } /> } />
                                 </div>
                             }
                     </div>

@@ -24,6 +24,7 @@ const Mailer 			= require('../services/Mailer');
 const sendItemTemplate	= require('../services/emailTemplates/sendItemTemplate');
 const paySimpleTemplate	= require('../services/emailTemplates/paySimpleTemplate');
 
+const { enqueueAuctionOwnerToSendItems } = require('./functions');
 const helpers = require('../services/helpers/otherHelpers');
 
 // 	verify: 'https://sandbox.przelewy24.pl/trnVerify'
@@ -221,19 +222,20 @@ module.exports = app => {
 			const owner = await User.findOne({ _id: ObjectId(owner_id) });
 
 			const buynowpayee = auction.buynowpayees && auction.buynowpayees.indexOf(buyer._id) !== -1;
-			const payee = auction.payees && auction.payees.indexOf(buyer._id !== -1);
+			const payee = auction.payees && auction.payees.indexOf(buyer._id) !== -1;
 
 			let qty = 1;
 
 			if (buynowpayee) {
 				let initialPayees = auction.buynowpayees.length;
 				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(buyer._id));
-				qty = initialPayees - auction.buynowpayees.length;
+				qty = initialPayees - auction.buynowpayees.length,
+				qtyArray = new Array(qty).fill(buyer._id);
 
 				if (auction.buynowpaid) {
-		            auction.buynowpaid.push(buyer._id);
+		            auction.buynowpaid = auction.buynowpaid.concat(qtyArray);
 		        } else {
-		            auction.buynowpaid = [buyer._id];
+		            auction.buynowpaid = [...qtyArray];
 		        }
 			}
 
@@ -241,6 +243,12 @@ module.exports = app => {
 				auction.payees = auction.payees.filter(id => String(id) !== String(buyer.id));
 				if (auction.payees.length === 0) {
 					auction.paid = true;
+				}
+
+				if (auction.auctionpaid) {
+					auction.auctionpaid.push(buyer._id);
+				} else {
+					auction.auctionpaid = [buyer._id];
 				}
 			}
 
@@ -276,6 +284,8 @@ module.exports = app => {
 			mailer.send();
 
 			req.session.message = 'Sprzedawca został powiadomiony o wpłacie i poproszony o sprawdzenie stanu konta';
+			enqueueAuctionOwnerToSendItems(owner._id, buyer._id);
+
 			res.send(true);
 			return;
 		}

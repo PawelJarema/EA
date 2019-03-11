@@ -15,6 +15,7 @@ import Progress from './Progress';
 import { Pagination } from './Pagination';
 import RegexHelper from '../helpers/regexHelper';
 
+import { isNotEmpty } from './auctions/functions';
 import { UserHelper } from '../helpers/UserHelper';
 
 moment.updateLocale('pl', {
@@ -83,8 +84,11 @@ class ProfileLinks extends Component {
         const 
             { user } = this.props,
             { credits } = user.balance || 0,
-            userHasFreebies = user.freebies ? Boolean(user.freebies.auctions) : false;
+            userHasFreebies = user.freebies ? Boolean(user.freebies.auctions) : false,
+            toSend = isNotEmpty(user.toSend),
+            toRate = isNotEmpty(user.toRate);
 
+        console.log(user.toSend);
         // console.log(user.freebies);
 
         return (
@@ -104,9 +108,11 @@ class ProfileLinks extends Component {
                 </div>
                 <Link className={ (active) === 'liked' ? 'active' : null } to="/polubione-aukcje">Polubione aukcje</Link>
                 <Link className={ (active === 'opinions' ? 'active' : null) } to="/konto/opinie">Opinie</Link>
-                <Link className={ (active === 'invoices' ? 'active' : null) } to="/konto/faktury">Faktury</Link>
+                {
+                    (toSend || toRate) &&  <Link className={ (active === 'send-rate' ? 'active' : null) } to="/konto/wyslij-i-ocen">Oznacz przedmioty jako wysłane i oceń kupujących</Link>
+                }  
             </div>
-        );
+        ); // <Link className={ (active === 'invoices' ? 'active' : null) } to="/konto/faktury">Faktury</Link>
     }
 }
 

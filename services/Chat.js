@@ -5,9 +5,9 @@ const production = process.env.NODE_ENV === 'production';
 
 
 // SSL CERT
-const privateKey = production ? fs.readFileSync('../cert/privkey.pem', 'utf8') : null;
-const certificate = production ? fs.readFileSync('../cert/cert.pem', 'utf8') : null;
-const ca = production ? fs.readFileSync('../cert/chain.pem', 'utf8') : null;
+const privateKey = production ? fs.readFileSync('./cert/privkey.pem', 'utf8') : null;
+const certificate = production ? fs.readFileSync('./cert/cert.pem', 'utf8') : null;
+const ca = production ? fs.readFileSync('./cert/chain.pem', 'utf8') : null;
 
 const credentials = {
 	key: privateKey,

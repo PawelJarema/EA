@@ -31,6 +31,7 @@ const bidTemplate               = require('../services/emailTemplates/bidTemplat
 const Mailer                    = require('../services/Mailer');
 
 const helpers = require('../services/helpers/otherHelpers');
+const { filterUnique } = require('./functions');
 
 // const util = require('util');
 
@@ -42,7 +43,117 @@ const currentUserId = (req) => {
     }
 }
 
+let global_user_cache = {};
+
+async function makeRow(user_id, auction, fromAuctionNotBuyNow, toSend, toRate) {
+    const user = global_user_cache[user_id] ? global_user_cache[user_id] : global_user_cache[user_id] = await User.findOne({ _id: user_id });
+
+    return ({
+        count: (fromAuctionNotBuyNow ? 1 : auction.buynowpaid.filter(id => String(id) === String(user._id)).length),
+        auction: {
+            _id: auction._id,
+            title: auction.title
+        },
+        user: {
+            _id: user._id,
+            data: helpers.userDataHelper(user)
+        },
+        toSend,
+        toRate
+    });
+}
+
 module.exports = app => {
+    app.post('/auction/send_and_rate_rows', requireLogin, async (req, res) => {
+        const
+            rows = [],
+            owner = req.user,
+            projection = { _id: 1, title: 1, buynowpaid: 1, auctionpaid: 1 },
+
+            itemsToSendAuction = await Auction.find({
+                _user: owner._id, 
+                auctionpaid: { $in: owner.toSend }
+            }, projection),
+
+            usersToRateAuction = await Auction.find({
+                _user: owner._id,    
+                auctionpaid: { $in: owner.toRate }
+            }, projection),
+
+            itemsToSendBuyNow = await Auction.find({ 
+                _user: owner._id, 
+                buynowpaid: { $in: owner.toSend }
+            }, projection),
+
+            usersToRateBuyNow = await Auction.find({
+                _user: owner._id,    
+                buynowpaid: { $in: owner.toRate }
+            }, projection);
+
+        for (let i = 0; i < itemsToSendAuction.length; i++) {
+            console.log('auction item found');
+
+            const auction = itemsToSendAuction[i];
+            rows.push(await makeRow(
+                auction.auctionpaid[0],
+                auction,
+                true,
+                true,
+                false
+            )); 
+        }
+
+        for (let i = 0; i < itemsToSendBuyNow.length; i++) {
+            console.log('buy now items found');
+
+            const 
+                auction = itemsToSendBuyNow[i],
+                buyers = auction.buynowpaid.filter(filterUnique);
+
+            for (let j = 0; j < buyers.length; j++) {
+                rows.push(await makeRow(
+                    buyers[j],
+                    auction,
+                    false,
+                    true,
+                    false
+                ));
+            }
+        }
+
+        for (let i = 0; i < usersToRateAuction.length; i++) {
+            const auction = usersToRateAuction[i];
+            rows.push(await makeRow(
+                auction.auctionpaid[0],
+                auction,
+                true,
+                false,
+                true
+            )); 
+        }
+
+        for (let i = 0; i < usersToRateBuyNow.length; i++) {
+            const 
+                auction = usersToRateBuyNow[i],
+                buyers = auction.buynowpaid.filter(filterUnique);
+
+            for (let j = 0; j < buyers.length; j++) {
+                rows.push(await makeRow(
+                    buyers[j],
+                    auction,
+                    false,
+                    false,
+                    true
+                ));
+            }
+        }
+
+        global_user_cache = {};
+
+        console.log(rows);
+        res.send(rows);
+    });
+
     app.get('/auction/:id/photo', async (req, res) => {
         const { id }    = req.params,
                 auction = await Auction.findOne({ _id: ObjectId(id) }, { photos: { $slice: 1 } }),
@@ -223,9 +334,9 @@ module.exports = app => {
 
         auction.quantity = auction.quantity - 1;
         if (auction.buynowpayees) {
-            auction.buynowpayees.push(ObjectId(user._id));
+            auction.buynowpayees.push(user._id);
         } else {
-            auction.buynowpayees = [ObjectId(user._id)];
+            auction.buynowpayees = [user._id];
         }
 
         auction.bids = auction.bids.filter(bid => String(bid._user) !== String(user._id));

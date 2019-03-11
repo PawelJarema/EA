@@ -58,7 +58,9 @@ const userSchema = new Schema({
             type: Number,
             default: 5
         }
-    }
+    },
+    toSend: [ObjectId],
+    toRate: [ObjectId]
 });
 
 mongoose.model('user', userSchema);

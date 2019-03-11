@@ -7,6 +7,8 @@ import FrontPageInner from './FrontPageInner';
 import Auction from './auctions/Auction';
 import Progress from './Progress';
 
+import { isNotEmpty } from './auctions/functions';
+
 import './FrontPage.css';
 
 const modes = ['main', 'promoted', 'new'];
@@ -47,7 +49,7 @@ class FrontPage extends Component {
                     this.props.auctions && <FrontPageCategories categoryCallback={ categoryCallback } onMobile={ onMobile } windowWidth={ windowWidth } />
                 }
                 {
-                    this.props.auctions && this.props.auctions.popular && (
+                    this.props.auctions && isNotEmpty(this.props.auctions.popular) && (
                         <div className="most-popular">
                             <h1 className="clickable" onClick={ () => this.toggleMode('promoted') }><i className="material-icons">trending_up</i> Promowane</h1>
                             {
@@ -80,7 +82,7 @@ class FrontPage extends Component {
                     )
                 }
                 {
-                    this.props.auctions && this.props.auctions.newest && (
+                    this.props.auctions && isNotEmpty(this.props.auctions.newest) && (
                         <div className="new">
                             <h1 className="clickable"  onClick={ () => this.toggleMode('new') }><i className="material-icons">new_releases</i> Najnowsze</h1>
                             {
