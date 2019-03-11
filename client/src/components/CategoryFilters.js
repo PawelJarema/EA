@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { isSet, isNotEmpty } from './CategoryPicker';
 import { InputSingular, InputRange, InputMultiple } from './CategoryInputs';
+import { catResource } from './FrontPageCategories';
 
 import './CategoryPicker.css';
 import './CategoryFilters.css';
@@ -67,14 +68,20 @@ class CategoryNavigation extends Component {
 		const 
 			{ data, callback, level } = this.props,
 			nextLevel = level === null ? 'category' : level === 'category' ? 'subcategory' : level === 'subcategory' ? 'subsubcategory' : null,
-			squirtle = level === null ? 'main-cat ' : ''; 
+			squirtle = level === null ? 'main-cat ' : '',
+			withIcon = level === null;
 
 		if (!isNotEmpty(data)) return null;
 
 		return(
 			<div className={ "CategoryTree " + nextLevel }>
 				{
-					data.map((cat, i) => <a key={ "cat_" + i } className={ squirtle + cat.name } onClick={ () => callback(nextLevel, cat.name, i) }>{ cat.name }</a>)
+					data.map((cat, i) => (
+						<a key={ "cat_" + i } className={ squirtle + cat.name } onClick={ () => callback(nextLevel, cat.name, i) }>
+						{ withIcon && <img className="extra-small-icon" alt={ cat.name } src={ catResource(cat.name) } /> } 
+						{ cat.name }
+						</a>
+					))
 				}
 			</div>
 		);

@@ -76,6 +76,30 @@ nav .user-links .search-mobile {
     	flex: 0 0 100%;
 	}
 }
+
+@media screen and (max-width: 1470px) {
+	.PromoteAuction .promo-form {
+		flex-direction: column-reverse;
+		padding: 0 !important;
+	}
+	.PromoteAuction .promo-form h2 {
+		background: #ccc;
+		padding-top: 16px;
+		color: white;
+	}
+	.PromoteAuction .promo-form i {
+		display: none;
+	}
+	.PromoteAuction .promo-form span:not(:first-child) {
+		box-sizing: border-box;
+		padding: 5px 10px;
+	}
+	.PromoteAuction .promo-form > div {
+		border: 1px solid #eee;
+		margin: 40px 0 !important;
+	}
+}
+
 @media screen and (max-width: 1350px) {
 	.App .registration-panel {
 		flex-wrap: wrap;

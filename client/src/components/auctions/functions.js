@@ -60,6 +60,10 @@ function isNotEmpty(object) {
   return Boolean(object);
 }
 
+function isEmpty(object) {
+    return !isNotEmpty(object);
+}
+
 function isIn(value, array) {
     const arr = array.map(val => String(val));
     return arr.indexOf(String(value)) !== -1;
@@ -107,4 +111,4 @@ function concatUnique(arr1, arr2) {
     return result
 }
 
-export { userName, applyToAuctions, auctionPath, getUnits, isSet, isNotEmpty, isBidder, pluralize, concatUnique };
+export { userName, applyToAuctions, auctionPath, getUnits, isSet, isEmpty, isNotEmpty, isBidder, pluralize, concatUnique };

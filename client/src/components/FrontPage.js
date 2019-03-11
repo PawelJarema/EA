@@ -3,24 +3,40 @@ import { connect } from 'react-redux';
 import * as auctionActions from '../actions/auctionActions';
 
 import FrontPageCategories from './FrontPageCategories';
+import FrontPageInner from './FrontPageInner';
 import Auction from './auctions/Auction';
 import Progress from './Progress';
 
 import './FrontPage.css';
 
+const modes = ['main', 'promoted', 'new'];
+
 class FrontPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { mode: 'main' };
+
+        this.toggleMode = this.toggleMode.bind(this);
+    }
 
     componentDidMount() {
         this.props.fetchFrontPageAuctions();
     }
 
     componentWillReceiveProps(props) {
-        if (props.auctions) {
-        }
+
+    }
+
+    toggleMode(changeMode) {
+        this.setState(({ mode }) => ({ mode: (mode === 'main' || mode !== changeMode ? changeMode : 'main') }));
     }
 
     render() {
-        const { categories, categoryCallback, onMobile, windowWidth } = this.props;
+        const
+            { mode } = this.state, 
+            { categories, categoryCallback, onMobile, windowWidth } = this.props,
+            inPromoted = mode === 'promoted',
+            inNew = mode === 'new';
 
         return (
             <div className="FrontPage">
@@ -33,43 +49,69 @@ class FrontPage extends Component {
                 {
                     this.props.auctions && this.props.auctions.popular && (
                         <div className="most-popular">
-                            <h1><i className="material-icons">trending_up</i> Promowane</h1>
-                            <div className="two-column">
-                                <div className="column">
-                                    <Auction auction={this.props.auctions.popular[0]} />
-                                 </div>
-                                <div className="column">
-                                    <Auction auction={this.props.auctions.popular[1]} />
-                                </div>
-                            </div>
-                            <div className="six-column">
-                                {
-                                    this.props.auctions.popular.slice(2).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
-                                }
-                            </div>
+                            <h1 className="clickable" onClick={ () => this.toggleMode('promoted') }><i className="material-icons">trending_up</i> Promowane</h1>
+                            {
+                                inPromoted
+                                ?
+                                (
+                                    <FrontPageInner mode={ mode } onMobile={ onMobile }/>
+                                )
+                                :
+                                (
+                                    <div>
+                                        <div className="two-column">
+                                            <div className="column">
+                                                <Auction auction={this.props.auctions.popular[0]} />
+                                             </div>
+                                            <div className="column">
+                                                <Auction auction={this.props.auctions.popular[1]} />
+                                            </div>
+                                        </div>
+                                        <div className="six-column">
+                                            {
+                                                this.props.auctions.popular.slice(2).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            
                         </div>
                     )
                 }
                 {
                     this.props.auctions && this.props.auctions.newest && (
                         <div className="new">
-                            <h1><i className="material-icons">new_releases</i> Najnowsze</h1>
-                            <div className="three-column">
-                                <div className="column">
-                                    <Auction auction={this.props.auctions.newest[0]} />
-                                </div>
-                                <div className="column">
-                                    <Auction auction={this.props.auctions.newest[1]} />
-                                </div>
-                                <div className="column">
-                                    <Auction auction={this.props.auctions.newest[2]} />
-                                </div>
-                            </div>
-                            <div className="six-column">
-                                {
-                                    this.props.auctions.newest.slice(3).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
-                                }
-                            </div>
+                            <h1 className="clickable"  onClick={ () => this.toggleMode('new') }><i className="material-icons">new_releases</i> Najnowsze</h1>
+                            {
+                                inNew 
+                                ?
+                                (
+                                    <FrontPageInner mode={ mode } onMobile={ onMobile } />
+                                )
+                                :
+                                (
+                                    <div>
+                                        <div className="three-column">
+                                            <div className="column">
+                                                <Auction auction={this.props.auctions.newest[0]} />
+                                            </div>
+                                            <div className="column">
+                                                <Auction auction={this.props.auctions.newest[1]} />
+                                            </div>
+                                            <div className="column">
+                                                <Auction auction={this.props.auctions.newest[2]} />
+                                            </div>
+                                        </div>
+                                        <div className="six-column">
+                                            {
+                                                this.props.auctions.newest.slice(3).map((auction, index) => <div key={auction.title + index} className="column"><Auction auction={auction} /></div>)
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            
                         </div>
                     )
                 }

@@ -790,11 +790,7 @@ const nintendoKindsProps = [{
     values: ['Konsole Nintendo', 'Kontrolery', 'Akcesoria Nintendo', 'Gry do Nintendo', 'Pozostałe']
 }];
 
-const balblaNazwa = [{
-    name: 'Rodzaj',
-    type: 'Singular', // !
-    values: []
-}];
+
 
 const categoryTree = {
     // 'Moda': {
@@ -1341,6 +1337,20 @@ const categoryTree = {
     },
 
     'Motoryzacja': {
+        'Samochody osobowe': [...carMakeProps, ...carModelProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...gearBoxProps, ...productionYearProps, ...cabinTypeProps, ...makeCountryProps, ...engineVolumeProps, ...colorProps, ...steeringWheelProps, ...courseDistanceProps, ...workingOrderProps],
+
+// 'Motocykle i Skutery': [...motorbikeCatProps, ...motorbikeMakeProps, ...priceProps, ...productionYearProps, ...motorbikeEngineVolumeProps, ...workingOrderProps, ...makeCountryProps],
+
+// 'Dostawcze i Ciężarowe': [...truckCatProps, ...workingOrderProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...engineVolumeProps, ...gearBoxProps, ...productionYearProps, ...makeCountryProps, ...courseDistanceProps],
+
+// 'Przyczepy i Pojazdy Użytkowe': [...trailerCatProps, ...workingOrderProps, ...priceProps, ...productionYearProps],
+
+// 'Części motocyklowe': [...motorcyclePartKindProps, ...stateProps, ...priceProps],
+
+// 'Sprzęt car audio': priceAndStateProps,
+
+// 'Pozostała motoryzacja': priceProps
+
         'Części samochodowe': {
             'Części karoserii': carPartAggregatedProps,
             'Filtry': carPartAggregatedProps,
@@ -1436,20 +1446,431 @@ const categoryTree = {
             'Części do quadów': [...czesciDoQuadowKindsProps, ...priceAndStateProps],
             'Akcesoria do quadów': [...akcesoriaDoQuadowProps, ...priceAndStateProps]
         }
+    },
 
-        // 'Samochody osobowe': [...carMakeProps, ...carModelProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...gearBoxProps, ...productionYearProps, ...cabinTypeProps, ...makeCountryProps, ...engineVolumeProps, ...colorProps, ...steeringWheelProps, ...courseDistanceProps, ...workingOrderProps],
+    'Spożywcze': {
+        'Owoce': [ ...priceProps ],
+        'Warzywa': [ ...priceProps ],
+        'Grzyby': [ ...priceProps ],
+        'Przyprawy i zioła': [ ...priceProps ],
+        'Owoce suszone, bakalie i orzechy': [ ...priceProps ],
+        'Nabiał i jaja': [ ...priceProps ],
+        'Pieczywo i cukiernia': [ ...priceProps ],
+        'Mięso i produkty mięsne': [ ...priceProps ],
+        'Ryby i produkty rybne': [ ...priceProps ],
+        'Owoce morza': [ ...priceProps ],
+        'Produkty sypkie': [ ...priceProps ],
+        'Oliwa, olej, ocet i sosy': [ ...priceProps ],
+        'Przetwory owocowe i warzywne': [ ...priceProps ],
+        'Miód i pyłek pszczeli': [ ...priceProps ],
+        'Słodycze i przekąski': [ ...priceProps ],
+        'Mrożonki': [ ...priceProps ],
+        'Kawa': [ ...priceProps ],
+        'Herbata': [ ...priceProps ],
+        'Napoje': [ ...priceProps ],
+        'Dekoracje cukiernicze i dodatki spożywcze': [ ...priceProps ],
+        'Akcesoria ': [ ...priceProps ],
+        'Alkohole': [ ...priceProps ],
+        'Dania gotowe': [ ...priceProps ],
+        'Dietetyczne': [ ...priceProps ],
+        'Wegetariańskie i wegańskie': [ ...priceProps ],
+        'Zdrowa żywność ': [ ...priceProps ],
+        'Superfood': [ ...priceProps ],
+        'Zestawy prezentowe': [ ...priceProps ]
+    },
 
-        // 'Motocykle i Skutery': [...motorbikeCatProps, ...motorbikeMakeProps, ...priceProps, ...productionYearProps, ...motorbikeEngineVolumeProps, ...workingOrderProps, ...makeCountryProps],
+    'Zwierzęta': {
+        'Akcesoria i dodatki': [ ...priceAndStateProps ],
+        'Kagańce': [ ...priceAndStateProps ],
+        'Karma': [ ...priceProps ],
+        'Kosmetyki i preparaty': [ ...priceProps ],
+        'Legowiska': [ ...priceAndStateProps ],
+        'Literatura i filmy': [ ...priceAndStateProps ],
+        'Obroże, smycze, szelki ': [ ...priceAndStateProps ],
+        'Przysmaki i witaminy': [ ...priceProps ],
+        'Szczotki, trymery i grzebienie': [ ...priceAndStateProps ],
+        'Transportery i torby': [ ...priceAndStateProps ],
+        'Zabawki': [ ...priceAndStateProps ],
+        'Żwirek': [ ...priceProps ],
+        'Akwarystyka ': [ ...priceAndStateProps ],
+        'Terrarystyka': [ ...priceAndStateProps ],
+        'Pozostałe': [ ...priceProps ]
+    },
 
-        // 'Dostawcze i Ciężarowe': [...truckCatProps, ...workingOrderProps, ...enginePowerProps, ...priceProps, ...fuelProps, ...engineVolumeProps, ...gearBoxProps, ...productionYearProps, ...makeCountryProps, ...courseDistanceProps],
+    'Dzieci i młodzież': {
+        'Zabawki i akcesoria': {
+            'AGD': [ ...priceAndStateProps ],
+            'Bujaki, skoczki': [ ...priceAndStateProps ],
+            'Kąpiele': [ ...priceAndStateProps ],
+            'Edukacyjne': [ ...priceAndStateProps ],
+            'Figurki': [ ...priceAndStateProps ],
+            'Kolejki i tory': [ ...priceAndStateProps ],
+            'Majsterkowanie': [ ...priceAndStateProps ],
+            'Maskotki': [ ...priceAndStateProps ],
+            'Militarne': [ ...priceAndStateProps ],
+            'Plastyczne': [ ...priceAndStateProps ],
+            'Puzzle': [ ...priceAndStateProps ],
+            'Samochody i pojazdy': [ ...priceAndStateProps ],
+            'Samoloty i pokrewne': [ ...priceAndStateProps ],
+            'Zdalnie sterowane': [ ...priceAndStateProps ],
+            'Akcesoria ogrodnicze': [ ...priceAndStateProps ],
+            'Baseny': [ ...priceAndStateProps ],
+            'Do piaskownicy': [ ...priceAndStateProps ],
+            'Do pływania': [ ...priceAndStateProps ],
+            'Domki i namioty': [ ...priceAndStateProps ],
+            'Gry i zabawy': [ ...priceAndStateProps ],
+            'Huśtawki': [ ...priceAndStateProps ],
+            'Meble ogrodowe': [ ...priceAndStateProps ],
+            'Piaskownice': [ ...priceAndStateProps ],
+            'Piłki': [ ...priceAndStateProps ],
+            'Place zabaw': [ ...priceAndStateProps ],
+            'Zjeżdżalnie': [ ...priceAndStateProps ],
+            'Rowery tradycyjne': [ ...priceAndStateProps ],
+            'Rowery trójkołowe': [ ...priceAndStateProps ],
+            'Sanki': [ ...priceAndStateProps ],
+            'Pojazdy elektryczne': [ ...priceAndStateProps ],
+            'Deskorolki': [ ...priceAndStateProps ],
+            'Gokarty': [ ...priceAndStateProps ],
+            'Hulajnogi': [ ...priceAndStateProps ],
+            'Jeździki': [ ...priceAndStateProps ],
+            'Rolki i wrotki': [ ...priceAndStateProps ],
+            'Samochody na pedaly': [ ...priceAndStateProps ],
+            'Traktorki': [ ...priceAndStateProps ],
+            'Łyżwy': [ ...priceAndStateProps ],
+            'Akcesoria rowerowe': [ ...priceAndStateProps ],
+            'Gry dla dzieci': [ ...priceAndStateProps ],
+            'Trampoliny i akcesoria': [ ...priceAndStateProps ],
+            'Zabawki ogrodowe': [ ...priceAndStateProps ],
+            'Plecaki i torby': [ ...priceAndStateProps ],
+            'Przybory szkolne': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
 
-        // 'Przyczepy i Pojazdy Użytkowe': [...trailerCatProps, ...workingOrderProps, ...priceProps, ...productionYearProps],
+        'Odzież dziecięca': {
+            'Bielizna': [ ...priceAndStateProps ],
+            'Odzież niemowlęca': [ ...priceAndStateProps ],
+            'Bluzki': [ ...priceAndStateProps ],
+            'Bluzy': [ ...priceAndStateProps ],
+            'Bolerka': [ ...priceAndStateProps ],
+            'Czapki i chustki': [ ...priceAndStateProps ],
+            'Dresy': [ ...priceAndStateProps ],
+            'Garnitury i Marynarki': [ ...priceAndStateProps ],
+            'Golfy': [ ...priceAndStateProps ],
+            'Kamizelki i bezrękawniki': [ ...priceAndStateProps ],
+            'Kombinezony i śpiworki': [ ...priceAndStateProps ],
+            'Koszule': [ ...priceAndStateProps ],
+            'Krótkie spodenki': [ ...priceAndStateProps ],
+            'Kurtki i płaszcze': [ ...priceAndStateProps ],
+            'Kąpielówki': [ ...priceAndStateProps ],
+            'Legginsy': [ ...priceAndStateProps ],
+            'Rękawiczki': [ ...priceAndStateProps ],
+            'Spodnie': [ ...priceAndStateProps ],
+            'Spódniczki': [ ...priceAndStateProps ],
+            'Stroje kąpielowe': [ ...priceAndStateProps ],
+            'Sukienki': [ ...priceAndStateProps ],
+            'Sweterki': [ ...priceAndStateProps ],
+            'Szaliki': [ ...priceAndStateProps ],
+            'Topy i koszulki': [ ...priceAndStateProps ],
+            'Tuniki': [ ...priceAndStateProps ],
+            'Komplety odzieży': [ ...priceAndStateProps ],
+            'Piżamy i szlafroki': [ ...priceAndStateProps ],
+            'Zestawy ubrań': [ ...priceAndStateProps ],
+            'Akcesoria i ozdoby': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
 
-        // 'Części motocyklowe': [...motorcyclePartKindProps, ...stateProps, ...priceProps],
+        'Obuwie': {
+            'Baleriny': [ ...priceAndStateProps ],
+            'Baletki': [ ...priceAndStateProps ],
+            'Botki': [ ...priceAndStateProps ],
+            'Obuwie dla niemowląt': [ ...priceAndStateProps ],
+            'Kalosze': [ ...priceAndStateProps ],
+            'Kapcie': [ ...priceAndStateProps ],
+            'Klapki': [ ...priceAndStateProps ],
+            'Kozaki': [ ...priceAndStateProps ],
+            'Obuwie profilaktyczne': [ ...priceAndStateProps ],
+            'Sandałki': [ ...priceAndStateProps ],
+            'Sportowe': [ ...priceAndStateProps ],
+            'Śniegowce': [ ...priceAndStateProps ],
+            'Trampki': [ ...priceAndStateProps ],
+            'Trzewiki i półbuty': [ ...priceAndStateProps ],
+            'Wkładki do butów': [ ...priceAndStateProps ],
+            'Pozostałe obuwie': [ ...priceAndStateProps ]
+        },
 
-        // 'Sprzęt car audio': priceAndStateProps,
+        'Wyprawka niemowlaka': {
+            'Body': [ ...priceAndStateProps ],
+            'Artykuły higieniczne': [ ...priceAndStateProps ],
+            'Kosmetyki': [ ...priceAndStateProps ],
+            'Nocniki i nakładki': [ ...priceAndStateProps ],
+            'Pieluszki i chusteczki': [ ...priceAndStateProps ],
+            'Przewijaki': [ ...priceAndStateProps ],
+            'Ręczniki i okrycia': [ ...priceAndStateProps ],
+            'Wanienki i akcesoria do kąpieli': [ ...priceAndStateProps ],
+            'Higiena pozostałe': [ ...priceAndStateProps ],
+            'Butelki akcesoria do karmienia': [ ...priceAndStateProps ],
+            'Krzesełka do karmienia': [ ...priceAndStateProps ],
+            'Naczynia i sztućce dla dzieci': [ ...priceAndStateProps ],
+            'Podgrzewacze do butelek': [ ...priceAndStateProps ],
+            'Sterylizatory': [ ...priceAndStateProps ],
+            'Śliniaki': [ ...priceAndStateProps ],
+            'Żywność dla dzieci': [ ...priceAndStateProps ],
+            'Pozostałe produkty do karmienia': [ ...priceAndStateProps ],
+            'Akcesoria dla mamy': [ ...priceAndStateProps ],
+            'Bezpieczeństwo dla dzieci': [ ...priceAndStateProps ],
+            'Laktatory i akcesoria': [ ...priceAndStateProps ],
+            'Leżaczki i huśtawki': [ ...priceAndStateProps ],
+            'Nosidełka': [ ...priceAndStateProps ],
+            'Smoczki i gryzaki': [ ...priceAndStateProps ],
+            'Termomoetry': [ ...priceAndStateProps ],
+            'Urządzenia medyczne': [ ...priceAndStateProps ],
+            'Pozostałe akcesoria dla dzieci': [ ...priceAndStateProps ],
+            'Odzież niemowlęca': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
 
-        // 'Pozostała motoryzacja': priceProps
+        'Pokój dziecięcy': {
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Dekoracje i ozdoby': [ ...priceAndStateProps ],
+            'Dywany i firaniki': [ ...priceAndStateProps ],
+            'Meble dziecięce': [ ...priceAndStateProps ],
+            'Oświetlenie': [ ...priceAndStateProps ],
+            'Pozostałe wyposażenie': [ ...priceAndStateProps ]
+        },
+
+        'Wózki i foteliki': {
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Wózki ': [ ...priceAndStateProps ],
+            'Pozostałe wózki': [ ...priceAndStateProps ],
+            'Podstawki, siedziska samochodowe': [ ...priceAndStateProps ],
+            'Pozostałe foteliki i akcesoria': [ ...priceAndStateProps ]
+        }
+    },
+
+    'Sport i turystyka': {
+        'Bieganie': {
+            'Obuwie': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Odżywki i suplementy': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Elektronika sportowa': {
+            'Echosondy': [ ...priceAndStateProps ],
+            'GPS': [ ...priceAndStateProps ],
+            'Kamery sportowe i akcesoria': [ ...priceAndStateProps ],
+            'Krokomierze (pedometry)': [ ...priceAndStateProps ],
+            'Stopery': [ ...priceAndStateProps ],
+            'Wagi': [ ...priceAndStateProps ],
+            'Zegarki sportowe, smartbandy': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Militaria': {
+            'Akcesoria ochronne': [ ...priceAndStateProps ],
+            'ASG': [ ...priceAndStateProps ],
+            'Myślistwo': [ ...priceAndStateProps ],
+            'Noże, maczety': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Optyka': [ ...priceAndStateProps ],
+            'Paintball': [ ...priceAndStateProps ],
+            'Proce i dmuchawki': [ ...priceAndStateProps ],
+            'Samoobrona': [ ...priceAndStateProps ],
+            'Wiatrówki': [ ...priceAndStateProps ],
+            'Łucznictwo': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Rowery': {
+            'Rowery': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Części': [ ...priceAndStateProps ],
+            'Kaski': [ ...priceAndStateProps ],
+            'Narzędzia i smary': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Ochraniacze': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Okulary': [ ...priceAndStateProps ],
+            'Literatura, instrukcje': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Siłownia i fitness': {
+            'Trening fitness': [ ...priceAndStateProps ],
+            'Trening siłowy': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Suplementy i odżywki': [ ...priceAndStateProps ],
+            'Ściągacze i stabilizatory': [ ...priceAndStateProps ],
+            'Akcesoria treningowe': [ ...priceAndStateProps ],
+            'Literatura i filmy': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Skating': {
+            'Deskorolki elektryczne': [ ...priceAndStateProps ],
+            'Deskorolki kompletne': [ ...priceAndStateProps ],
+            'Fingerboard, fingerbike': [ ...priceAndStateProps ],
+            'Hulajnogi': [ ...priceAndStateProps ],
+            'Longboard': [ ...priceAndStateProps ],
+            'Rolki': [ ...priceAndStateProps ],
+            'Trickboard': [ ...priceAndStateProps ],
+            'Waveboard': [ ...priceAndStateProps ],
+            'Wrotki': [ ...priceAndStateProps ],
+            'Części': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Ochraniacze, kaski': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty drużynowe': {
+            'Baseball': [ ...priceAndStateProps ],
+            'Futbol amerykański': [ ...priceAndStateProps ],
+            'Hokej i unihokej': [ ...priceAndStateProps ],
+            'Koszykówka': [ ...priceAndStateProps ],
+            'Piłka nożna': [ ...priceAndStateProps ],
+            'Piłka ręczna': [ ...priceAndStateProps ],
+            'Rugby': [ ...priceAndStateProps ],
+            'Siatkówka': [ ...priceAndStateProps ],
+            'Waterpolo': [ ...priceAndStateProps ],
+            'Dla kibiców': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty ekstremalne': {
+            'Lotnictwo': [ ...priceAndStateProps ],
+            'Paralotniarstwo': [ ...priceAndStateProps ],
+            'Spadochroniarstwo': [ ...priceAndStateProps ],
+            'Szybownictwo': [ ...priceAndStateProps ],
+            'Wspinaczka': [ ...priceAndStateProps ],
+            'Kitesurfing': [ ...priceAndStateProps ],
+            'Surfing': [ ...priceAndStateProps ],
+            'Nurkowanie': [ ...priceAndStateProps ],
+            'Akcesoria': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty towarzyskie i rekreacja': {
+            'Bilard': [ ...priceAndStateProps ],
+            'Bowling i kręgle': [ ...priceAndStateProps ],
+            'Bule': [ ...priceAndStateProps ],
+            'Dart': [ ...priceAndStateProps ],
+            'Golf': [ ...priceAndStateProps ],
+            'Jeździectwo': [ ...priceAndStateProps ],
+            'Nordic Walking': [ ...priceAndStateProps ],
+            'Piłkarzyki': [ ...priceAndStateProps ],
+            'Sporty z psami': [ ...priceAndStateProps ],
+            'Slackline': [ ...priceAndStateProps ],
+            'Taniec': [ ...priceAndStateProps ],
+            'Żonglerka': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty walki': {
+            'Boks': [ ...priceAndStateProps ],
+            'MMA': [ ...priceAndStateProps ],
+            'Szermierka': [ ...priceAndStateProps ],
+            'Walki wschodu': [ ...priceAndStateProps ],
+            'Zapasy': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty wodne': {
+            'Kajakarstwo': [ ...priceAndStateProps ],
+            'Kitesurfing': [ ...priceAndStateProps ],
+            'Nurkowanie': [ ...priceAndStateProps ],
+            'Pływanie': [ ...priceAndStateProps ],
+            'Skimboard': [ ...priceAndStateProps ],
+            'SUP': [ ...priceAndStateProps ],
+            'Surfing': [ ...priceAndStateProps ],
+            'Wakeboard i narty wodne': [ ...priceAndStateProps ],
+            'Windsurfing': [ ...priceAndStateProps ],
+            'Żeglarstwo': [ ...priceAndStateProps ],
+            'Sprzęt ratunkowy i asekuracyjny': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Sporty zimowe': {
+            'Akcesoria narciarskie i snowboardowe': [ ...priceAndStateProps ],
+            'Buty narciarskie': [ ...priceAndStateProps ],
+            'Buty snowboardowe': [ ...priceAndStateProps ],
+            'Deski snowboardowe': [ ...priceAndStateProps ],
+            'Gogle i okulary': [ ...priceAndStateProps ],
+            'Kaski': [ ...priceAndStateProps ],
+            'Kijki': [ ...priceAndStateProps ],
+            'Narty': [ ...priceAndStateProps ],
+            'Snowpark': [ ...priceAndStateProps ],
+            'Wiązania narciarskie i snowboardowe': [ ...priceAndStateProps ],
+            'Łyżwiarstwo': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Sanki': [ ...priceAndStateProps ],
+            'Snowkiting': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Tenis i pokrewne': {
+            'Badminton': [ ...priceAndStateProps ],
+            'Squash': [ ...priceAndStateProps ],
+            'Tenis stołowy': [ ...priceAndStateProps ],
+            'Tenis ziemny': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Wędkarstwo': {
+            'Akcesoria wędkarskie': [ ...priceAndStateProps ],
+            'Kołowrotki': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Sprzęt elektroniczny': [ ...priceAndStateProps ],
+            'Torby, pojemniki, krzesełka': [ ...priceAndStateProps ],
+            'Wędziska': [ ...priceAndStateProps ],
+            'Przynęty': [ ...priceAndStateProps ],
+            'Zanęty': [ ...priceAndStateProps ],
+            'Literatura': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Turystyka': {
+            'Apteczki i środki na owady': [ ...priceAndStateProps ],
+            'Bagaż': [ ...priceAndStateProps ],
+            'Higiena': [ ...priceAndStateProps ],
+            'Kuchnia turystyczna': [ ...priceAndStateProps ],
+            'Latarki i lampy': [ ...priceAndStateProps ],
+            'Na plażę/Na piknik': [ ...priceAndStateProps ],
+            'Noże, scyzoryki i multitoole': [ ...priceAndStateProps ],
+            'Obuwie': [ ...priceAndStateProps ],
+            'Odzież': [ ...priceAndStateProps ],
+            'Ogień i ciepło': [ ...priceAndStateProps ],
+            'Orientacja w terenie': [ ...priceAndStateProps ],
+            'Meble turystyczne': [ ...priceAndStateProps ],
+            'Namioty i akcesoria': [ ...priceAndStateProps ],
+            'Plecaki': [ ...priceAndStateProps ],
+            'Pontony i łodzie': [ ...priceAndStateProps ],
+            'Śpiwory, materace i karimaty': [ ...priceAndStateProps ],
+            'Akcesoria turystyczne': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        },
+
+        'Kolekcje': {
+            'Autografy': [ ...priceProps ],
+            'Bilety kolekcjonerskie': [ ...priceProps ],
+            'Gadżety kolekcjonerskie': [ ...priceAndStateProps ],
+            'Karty sportowe': [ ...priceAndStateProps ],
+            'Medale i plakiety': [ ...priceAndStateProps ],
+            'Naklejki (vlepki)': [ ...priceAndStateProps ],
+            'Odznaki': [ ...priceAndStateProps ],
+            'Programy sportowe': [ ...priceAndStateProps ],
+            'Proporczyki': [ ...priceAndStateProps ],
+            'Puchary i statuetki': [ ...priceAndStateProps ],
+            'Szaliki': [ ...priceAndStateProps ],
+            'Zdjęcia i plakaty': [ ...priceAndStateProps ],
+            'Pozostałe': [ ...priceAndStateProps ]
+        }
     },
 
     'Nieruchomości': {
@@ -1472,151 +1893,151 @@ const categoryTree = {
         'Pozostałe nieruchomości': [...realEstateCatProps, ...priceProps]
     },
 
-    'Elektronika': {
-        'Telefony komórkowe': [...phoneMakeProps, ...priceAndStateProps, ...workingOrderProps],
+    // 'Elektronika': {
+    //     'Telefony komórkowe': [...phoneMakeProps, ...priceAndStateProps, ...workingOrderProps],
 
-        'Akcesoria telefoniczne': priceAndStateProps,
+    //     'Akcesoria telefoniczne': priceAndStateProps,
 
-        'Komputery': [...computerKindsProps, ...stateProps, ...priceProps],
+    //     'Komputery': [...computerKindsProps, ...stateProps, ...priceProps],
 
-        'Tablety': priceAndStateProps,
+    //     'Tablety': priceAndStateProps,
 
-        'Telewizory': priceAndStateProps,
+    //     'Telewizory': priceAndStateProps,
 
-        'Gry i Konsole': priceAndStateProps,
+    //     'Gry i Konsole': priceAndStateProps,
 
-        'Fotografia': priceAndStateProps,
+    //     'Fotografia': priceAndStateProps,
 
-        'Sprzęt audio': priceAndStateProps,
+    //     'Sprzęt audio': priceAndStateProps,
 
-        'Pozostała elektronika': priceAndStateProps
-    },
+    //     'Pozostała elektronika': priceAndStateProps
+    // },
 
-    'Rolnictwo': {
-        'Ciągniki': [...priceProps, ...powerProps, ...motorHoursProps, productionYearProps],
+    // 'Rolnictwo': {
+    //     'Ciągniki': [...priceProps, ...powerProps, ...motorHoursProps, productionYearProps],
 
-        'Maszyny rolnicze': [...priceProps, ...ruralMachineKindProps , ...productionYearProps],
+    //     'Maszyny rolnicze': [...priceProps, ...ruralMachineKindProps , ...productionYearProps],
 
-        'Przyczepy': [...priceProps, ...productionYearProps],
+    //     'Przyczepy': [...priceProps, ...productionYearProps],
 
-        'Części do maszyn rolniczych': priceProps,
+    //     'Części do maszyn rolniczych': priceProps,
 
-        'Opony rolnicze': priceProps,
+    //     'Opony rolnicze': priceProps,
 
-        'Produkty rolne': priceProps,
+    //     'Produkty rolne': priceProps,
 
-        'Giełda zwierząt': [...priceProps, ...ruralAnimalProps],
+    //     'Giełda zwierząt': [...priceProps, ...ruralAnimalProps],
 
-        'Ryneczek': priceProps,
+    //     'Ryneczek': priceProps,
 
-        'Pozostałe rolnicze': priceProps
-    },
+    //     'Pozostałe rolnicze': priceProps
+    // },
 
-    'Zwierzęta': {
-        'Psy': [...dogRaceProps, ...priceProps],
+    // 'Zwierzęta': {
+    //     'Psy': [...dogRaceProps, ...priceProps],
 
-        'Koty': [...catRaceProps, ...priceProps],
+    //     'Koty': [...catRaceProps, ...priceProps],
 
-        'Ptaki': priceProps,
+    //     'Ptaki': priceProps,
 
-        'Gryzonie i króliki': priceProps,
+    //     'Gryzonie i króliki': priceProps,
 
-        'Konie': priceProps,
+    //     'Konie': priceProps,
 
-        'Akwarystyka': [...subnauticaProps, ...priceAndStateProps],
+    //     'Akwarystyka': [...subnauticaProps, ...priceAndStateProps],
 
-        'Akcesoria dla zwierząt': priceProps,
+    //     'Akcesoria dla zwierząt': priceProps,
 
-        'Pozostałe zwierzęta': priceProps
-    },
+    //     'Pozostałe zwierzęta': priceProps
+    // },
 
-    'Dla dzieci': {
-        'Zabawki': priceAndStateProps,
+    // 'Dla dzieci': {
+    //     'Zabawki': priceAndStateProps,
 
-        'Wózki dziecięce': priceAndStateProps,
+    //     'Wózki dziecięce': priceAndStateProps,
 
-        'Foteliki - Nosidełka': priceAndStateProps,
+    //     'Foteliki - Nosidełka': priceAndStateProps,
 
-        'Ubranka': [...priceAndStateProps, ...childGenderProps, ...childClothesSizeProps],
+    //     'Ubranka': [...priceAndStateProps, ...childGenderProps, ...childClothesSizeProps],
 
-        'Buciki': [...priceAndStateProps, ...childGenderProps, ...childShoeSizeProps],
+    //     'Buciki': [...priceAndStateProps, ...childGenderProps, ...childShoeSizeProps],
 
-        'Meble dla dziecka': priceAndStateProps,
+    //     'Meble dla dziecka': priceAndStateProps,
 
-        'Pozostałe dla dzieci': priceProps
-    },
+    //     'Pozostałe dla dzieci': priceProps
+    // },
 
-    'Sport i hobby': {
-        'Kolekcje': priceProps,
+    // 'Sport i hobby': {
+    //     'Kolekcje': priceProps,
 
-        'Militaria': [...priceProps, ...stateProps],
+    //     'Militaria': [...priceProps, ...stateProps],
 
-        'Rowery': priceAndStateProps,
+    //     'Rowery': priceAndStateProps,
 
-        'Fitness': priceAndStateProps,
+    //     'Fitness': priceAndStateProps,
 
-        'Sporty zimowe': priceAndStateProps,
+    //     'Sporty zimowe': priceAndStateProps,
 
-        'Odzież sportowa': [...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps],
+    //     'Odzież sportowa': [...priceAndStateProps, ...genderWithUnisexProps, ...clothesSizeLettersProps],
 
-        'Obuwie sportowe': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
+    //     'Obuwie sportowe': [...priceAndStateProps, ...genderWithUnisexProps, ...adultShoeSizeProps],
 
-        'Pozostały sport i hobby': priceProps
-    },
+    //     'Pozostały sport i hobby': priceProps
+    // },
 
-    'Muzyka i edukacja': {
-        'Ksiązki': [...bookKindProps, ...stateProps, ...priceProps, ...publishYearProps],
+    // 'Muzyka i edukacja': {
+    //     'Ksiązki': [...bookKindProps, ...stateProps, ...priceProps, ...publishYearProps],
 
-        'Muzyka': priceAndStateProps,
+    //     'Muzyka': priceAndStateProps,
 
-        'Filmy': priceAndStateProps,
+    //     'Filmy': priceAndStateProps,
 
-        'Instrumenty': priceAndStateProps,
+    //     'Instrumenty': priceAndStateProps,
 
-        'Sprzęt muzyczny': priceAndStateProps,
+    //     'Sprzęt muzyczny': priceAndStateProps,
 
-        'Materiały językowe': priceAndStateProps,
+    //     'Materiały językowe': priceAndStateProps,
 
-        'Pozostała muzyka i edukacja': priceProps
-    },
+    //     'Pozostała muzyka i edukacja': priceProps
+    // },
 
-    'Ślub i Wesele': {
-        'Moda ślubna' : {
-            'Biżuteria ślubna': [...priceProps, ...stateProps, ...genderProps],
+    // 'Ślub i Wesele': {
+    //     'Moda ślubna' : {
+    //         'Biżuteria ślubna': [...priceProps, ...stateProps, ...genderProps],
 
-            'Buty ślubne': [...priceProps, ...stateProps, ...genderProps, ...shoeSizeProps],
+    //         'Buty ślubne': [...priceProps, ...stateProps, ...genderProps, ...shoeSizeProps],
 
-            'Skunie ślubne': [...priceProps, ...stateProps, ...dressSizeProps],
+    //         'Skunie ślubne': [...priceProps, ...stateProps, ...dressSizeProps],
 
-            'Garnitury ślubne': priceAndStateProps,
+    //         'Garnitury ślubne': priceAndStateProps,
 
-            'Obrączki': priceAndStateProps,
+    //         'Obrączki': priceAndStateProps,
 
-            'Pozostałe': priceAndStateProps
-        },
+    //         'Pozostałe': priceAndStateProps
+    //     },
 
-        'Usługi ślubne': {
-            'Fotografia i filmowanie': null,
+    //     'Usługi ślubne': {
+    //         'Fotografia i filmowanie': null,
 
-            'Dekorowanie': null,
+    //         'Dekorowanie': null,
 
-            'Oprawa muzyczna': null,
+    //         'Oprawa muzyczna': null,
 
-            'Pojazdy do ślubu': null,
+    //         'Pojazdy do ślubu': null,
 
-            'Torty i Catering': null,
+    //         'Torty i Catering': null,
 
-            'Pozostałe': null
-        },
+    //         'Pozostałe': null
+    //     },
 
-        'Akcesoria ślubne': {
-            'Zaproszenia ślubne': priceProps,
+    //     'Akcesoria ślubne': {
+    //         'Zaproszenia ślubne': priceProps,
 
-            'Dekoracje ślubne': priceAndStateProps,
+    //         'Dekoracje ślubne': priceAndStateProps,
 
-            'Pozostałe': priceProps
-        }
-    }
+    //         'Pozostałe': priceProps
+    //     }
+    // }
 }
 
 // LEGACY CAATEGORIES

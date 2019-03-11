@@ -58,6 +58,7 @@
 .promo-form .input-value {
 	z-index: -1;
 	width: 108%; height: 108%;
+	max-width: 100vw;
 }
 
 .promo-form input {

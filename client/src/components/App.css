@@ -402,7 +402,7 @@ footer {
 }
 
 .category-links .row .categories {
-    max-width: 50%;
+    max-width: 95%;
 }
 
 .category-links .row .column .logo {
@@ -671,7 +671,7 @@ strong {
 
     border: 1px solid #ddd;
     background: white;
-    padding: 20px; margin-bottom: 20px;
+    padding: 20px; margin-bottom: 50px;
     box-shadow: 1px 1px 1px #ddd;
 }
 .cookie-message > div {
@@ -764,4 +764,16 @@ margin-bottom: 10px;
 
 .display-none {
     display: none !important;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.link {
+    color: var(--link-blue);
+    font-size: 14px; letter-spacing: 1px;
+}
+.link i {
+    margin-top: -1.5px;
 }

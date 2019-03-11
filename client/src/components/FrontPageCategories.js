@@ -6,8 +6,9 @@ import { stripPolish } from '../helpers/charHelper';
 import { Swipeable } from 'react-swipeable';
 
 const
+	catResource = (cat) => '/assets/icons/new/' + stripPolish(cat.toLowerCase().replace(/\s+/g, '_')) + '.svg',
 	iconWidth = 150, 
-	assetNames = categories.map(cat => cat.toLowerCase().replace(/\s+/g, '_') + '.png');
+	assetNames = categories.map(cat => catResource(cat));
 
 class CategoryLink extends Component {
 	navigate() {
@@ -117,7 +118,7 @@ class FrontPageCategories extends Component {
 								return (
 									<CategoryLink key={ 'cat_' + i } to={ categoryName } categoryCallback={ this.props.categoryCallback }>
 										<figure className="frontpage category-icon">
-											<img src={ '/assets/icons/new/' + stripPolish(asset) } alt={ categoryName } />
+											<img src={ asset } alt={ categoryName } />
 											<figcaption>{ categoryName }</figcaption>
 										</figure>
 									</CategoryLink>
@@ -134,4 +135,5 @@ class FrontPageCategories extends Component {
 }
 
 CategoryLink = withRouter(CategoryLink);
+export { catResource };
 export default FrontPageCategories;

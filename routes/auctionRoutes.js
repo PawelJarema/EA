@@ -412,6 +412,35 @@ module.exports = app => {
         res.send(auction);
     });
 
+    app.post('/auction/front_page_auctions/:mode', async (req, res) => {
+        const 
+            { mode } = req.params,
+            { itemCount, itemsPerFetch } = req.body;
+
+        let 
+            query = { ended: { $ne:true } };
+
+        switch(mode) {
+            case 'promoted':
+                query['premium.isPremium'] = true;
+                break;
+            case 'new':
+                break;
+        }
+
+        const auctions = await Auction.find(
+            query, 
+            { title: 1, shortdescription: 1, price: 1, date: 1 },
+            { 
+                sort: { 'date.start_date': -1 }, 
+                skip: +itemCount, 
+                limit: +itemsPerFetch 
+            }
+        );
+
+        res.send(auctions);
+    });
+
     app.get('/auction/get_front_page_auctions', async (req, res) => {
         const user_id = currentUserId(req);
 
