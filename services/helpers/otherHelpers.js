@@ -12,11 +12,27 @@ function account(user) {
     return user.balance.account_number ? 'konto: ' + user.balance.account_number : '';
 }
 
+function userFirmHelper(user) {
+    return user.firm && user.firm.firm_name ? `${ user.firm.firm_name }\nNIP: ${ user.firm.nip }` : '';
+}
+
+function userNameHelper(user) {
+    return `${ user.firstname } ${ user.lastname }`.trim() || 'Anonim';
+}
+
+function userAddressHelper(user) {
+    return `${ user.address.street } ${ user.address.postal } ${ user.address.city }`;
+}
+
+function userContactHelper(user) {
+    return `${ user.contact.email }\n${ user.contact.phone ? 'telefon: ' + user.contact.phone : '' }`
+}
+
 function userDataHelper(user) {
-    const   firm    = user.firm && user.firm.firm_name ? `${ user.firm.firm_name }\nNIP: ${ user.firm.nip }` : '',
-            name    = `${ user.firstname } ${ user.lastname }`.trim() || 'Anonim',
-            address = `${ user.address.street } ${ user.address.postal } ${ user.address.city }`,
-            contact = `${ user.contact.email }\n${ user.contact.phone ? 'telefon: ' + user.contact.phone : '' }`;
+    const   firm    = userFirmHelper(user),
+            name    = userNameHelper(user),
+            address = userAddressHelper(user),
+            contact = userContactHelper(user);
 
     return (
         `${ name }\n${ firm }\n${ address }\n${ contact }`
@@ -100,6 +116,10 @@ async function sendChatMessagesOnPay(buyer_id, seller_id, auction, price, qty) {
     sendChatMessages(buyer_id, seller_id, auction, price, buyer_text, null);
 }
 
+module.exports.userNameHelper = userNameHelper;
+module.exports.userFirmHelper = userFirmHelper;
+module.exports.userAddressHelper = userAddressHelper;
+module.exports.userContactHelper = userContactHelper;
 module.exports.userDataHelper = userDataHelper;
 module.exports.sendChatMessagesOnPay = sendChatMessagesOnPay;
 module.exports.sendChatMessagesOnAuctionEnd = sendChatMessagesOnAuctionEnd;

@@ -56,7 +56,10 @@ async function makeRow(user_id, auction, fromAuctionNotBuyNow, toSend, toRate) {
         },
         user: {
             _id: user._id,
-            data: helpers.userDataHelper(user)
+            name: helpers.userNameHelper(user),
+            firm: helpers.userFirmHelper(user),
+            address: helpers.userAddressHelper(user),
+            contact: helpers.userContactHelper(user)
         },
         toSend,
         toRate

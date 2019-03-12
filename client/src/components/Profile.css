@@ -322,8 +322,6 @@
     margin-top: 10px;
     margin-bottom: 0;
     flex: 0 0 100%;
-
-
 }
 .user-settings p label.required:before {
     content: '* ';
@@ -331,4 +329,41 @@
 }
 .user-settings p .labels label {
     flex: 0 0 auto;
+}
+
+.send-and-rate-table a {
+    color: var(--link-blue);
+}
+.send-and-rate-table td:nth-child(3) {
+    text-align: center;
+}
+.send-and-rate-table td {
+    white-space: pre-line;
+    padding: 10px;
+}
+.send-and-rate-table td div {
+    padding-top: 13px;
+}
+
+.send-and-rate-table button {
+    padding: 10px;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+.send-and-rate-table button:hover {
+    border: 1px solid var(--orange);
+    background: var(--orange);
+    color: white;
+}
+.send-and-rate-table .name {
+    font-weight: 400;
+}
+.send-and-rate-table .name i {
+    margin-top: -3px;
+}
+.send-and-rate-table .address,
+.send-and-rate-table .contact {
+    display: block;
+    font-size: 13px;
+    padding: 3px 0;
 }
