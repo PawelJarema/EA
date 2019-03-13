@@ -11,8 +11,7 @@ const getUnseenChats = async id => {
 	let chats = await Chat.find({ $or: [{ _user_1: id }, { _user_2: id }] }, {}, { sort: { date: -1 }, limit: 9 }).lean();
 
 	let unseen = 
-		chats.filter(chat => 
-			chat.messages.filter(message => String(message._to) === String(id) && message.seen !== true).length);
+		chats.filter(chat => (chat.messages ? chat.messages.filter(message => String(message._to) === String(id) && message.seen !== true).length : 0));
 
 	for (let i = 0; i < unseen.length; i++) {
 		const index = chats.indexOf(unseen[i]);
