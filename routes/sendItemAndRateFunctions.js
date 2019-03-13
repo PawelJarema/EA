@@ -23,7 +23,7 @@ async function removeUserFromRateArray(owner, _auction, _user, buynow) {
 	const index = indexOfSendRateObject(owner.toRate, _auction, _user, buynow);
 
 	if (index !== -1) {
-		owner.toRate = owner.toRate.slice(0, index).concat(owner.toRate.slice(index + 1));
+		owner.toRate = owner.toRate.filter(obj => !(String(obj._auction) === String(_auction) && String(obj._user) === String(_user) && obj.buynow === buynow));
 		owner.save();
 	}
 
@@ -39,7 +39,7 @@ async function moveUserFromSendToRate(owner, _auction, _user, buynow) {
 
 	if (index !== -1) {
 		const item = owner.toSend[index];
-		owner.toSend = owner.toSend.filter(obj => String(obj.auction) !== String(_auction) && String(obj._user) !== String(obj.user) && obj.buynow !== buynow);
+		owner.toSend = owner.toSend.filter(obj => !(String(obj._auction) === String(_auction) && String(obj._user) === String(_user) && obj.buynow === buynow));
 		if (owner.toRate) {
 			owner.toRate.push(item);
 		} else {

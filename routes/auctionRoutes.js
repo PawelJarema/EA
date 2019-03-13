@@ -258,7 +258,8 @@ module.exports = app => {
                         $or: [
                             { buynowpayees: user_id },
                             { payees: user_id },
-                            { buynowpaid: user_id }
+                            { buynowpaid: user_id },
+                            { raters: user_id }
                         ] 
                     }
                 ],

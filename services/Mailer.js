@@ -13,7 +13,9 @@ class Mailer extends helper.Mail {
         this.body = new helper.Content('text/html', template);
         
         this.recipients = this.formatAddresses(recipients);
+
         this.addContent(this.body);
+
         this.addClickTracking();
         this.addRecipients();
     }
@@ -40,31 +42,20 @@ class Mailer extends helper.Mail {
         this.addPersonalization(personalize);
     }
     
-    async send() {
+    async send() {  
         const request = this.sgApi.emptyRequest({
             method: 'POST',
             path: '/v3/mail/send',
             body: this.toJSON()
         });
-        
-        const response = this.sgApi.API(request);
-        return response;
+
+        this.sgApi.API(request)
+        .then(res => { return res })
+        .catch(err => {
+            console.log('mailer error:', err);
+            return false;
+        });
     }
 }
 
 module.exports = Mailer;
-
-
-/*
-const message = {
-    title: '',
-    subject: '',
-    body: '',
-    recipients: recipients.split(', ').map(email => ({email})),
-    _user: user.id,
-    date: Date.now()
-};
-
-const mailer = new Mailer(message, template);
-mailer.send();
-*/

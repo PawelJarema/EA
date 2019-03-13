@@ -228,12 +228,13 @@ module.exports = app => {
 			if (buynowpayee) {
 				let initialPayees = auction.buynowpayees.length;
 				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(buyer._id));
-				qty = initialPayees - auction.buynowpayees.length;
+				qty = initialPayees - auction.buynowpayees.length,
+				qtyArray = new Array(qty).fill(buyer._id);
 
 				if (auction.buynowpaid) {
-		            auction.buynowpaid.push(buyer._id);
+		            auction.buynowpaid = auction.buynowpaid.concat(qtyArray);
 		        } else {
-		            auction.buynowpaid = [buyer._id];
+		            auction.buynowpaid = qtyArray;
 		        }
 			}
 
