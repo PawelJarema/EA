@@ -24,7 +24,6 @@ const Mailer 			= require('../services/Mailer');
 const sendItemTemplate	= require('../services/emailTemplates/sendItemTemplate');
 const paySimpleTemplate	= require('../services/emailTemplates/paySimpleTemplate');
 
-const { enqueueAuctionOwnerToSendItems } = require('./functions');
 const helpers = require('../services/helpers/otherHelpers');
 
 // 	verify: 'https://sandbox.przelewy24.pl/trnVerify'
@@ -229,13 +228,12 @@ module.exports = app => {
 			if (buynowpayee) {
 				let initialPayees = auction.buynowpayees.length;
 				auction.buynowpayees = auction.buynowpayees.filter(id => String(id) !== String(buyer._id));
-				qty = initialPayees - auction.buynowpayees.length,
-				qtyArray = new Array(qty).fill(buyer._id);
+				qty = initialPayees - auction.buynowpayees.length;
 
 				if (auction.buynowpaid) {
-		            auction.buynowpaid = auction.buynowpaid.concat(qtyArray);
+		            auction.buynowpaid.push(buyer._id);
 		        } else {
-		            auction.buynowpaid = [...qtyArray];
+		            auction.buynowpaid = [buyer._id];
 		        }
 			}
 
@@ -243,12 +241,6 @@ module.exports = app => {
 				auction.payees = auction.payees.filter(id => String(id) !== String(buyer.id));
 				if (auction.payees.length === 0) {
 					auction.paid = true;
-				}
-
-				if (auction.auctionpaid) {
-					auction.auctionpaid.push(buyer._id);
-				} else {
-					auction.auctionpaid = [buyer._id];
 				}
 			}
 
@@ -258,6 +250,21 @@ module.exports = app => {
 				auction.raters = [ObjectId(buyer._id)];
 			}
 
+			let 
+				sendRateData = {
+					_auction: auction._id,
+					_user: buyer._id,
+					buynow: buynowpayee,
+					count: qty
+				};
+
+			if (owner.toSend) {
+				owner.toSend.push(sendRateData);
+			} else {
+				owner.toSend = [sendRateData];
+			}
+
+			owner.save();
 			auction.save();
 
 			const transaction = new Transaction({
@@ -284,8 +291,6 @@ module.exports = app => {
 			mailer.send();
 
 			req.session.message = 'Sprzedawca został powiadomiony o wpłacie i poproszony o sprawdzenie stanu konta';
-			enqueueAuctionOwnerToSendItems(owner._id, buyer._id);
-
 			res.send(true);
 			return;
 		}

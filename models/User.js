@@ -5,6 +5,13 @@ const { ObjectId } = Schema.Types;
 const addressSchema = require('./Address');
 const balanceSchema = require('./Balance');
 
+const sendRateSchema = new Schema({
+    _auction: ObjectId,
+    _user: ObjectId,
+    buynow: Boolean,
+    count: Number
+});
+
 const userSchema = new Schema({
     firstname: String,
     lastname: String,
@@ -59,8 +66,8 @@ const userSchema = new Schema({
             default: 5
         }
     },
-    toSend: [ObjectId],
-    toRate: [ObjectId]
+    toSend: [sendRateSchema],
+    toRate: [sendRateSchema]
 });
 
 mongoose.model('user', userSchema);

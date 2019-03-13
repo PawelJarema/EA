@@ -215,7 +215,7 @@ class AuctionDetails extends Component {
 
         const extended_view = true || window.innerWidth > 1579;
         const iAmBidder = isBidder(user);
-        const premium = auction ? Boolean(auction.premium) : false;
+        const premium = auction ? Boolean(auction.premium) : false; // legacy auctions
         const isPremium = premium ? auction.premium.isPremium : false;
         const premiumForever = premium ? auction.premium.forever : false;
 

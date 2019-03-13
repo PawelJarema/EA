@@ -33,6 +33,7 @@ const Mailer                    = require('../services/Mailer');
 
 const helpers = require('../services/helpers/otherHelpers');
 const { filterUnique } = require('./functions');
+const { getItemsToSend, getItemsToRate, moveUserFromSendToRate, removeUserFromRateArray, makeRow, clearUserCache } = require('./sendItemAndRateFunctions');
 
 // const util = require('util');
 
@@ -44,53 +45,18 @@ const currentUserId = (req) => {
     }
 }
 
-let global_user_cache = {};
-
-// data row for marking as sent / rating buyers
-async function makeRow(user_id, auction, fromAuctionNotBuyNow, toSend, toRate) {
-    const user = global_user_cache[user_id] ? global_user_cache[user_id] : global_user_cache[user_id] = await User.findOne({ _id: user_id });
-
-    return ({
-        count: (fromAuctionNotBuyNow ? 1 : auction.buynowpaid.filter(id => String(id) === String(user._id)).length),
-        auction: {
-            _id: auction._id,
-            title: auction.title
-        },
-        user: {
-            _id: user._id,
-            name: helpers.userNameHelper(user),
-            firm: helpers.userFirmHelper(user),
-            address: helpers.userAddressHelper(user),
-            contact: helpers.userContactHelper(user)
-        },
-        toSend,
-        toRate
-    });
-}
-
 module.exports = app => {
     app.post('/auction/rate_buyer', requireLogin, async (req, res) => {
         const rate = req.body;
 
+        console.log(rate);
+
         rate._user = ObjectId(rate._user);
         rate._rater = ObjectId(req.user._id);
 
-        let 
-            person_index = req.user.toRate.indexOf(rate._user);
-
-        if (person_index !== -1) {
-            req.user.toRate = req.user.toRate.slice(0, person_index).concat(req.user.toRate.slice(person_index + 1));
-            // console.log(req.user.toRate);
-
-            await req.user.save();
-        }
-
-        const auction = await Auction.findOne({ _id: ObjectId(rate._auction) });
-        if (!auction.ended || +rate.count > 1) {
-            auction.buynowpaid = auction.buynowpaid.filter(id => String(id) !== String(rate._user));
-            await auction.save();
-        }
+        await removeUserFromRateArray(req.user, ObjectId(rate._auction), rate._user, rate.buynow, rate.count);
         
+        delete rate.buynow;
         delete rate._auction;
         delete rate.count;
 
@@ -102,7 +68,7 @@ module.exports = app => {
 
     app.post('/auction/send_items', requireLogin, async (req, res) => {
         const
-            { auction_id, auction_title, count, user_id, user_email } = req.body;
+            { auction_id, auction_title, buynow, count, user_id, user_email } = req.body;
             data = {
                 subject: 'Właśnie wysłano do Ciebie przedmiot: ' + auction_title,
                 recipients: [{ email: user_email }]
@@ -116,84 +82,43 @@ module.exports = app => {
             _auction_id = ObjectId(auction_id),
             _user_id = ObjectId(user_id),
             auction = await Auction.findOne({ _id: _auction_id });
-        //  boughtNow = auction.buynowpaid.indexOf(_user_id) !== -1,
-
-        //  removeBuyer = id => String(id) !== user_id;
 
         helpers.sendChatMessageOnItemSend(_user_id, auction._user, auction, 0, count);
+        await moveUserFromSendToRate(req.user, _auction_id, _user_id, buynow, count);
 
-        // if (boughtNow) {
-        //     auction.buynowpaid = auction.buynowpaid.filter(removeBuyer);
-        // } else {
-        //     auction.auctionpaid = auction.auctionpaid.filter(removeBuyer);
-        // }
-
-        let 
-            buyer_index = req.user.toSend.indexOf(_user_id);
-
-        if (buyer_index !== -1) {
-            req.user.toSend = req.user.toSend.slice(0, buyer_index).concat(req.user.toSend.slice(buyer_index + 1))
-        }
-
-        if (req.user.toRate) {
-            req.user.toRate.push(_user_id);
-        } else {
-            req.user.toRate = [_user_id];
-        }
-        
-        await req.user.save();
-
-        await auction
-            .save()
-            .then(
-                doc => res.send(true),
-                err => res.send(false)
-            );
+        res.send(true);
     });
 
     app.post('/auction/send_and_rate_rows', requireLogin, async (req, res) => {
         const
             rows = [],
             owner = req.user,
-            projection = { _id: 1, title: 1, buynowpaid: 1, auctionpaid: 1 },
 
-            itemsToSendAuction = await Auction.find({
-                _user: owner._id, 
-                auctionpaid: { $in: owner.toSend }
-            }, projection),
+            itemsToSendAuction = await getItemsToSend(owner, false),
+            itemsToSendBuyNow = await getItemsToSend(owner, true),
 
-            usersToRateAuction = await Auction.find({
-                _user: owner._id,    
-                auctionpaid: { $in: owner.toRate }
-            }, projection),
-
-            itemsToSendBuyNow = await Auction.find({ 
-                _user: owner._id, 
-                buynowpaid: { $in: owner.toSend }
-            }, projection),
-
-            usersToRateBuyNow = await Auction.find({
-                _user: owner._id,    
-                buynowpaid: { $in: owner.toRate }
-            }, projection);
+            usersToRateAuction = await getItemsToRate(owner, false),
+            usersToRateBuyNow = await getItemsToRate(owner, true);
 
             // console.log(owner.toRate);
 
+        console.log(req.user);
+
         for (let i = 0; i < itemsToSendAuction.length; i++) {
-            // console.log('auction item found');
+            console.log('auction item found');
 
             const auction = itemsToSendAuction[i];
             rows.push(await makeRow(
-                auction.auctionpaid[0],
+                auction.bids[0]._user,
                 auction,
-                true,
+                false,
                 true,
                 false
             )); 
         }
 
         for (let i = 0; i < itemsToSendBuyNow.length; i++) {
-            // console.log('buy now items found');
+            console.log('buy now items found');
 
             const 
                 auction = itemsToSendBuyNow[i],
@@ -203,7 +128,7 @@ module.exports = app => {
                 rows.push(await makeRow(
                     buyers[j],
                     auction,
-                    false,
+                    true,
                     true,
                     false
                 ));
@@ -211,19 +136,19 @@ module.exports = app => {
         }
 
         for (let i = 0; i < usersToRateAuction.length; i++) {
-            // console.log('users to rate auction found')
+            console.log('users to rate auction found')
             const auction = usersToRateAuction[i];
             rows.push(await makeRow(
-                auction.auctionpaid[0],
+                auction.bids[0]._user,
                 auction,
-                true,
+                false,
                 false,
                 true
             )); 
         }
 
         for (let i = 0; i < usersToRateBuyNow.length; i++) {
-            // console.log('users to rate buynow found')
+            console.log('users to rate buynow found')
             const 
                 auction = usersToRateBuyNow[i],
                 buyers = auction.buynowpaid.filter(filterUnique);
@@ -232,16 +157,16 @@ module.exports = app => {
                 rows.push(await makeRow(
                     buyers[j],
                     auction,
-                    false,
+                    true,
                     false,
                     true
                 ));
             }
         }
 
-        global_user_cache = {};
+        clearUserCache();
 
-        // console.log(rows);
+        console.log(rows);
         res.send(rows);
     });
 

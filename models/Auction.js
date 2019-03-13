@@ -47,7 +47,6 @@ const auctionSchema = new Schema({
     payees: [ObjectId],
     buynowpayees: [ObjectId],
     buynowpaid: [ObjectId],
-    auctionpaid: [ObjectId],
     raters: [ObjectId],
     rated: Boolean,
     properties: [attributeSchema],

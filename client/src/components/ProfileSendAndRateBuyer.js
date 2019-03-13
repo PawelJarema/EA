@@ -24,6 +24,7 @@ class DataRow extends Component {
 				body: JSON.stringify({ 
 					auction_id: row.auction._id, 
 					auction_title: row.auction.title,
+					buynow: row.buynow,
 					count: row.count,
 					user_id: row.user._id,
 					user_email: row.user.contact.split(/\s+/g)[0]
@@ -145,6 +146,7 @@ class ProfileSendAndRateBuyer extends Component {
             isbuyer: true,
             auction: row.auction.title,
             _auction: row.auction._id,
+            buynow: row.buynow,
             count: row.count,
             rate,
             text
