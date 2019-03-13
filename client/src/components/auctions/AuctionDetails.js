@@ -209,6 +209,7 @@ class AuctionDetails extends Component {
         const min_price = auction ? !auction.ended && auction.price.min_price && !auction.price.hide_min_price : false;
         const payee = auction ? auction.payees && auction.payees.indexOf(user._id) !== -1 : false;
         const buy_now_payee = auction ? auction.buynowpayees && auction.buynowpayees.indexOf(user._id) !== -1 : false;
+        const count = buy_now_payee ? auction.buynowpayees.filter(id => String(id) === String(user._id)).length : 1;
 
         const current_price = auction ? auction.price.current_price || auction.price.start_price : false;
 
@@ -286,7 +287,7 @@ class AuctionDetails extends Component {
                                             auction.ended && <div className="end-tag">Aukcja Zakończona</div>
                                         }
                                         {
-                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? PriceHelper.write(current_price) : PriceHelper.write(auction.price.buy_now_price)} zł</button></div>
+                                            (payee || buy_now_payee) && <div className="pay"><br />kupiłeś ten przedmiot. <button className="standard-button" onClick={() => this.setState({ pay: true })} style={{ padding: '0 26.5px' }}>Zapłać {payee ? PriceHelper.write(current_price) : PriceHelper.write(auction.price.buy_now_price * count)} zł</button></div>
                                         }
                                     </div>
                                 </div>

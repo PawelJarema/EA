@@ -23,11 +23,12 @@ const imageminSvgo          = require('imagemin-svgo');
 const imageminMozjpeg       = require('imagemin-mozjpeg');
 const imageminGifsicle      = require('imagemin-gifsicle');
 
-const Sharp     = require('sharp');
+const Sharp = require('sharp');
 
 const buyNowWonTemplate         = require('../services/emailTemplates/buyNowWonTemplate');
 const buyNowItemSoldTemplate    = require('../services/emailTemplates/buyNowItemSoldTemplate');
 const bidTemplate               = require('../services/emailTemplates/bidTemplate');
+const itemSentTemplate          = require('../services/emailTemplates/itemSentTemplate');
 const Mailer                    = require('../services/Mailer');
 
 const helpers = require('../services/helpers/otherHelpers');
@@ -45,6 +46,7 @@ const currentUserId = (req) => {
 
 let global_user_cache = {};
 
+// data row for marking as sent / rating buyers
 async function makeRow(user_id, auction, fromAuctionNotBuyNow, toSend, toRate) {
     const user = global_user_cache[user_id] ? global_user_cache[user_id] : global_user_cache[user_id] = await User.findOne({ _id: user_id });
 
@@ -67,6 +69,88 @@ async function makeRow(user_id, auction, fromAuctionNotBuyNow, toSend, toRate) {
 }
 
 module.exports = app => {
+    app.post('/auction/rate_buyer', requireLogin, async (req, res) => {
+        const rate = req.body;
+
+        rate._user = ObjectId(rate._user);
+        rate._rater = ObjectId(req.user._id);
+
+        let 
+            person_index = req.user.toRate.indexOf(rate._user);
+
+        if (person_index !== -1) {
+            req.user.toRate = req.user.toRate.slice(0, person_index).concat(req.user.toRate.slice(person_index + 1));
+            // console.log(req.user.toRate);
+
+            await req.user.save();
+        }
+
+        const auction = await Auction.findOne({ _id: ObjectId(rate._auction) });
+        if (!auction.ended || +rate.count > 1) {
+            auction.buynowpaid = auction.buynowpaid.filter(id => String(id) !== String(rate._user));
+            await auction.save();
+        }
+        
+        delete rate._auction;
+        delete rate.count;
+
+        const newRate = new Rate(rate).save().then(
+            doc => res.send(true),
+            err => res.send(false)
+        );
+    });
+
+    app.post('/auction/send_items', requireLogin, async (req, res) => {
+        const
+            { auction_id, auction_title, count, user_id, user_email } = req.body;
+            data = {
+                subject: 'Właśnie wysłano do Ciebie przedmiot: ' + auction_title,
+                recipients: [{ email: user_email }]
+            },
+
+            mailer = new Mailer(data, itemSentTemplate(auction_id, auction_title));
+
+        mailer.send();
+
+        const 
+            _auction_id = ObjectId(auction_id),
+            _user_id = ObjectId(user_id),
+            auction = await Auction.findOne({ _id: _auction_id });
+        //  boughtNow = auction.buynowpaid.indexOf(_user_id) !== -1,
+
+        //  removeBuyer = id => String(id) !== user_id;
+
+        helpers.sendChatMessageOnItemSend(_user_id, auction._user, auction, 0, count);
+
+        // if (boughtNow) {
+        //     auction.buynowpaid = auction.buynowpaid.filter(removeBuyer);
+        // } else {
+        //     auction.auctionpaid = auction.auctionpaid.filter(removeBuyer);
+        // }
+
+        let 
+            buyer_index = req.user.toSend.indexOf(_user_id);
+
+        if (buyer_index !== -1) {
+            req.user.toSend = req.user.toSend.slice(0, buyer_index).concat(req.user.toSend.slice(buyer_index + 1))
+        }
+
+        if (req.user.toRate) {
+            req.user.toRate.push(_user_id);
+        } else {
+            req.user.toRate = [_user_id];
+        }
+        
+        await req.user.save();
+
+        await auction
+            .save()
+            .then(
+                doc => res.send(true),
+                err => res.send(false)
+            );
+    });
+
     app.post('/auction/send_and_rate_rows', requireLogin, async (req, res) => {
         const
             rows = [],
@@ -93,8 +177,10 @@ module.exports = app => {
                 buynowpaid: { $in: owner.toRate }
             }, projection);
 
+            // console.log(owner.toRate);
+
         for (let i = 0; i < itemsToSendAuction.length; i++) {
-            console.log('auction item found');
+            // console.log('auction item found');
 
             const auction = itemsToSendAuction[i];
             rows.push(await makeRow(
@@ -107,7 +193,7 @@ module.exports = app => {
         }
 
         for (let i = 0; i < itemsToSendBuyNow.length; i++) {
-            console.log('buy now items found');
+            // console.log('buy now items found');
 
             const 
                 auction = itemsToSendBuyNow[i],
@@ -125,6 +211,7 @@ module.exports = app => {
         }
 
         for (let i = 0; i < usersToRateAuction.length; i++) {
+            // console.log('users to rate auction found')
             const auction = usersToRateAuction[i];
             rows.push(await makeRow(
                 auction.auctionpaid[0],
@@ -136,6 +223,7 @@ module.exports = app => {
         }
 
         for (let i = 0; i < usersToRateBuyNow.length; i++) {
+            // console.log('users to rate buynow found')
             const 
                 auction = usersToRateBuyNow[i],
                 buyers = auction.buynowpaid.filter(filterUnique);
@@ -153,7 +241,7 @@ module.exports = app => {
 
         global_user_cache = {};
 
-        console.log(rows);
+        // console.log(rows);
         res.send(rows);
     });
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ProfileLinks } from './Profile';
-import { auctionPath } from './auctions/functions';
+import { RateModal } from './auctions/RateAuction';
+import { isEmpty, isNotEmpty, auctionPath } from './auctions/functions';
 
 class DataRow extends Component {
 	constructor(props) {
@@ -14,11 +15,36 @@ class DataRow extends Component {
 	}
 
 	notify(row) {
-		alert('notify');
+		if (!this.actionInProgress) {
+			this.actionInProgress = true;
+
+			fetch('/auction/send_items', {
+				headers: { 'Content-Type': 'application/json' },
+				method: 'POST',
+				body: JSON.stringify({ 
+					auction_id: row.auction._id, 
+					auction_title: row.auction.title,
+					count: row.count,
+					user_id: row.user._id,
+					user_email: row.user.contact.split(/\s+/g)[0]
+				})
+			})
+			.then(res => res.json())
+			.then(success => {
+				if (success) {
+					alert(row.user.name + ' otrzyma powiadomienie o ' + wyslaniePlural(row));
+					this.props.fetchRows();
+				} else {
+					alert('Nastąpił błąd. Spróbuj ponownie');
+				}
+
+				this.actionInProgress = false;
+			})
+		}
 	}
 
 	rate(row) {
-		alert('open rate');
+		this.props.rateCallback(row);
 	}
 
 	toggleDetails() {
@@ -53,7 +79,7 @@ class DataRow extends Component {
 				<td><a href={ auctionPath(row.auction) } target="_blank">{ row.auction.title }</a></td>
 				<td>{ row.count }</td>
 				<td>
-					{ row.toSend && <button onClick={ () => this.notify(row) }>Powiadom o { row.count > 1 ? ' wysłaniu przedmiotów' : ' wysłaniu przedmiotu' }</button> } 
+					{ row.toSend && <button onClick={ () => this.notify(row) }>Powiadom o { wyslaniePlural(row) }</button> } 
 					{ row.toRate && <button onClick={ () => this.rate(row) }>Wystaw opinię</button> }
 				</td>
 			</tr>
@@ -65,9 +91,12 @@ class ProfileSendAndRateBuyer extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { rows: [] };
+		this.state = { rows: [], rateModal: false, rate: 0, text: '' };
 
 		this.fetchRows = this.fetchRows.bind(this);
+		this.toggleModal = this.toggleModal.bind(this);
+		this.rateCallback = this.rateCallback.bind(this);
+		this.rate = this.rate.bind(this);
 	}
 
 	componentDidMount() {
@@ -88,12 +117,79 @@ class ProfileSendAndRateBuyer extends Component {
 		.then(rows => this.setState({ rows }));
 	}
 
+	toggleModal() {
+		this.setState(({ rateModal }) => ({ rateModal: !rateModal }));
+	}
+
+	rateCallback(row) {
+		this.setState({ row, rateModal: true });
+	}
+
+	rate() {
+        const { row, text, rate } = this.state;
+
+        if (!text) {
+            alert('Wystaw opinię i wybierz ilość gwiazdek');
+            return;
+        }
+
+        if (!rate) {
+            alert('Wybierz ilość gwiazdek');
+            return;
+        }
+        
+        const data = {
+            date: new Date().getTime(),
+            _user: row.user._id,
+            isseller: false,
+            isbuyer: true,
+            auction: row.auction.title,
+            _auction: row.auction._id,
+            count: row.count,
+            rate,
+            text
+        };
+
+        fetch('/auction/rate_buyer', {
+        	headers: { 'Content-Type': 'application/json' },
+        	method: 'POST',
+        	body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(success => {
+        	if (success) {
+        		alert('Wystawiono opinię');
+        		this.toggleModal();
+        		this.fetchRows();
+        	} else {
+        		alert('Nastąpił błąd. Spróbuj ponownie');
+        	}
+        })   
+	}
+
 	render() {
-		const { rows } = this.state;
-		console.log(rows);
-		
+		const { rows, rateModal, row, text, rate } = this.state;
+
+		if (isEmpty(rows)) return (
+			<div className="Profile PrifileSendAndRateBuyer">
+				<ProfileLinks active="send-rate" />
+			</div>
+		);
+
 		return (
 			<div className="Profile PrifileSendAndRateBuyer">
+				{
+					rateModal && <RateModal 
+                        title={ <span><span className="thin">Wystaw opinię kupującemu: </span> { row.user.name }</span> }
+                        rateCallback={ (i) => this.setState({ rate: i }) }
+                        textCallback={ (e) => this.setState({ text: e.target.value }) }
+                        submitCallback={ this.rate } 
+                        closeCallback={ this.toggleModal }
+                        open={ rateModal } 
+                        text={ text }
+                        rate={ rate } />
+				}
+
 				<ProfileLinks active="send-rate" />
 				<div>
 					<table className="send-and-rate-table">
@@ -107,7 +203,7 @@ class ProfileSendAndRateBuyer extends Component {
 						</thead>
 						<tbody>
 							{
-								rows.map((row, i) => <DataRow key={ 'row_' + i } row={ row } />)
+								rows.map((row, i) => <DataRow key={ 'row_' + i } row={ row } fetchRows={ this.fetchRows } rateCallback={ this.rateCallback } />)
 							}
 						</tbody>
 					</table>
@@ -115,6 +211,10 @@ class ProfileSendAndRateBuyer extends Component {
 			</div>
 		)
 	}
+}
+
+function wyslaniePlural(row) {
+	return row.count > 1 ? ' wysłaniu przedmiotów' : ' wysłaniu przedmiotu';
 }
 
 export default ProfileSendAndRateBuyer;

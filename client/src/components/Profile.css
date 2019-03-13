@@ -360,10 +360,20 @@
 }
 .send-and-rate-table .name i {
     margin-top: -3px;
+    user-select: none;
 }
 .send-and-rate-table .address,
 .send-and-rate-table .contact {
     display: block;
     font-size: 13px;
     padding: 3px 0;
+}
+
+.Profile .rate-user {
+    padding-left: 30px;
+    font-size: 12px;
+    user-select: none;
+}
+.Profile .rate-user i {
+    cursor: pointer; 
 }

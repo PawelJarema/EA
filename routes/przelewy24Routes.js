@@ -274,12 +274,12 @@ module.exports = app => {
 			});
 			transaction.save();
 
-			helpers.sendChatMessagesOnPay(buyer._id, owner._id, auction, price, qty);
+			helpers.sendChatMessagesOnPay(buyer._id, owner._id, auction, +price + +shipping_price, qty, shipping_method);
 
 			const name = `${buyer.firstname || ''} ${buyer.lastname || (buyer.firstname ? '' : 'Anonim')}`;
 			const mailer = new Mailer(
 				{ subject: 'Kupujący oznaczył aukcję jako opłaconą', recipients: [{ email: owner.contact.email }] },
-				paySimpleTemplate(name, buyer.contact.phone, buyer.contact.email, buyer.address, title, (+price + +shipping_price), shipping_method, auction_id)
+				paySimpleTemplate(name, buyer.contact.phone, buyer.contact.email, buyer.address, title, (+price + +shipping_price), shipping_method, auction_id, qty)
 			);
 			mailer.send();
 

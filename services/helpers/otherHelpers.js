@@ -46,16 +46,18 @@ async function sendChatMessages(buyer_id, seller_id, auction, price, buyer_text,
         _auction = auction._id,
         date     = Date.now();
 
-    const chat = await Chat.findOne({ 
-        $and: [
-            { $or: [ { _user_1 }, { _user_1: _user_2 } ] },
-            { $or: [ { _user_2 }, { _user_2: _user_1 } ] }
-        ],
-        title: { $regex: auction.title, $options: 'i' }
-    });
+    const 
+        chat = await Chat.findOne({ 
+            $and: [
+                { $or: [ { _user_1 }, { _user_1: _user_2 } ] },
+                { $or: [ { _user_2 }, { _user_2: _user_1 } ] }
+            ],
+            title: { $regex: auction.title, $options: 'i' }
+        });
 
-    const   buyer_message   = buyer_text ? { date, _from: _user_1, _to: _user_2, title: auction.title, text: buyer_text, seen: false } : null,
-            seller_message  = seller_text ? { date: (date + 10000), _from: _user_2, _to: _user_1, title: auction.title, text: seller_text, seen: false } : null;
+    const   
+        buyer_message   = buyer_text ? { date, _from: _user_1, _to: _user_2, title: auction.title, text: buyer_text, seen: false } : null,
+        seller_message  = seller_text ? { date: (date + 10000), _from: _user_2, _to: _user_1, title: auction.title, text: seller_text, seen: false } : null;
 
     if (chat) { 
         if (buyer_message) chat.messages.push(buyer_message);
@@ -107,15 +109,25 @@ async function sendChatMessagesOnAuctionEnd(buyer_id, seller_id, auction, price)
     sendChatMessages(buyer_id, seller_id, auction, price, buyer_text, seller_text);
 };
 
-async function sendChatMessagesOnPay(buyer_id, seller_id, auction, price, qty) {
+async function sendChatMessagesOnPay(buyer_id, seller_id, auction, price, qty, shipping_method) {
     const buyer_text = (
         `Wpłaciłem ${ price } zł na zakup ${ auction.title }\n(${qty} szt.)\n
-         Pieniądze powinny dotrzeć za jakiś czas. Koniecznie sprawdź, czy pieniądze dotarły, a potem wyślij zamówienie.`
+         Na metodę dostawy wybrałem ${ shipping_method }.\n
+         Pieniądze powinny dotrzeć za jakiś czas. Koniecznie sprawdź, czy pieniądze dotarły, a potem wyślij ${ (qty > 1 ? 'przedmioty' : 'przedmiot') }.`
     );
 
     sendChatMessages(buyer_id, seller_id, auction, price, buyer_text, null);
 }
 
+async function sendChatMessageOnItemSend(buyer_id, seller_id, auction, price, qty) {
+    const seller_text = (
+        `Wysłałem do Ciebie ${ qty > 1 ? ('zakupione przedmioty (' + qty + ' szt.)') : 'zakupiony przedmiot' } ${ auction.title }.`
+    );
+
+    sendChatMessages(buyer_id, seller_id, auction, price, null, seller_text);
+} 
+
+module.exports.sendChatMessageOnItemSend = sendChatMessageOnItemSend;
 module.exports.userNameHelper = userNameHelper;
 module.exports.userFirmHelper = userFirmHelper;
 module.exports.userAddressHelper = userAddressHelper;

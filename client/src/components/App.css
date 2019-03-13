@@ -704,12 +704,15 @@ strong {
 }
 */
 
+nav .user-links {
+    user-select: none;
+}
+
 .navigation-welcome {
     position: absolute;
     top: -22px; 
     font-size: 10px; text-align: center;
     width: 100%;
-
 }
 
 #user-agent {

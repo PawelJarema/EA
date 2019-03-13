@@ -1,9 +1,9 @@
 const mainTemplate = require('./mainTemplate');
 const business = require('./business');
 
-module.exports = (name, phone, email, address, title, price, delivery_method, auction_id) => mainTemplate(
+module.exports = (name, phone, email, address, title, price, delivery_method, auction_id, qty) => mainTemplate(
 	`Wpłata`,
-	`<p>Kupujący twierdzi, że dokonał wpłaty <b>${price} zł</b> za przedmiot <a href="${business.host}aukcje/${auction_id}">${title}</a>.</p>
+	`<p>Kupujący twierdzi, że dokonał wpłaty <b>${price} zł</b> za <b>${ qty} szt.</b> przedmiotu <a href="${business.host}aukcje/${auction_id}">${title}</a>.</p>
 	 <p>Dane kupującego:</p>
 	 <div class='quote'>
 	 	<p>${name}</p>

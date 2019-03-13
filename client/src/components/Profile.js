@@ -88,7 +88,7 @@ class ProfileLinks extends Component {
             toSend = isNotEmpty(user.toSend),
             toRate = isNotEmpty(user.toRate);
 
-        console.log(user.toSend);
+        // console.log(user.toSend);
         // console.log(user.freebies);
 
         return (
@@ -109,7 +109,7 @@ class ProfileLinks extends Component {
                 <Link className={ (active) === 'liked' ? 'active' : null } to="/polubione-aukcje">Polubione aukcje</Link>
                 <Link className={ (active === 'opinions' ? 'active' : null) } to="/konto/opinie">Opinie</Link>
                 {
-                    (toSend || toRate) &&  <Link className={ (active === 'send-rate' ? 'active' : null) } to="/konto/wyslij-i-ocen">Oznacz przedmioty jako wysłane i oceń kupujących</Link>
+                    (toSend || toRate) &&  <Link className={ (active === 'send-rate' ? 'active' : null) } to="/konto/wyslij-i-ocen">Wyślij przedmioty i oceń kupujących</Link>
                 }  
             </div>
         ); // <Link className={ (active === 'invoices' ? 'active' : null) } to="/konto/faktury">Faktury</Link>

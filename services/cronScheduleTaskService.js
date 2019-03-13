@@ -153,6 +153,8 @@ const endAuction = async (auction_id) => {
 	auction.quantity = quantity;
 	auction.payees = winner_ids;
 
+	console.log('cronsheduler', auction.payees);
+
 	await auction
 		.save()
 		.then(

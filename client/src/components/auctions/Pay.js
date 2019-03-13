@@ -43,14 +43,18 @@ class Pay extends Component {
             paySimple, 
             title: auction.title,
             price,
-            shipping_price: delivery_price,
+            shipping_price: delivery_price * qty,
             shipping_method: delivery_method,
             qty,
             owner_id: auction._user,
             auction_id: auction._id
         };
 
-        this.props.registerP24Transaction(data);
+        this.props.registerP24Transaction(data)
+        .then(() => {
+            window.scrollTo(0, 0)
+            this.props.callback();
+        });
     }
 
 
@@ -92,7 +96,7 @@ class Pay extends Component {
                             </table>
                         </form>
 
-                        <h1>Do zapłaty: { price + delivery_price } zł</h1>
+                        <h1>Do zapłaty: { price + (delivery_price * qty) } zł</h1>
                         {
                             paySimple && (<p>
                                 <br/>Wykonaj teraz przelew na konto Sprzedawcy: 

@@ -6,6 +6,8 @@ import Logo from './Logo';
 import { SearchField } from './Search';
 import Chat from './Chat';
 
+let isChrome = /chrome/i.test(window.navigator.userAgent);
+
 class UserLinks extends Component {
     render() {
         const 
@@ -22,7 +24,7 @@ class UserLinks extends Component {
                     { Search }
                     <Chat socket={ this.props.socket } id={user._id} callback={callback} onClick={toggleMenu} />
                     <span className="link" onClick={toggleMenu}>
-                        { user.firstname && <span className="orange navigation-welcome">{ user.firstname }</span> }
+                        { isChrome && user.firstname && <span className="orange navigation-welcome">{ user.firstname }</span> }
                         <img src="/assets/icons/user.png" />
                         <div className="dropdown">
                             <Link to="/konto/ustawienia" className="account">Konto</Link>
