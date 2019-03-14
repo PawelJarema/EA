@@ -780,3 +780,9 @@ margin-bottom: 10px;
 .link i {
     margin-top: -1.5px;
 }
+.empty {
+    position: relative;
+    height: 36vh;
+    text-align: center;
+    line-height: 1.5;
+}

@@ -7,7 +7,7 @@ import FrontPageInner from './FrontPageInner';
 import Auction from './auctions/Auction';
 import Progress from './Progress';
 
-import { isNotEmpty } from './auctions/functions';
+import { isEmpty, isNotEmpty } from './auctions/functions';
 
 import './FrontPage.css';
 
@@ -36,9 +36,10 @@ class FrontPage extends Component {
     render() {
         const
             { mode } = this.state, 
-            { categories, categoryCallback, onMobile, windowWidth } = this.props,
+            { categories, categoryCallback, onMobile, windowWidth, user } = this.props,
             inPromoted = mode === 'promoted',
-            inNew = mode === 'new';
+            inNew = mode === 'new',
+            empty = this.props.auctions && isEmpty(this.props.auctions.popular) && isEmpty(this.props.auctions.newest);
 
         return (
             <div className="FrontPage">
@@ -47,6 +48,13 @@ class FrontPage extends Component {
                 }
                 {
                     this.props.auctions && <FrontPageCategories categoryCallback={ categoryCallback } onMobile={ onMobile } windowWidth={ windowWidth } />
+                }
+                {
+                    empty && (
+                        <div className="empty">
+                            <p className="absolute-center">Nic tu jeszcze nie ma!<br/><a className="link clickable" href={ (user ? "/konto/aukcje/dodaj" : "/konto/zaloguj") }>Dodaj aukcję</a> i bądź pierwszy.</p> 
+                        </div>
+                    )
                 }
                 {
                     this.props.auctions && isNotEmpty(this.props.auctions.popular) && (

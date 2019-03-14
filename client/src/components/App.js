@@ -202,7 +202,7 @@ class App extends Component {
                             <TopScroller />
                             <CookieMessage cookies={cookies} />
                             
-                            <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } windowWidth={ windowWidth } onMobile={ onMobile } /> } />
+                            <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } windowWidth={ windowWidth } onMobile={ onMobile } user={ user } /> } />
                             <Route exact path="/aukcje" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/szukaj/:category/:query" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/wyszukiwanie-zaawansowane/:category/:query/:min/:max/:state/:sort" render={props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />

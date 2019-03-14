@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import './Landing.css';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as authActions from '../actions/authActions';
 import Regex from '../helpers/regexHelper';
+
+import './Landing.css';
 
 class RegistrationPanel extends Component {
     render() {
@@ -11,12 +12,12 @@ class RegistrationPanel extends Component {
             <div className={"registration-panel" + (this.props.className ? ` ${this.props.className}` : '')}> 
                 <div className="column">
                     <div className="container">
+                        <h1>{ this.props.title }</h1>
                         { this.props.children }
                     </div>
                 </div>
                 <div className="column">
-                    <div className="container">
-                        <h1>{ this.props.title }</h1>
+                    <div className="container">       
                         <img src="/assets/website.png" />
                     </div>
                 </div>
