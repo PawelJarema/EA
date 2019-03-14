@@ -49,8 +49,6 @@ module.exports = app => {
     app.post('/auction/rate_buyer', requireLogin, async (req, res) => {
         const rate = req.body;
 
-        console.log(rate);
-
         rate._user = ObjectId(rate._user);
         rate._rater = ObjectId(req.user._id);
 
@@ -92,39 +90,40 @@ module.exports = app => {
     app.post('/auction/send_and_rate_rows', requireLogin, async (req, res) => {
         const
             rows = [],
-            owner = req.user,
+            owner = req.user;
 
-            itemsToSendAuction = await getItemsToSend(owner, false),
-            itemsToSendBuyNow = await getItemsToSend(owner, true),
+        let 
+            data, auction, buyers, i, j;
 
-            usersToRateAuction = await getItemsToRate(owner, false),
-            usersToRateBuyNow = await getItemsToRate(owner, true);
+        console.log('request rows');
 
-            // console.log(owner.toRate);
-
-        console.log(req.user);
-
-        for (let i = 0; i < itemsToSendAuction.length; i++) {
+        data = await getItemsToSend(owner, false);
+        for (let i = 0; i < data.length; i++) {
             console.log('auction item found');
-
-            const auction = itemsToSendAuction[i];
-            rows.push(await makeRow(
-                auction.bids[0]._user,
-                auction,
-                false,
-                true,
-                false
-            )); 
-        }
-
-        for (let i = 0; i < itemsToSendBuyNow.length; i++) {
-            console.log('buy now items found');
-
-            const 
-                auction = itemsToSendBuyNow[i],
-                buyers = auction.buynowpaid.filter(filterUnique);
+  
+            auction = data[i];
+            buyers = auction.auctionpaid;
 
             for (let j = 0; j < buyers.length; j++) {
+                console.log('making row for items to send auction');
+                rows.push(await makeRow(
+                    buyers[j],
+                    auction,
+                    false,
+                    true,
+                    false
+                )); 
+            }
+        }
+
+        data = await getItemsToSend(owner, true);
+        for (let i = 0; i < data.length; i++) {
+ 
+            auction = data[i];
+            buyers = auction.buynowpaid.filter(filterUnique);
+
+            for (let j = 0; j < buyers.length; j++) {
+                console.log('making row for items to send buynow');
                 rows.push(await makeRow(
                     buyers[j],
                     auction,
@@ -135,25 +134,32 @@ module.exports = app => {
             }
         }
 
-        for (let i = 0; i < usersToRateAuction.length; i++) {
-            console.log('users to rate auction found')
-            const auction = usersToRateAuction[i];
-            rows.push(await makeRow(
-                auction.bids[0]._user,
-                auction,
-                false,
-                false,
-                true
-            )); 
-        }
-
-        for (let i = 0; i < usersToRateBuyNow.length; i++) {
-            console.log('users to rate buynow found')
-            const 
-                auction = usersToRateBuyNow[i],
-                buyers = auction.buynowpaid.filter(filterUnique);
+        data = await getItemsToRate(owner, false);
+        for (let i = 0; i < data.length; i++) {
+ 
+            auction = data[i];
+            buyers = auction.auctionpaid;
 
             for (let j = 0; j < buyers.length; j++) {
+                console.log('making row for users to rate auction');
+                rows.push(await makeRow(
+                    buyers[j],
+                    auction,
+                    false,
+                    false,
+                    true
+                ));
+            }  
+        }
+
+        data = await getItemsToRate(owner, true);
+        for (let i = 0; i < data.length; i++) {
+ 
+            auction = data[i],
+            buyers = auction.buynowpaid.filter(filterUnique);
+
+            for (let j = 0; j < buyers.length; j++) {
+                console.log('making row for users to rate buynow');
                 rows.push(await makeRow(
                     buyers[j],
                     auction,

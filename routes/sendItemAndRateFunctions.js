@@ -16,7 +16,7 @@ module.exports.makeRow = makeRow;
 module.exports.clearUserCache = () => { if (global_user_cache) global_user_cache = {} };
 
 let 
-	auction_projection = { _id: 1, title: 1, buynowpaid: 1, bids: 1 },
+	auction_projection = { _id: 1, title: 1, auctionpaid: 1, buynowpaid: 1, bids: 1 },
 	global_user_cache = {};
 
 async function removeUserFromRateArray(owner, _auction, _user, buynow) {
@@ -27,11 +27,15 @@ async function removeUserFromRateArray(owner, _auction, _user, buynow) {
 		owner.save();
 	}
 
+	const auction = await Auction.findOne({ _id: ObjectId(_auction) });
+	
 	if (buynow) {
-		const auction = await Auction.findOne({ _id: ObjectId(_auction) });
 		auction.buynowpaid = auction.buynowpaid.filter(id => String(id) !== String(_user));
-		auction.save();
+	} else {
+		auction.auctionpaid = auction.auctionpaid.filter(id => String(id) !== String(_user));
 	}
+
+	auction.save();
 }
 
 async function moveUserFromSendToRate(owner, _auction, _user, buynow) {

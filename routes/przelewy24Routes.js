@@ -243,6 +243,12 @@ module.exports = app => {
 				if (auction.payees.length === 0) {
 					auction.paid = true;
 				}
+
+				if (auction.auctionpaid) {
+					auction.auctionpaid.push(buyer._id);
+				} else {
+					auction.auctionpaid = [buyer._id];
+				}
 			}
 
 			if (auction.raters) {
