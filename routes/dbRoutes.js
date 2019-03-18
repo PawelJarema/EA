@@ -14,6 +14,12 @@ const Property = mongoose.model('property');
 
 const categoryTree = require('../client/src/categories/categories');
 
+
+const
+    { appAuthSecret } = require('../config/keys'),
+    md5 = require('md5'), 
+    axios = require('axios');
+
 // kategoria, tytuł i cena, atrybuty, opis
 
 const random = function(min, max) {

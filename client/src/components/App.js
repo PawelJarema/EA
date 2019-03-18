@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import md5 from 'md5';
 import './App.css';
 import './Mobile.css';
 
@@ -113,6 +114,46 @@ class CookieMessage extends Component {
     }
 }
 
+class TestWebAPi extends Component {
+    state = { res: '' };
+
+    // /api/webapi              - test connection
+    // /api/user_exists         - check if account exists with particular email 
+    // /api/webapi/user         - get user data
+    // /api/webapi/post_auction - check if user account exists and creates post if provided data is sufficient
+
+    test() {
+        const
+        appAuthSecret = 'Polmarket_12WsdfRghjnlPqwWefdsgeqwerIjh34%6%2dgdhsSl1_',
+        date = Date.now(),
+        email = 'pawel.jarema@dd1studio.com',
+        password = 'boguspassword',
+        bogusData = {
+            date_milliseconds: date,
+            user_email: email,
+            user_password: password,
+            token: md5(`${ date }|${ appAuthSecret }|${ email }|${ password }`)
+        };
+
+        fetch('/api/webapi/user_exists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bogusData)
+        })
+        .then(res => res.text())
+        .then(res => this.setState({ res }));
+    }
+
+    render() {
+        return (
+            <div>
+                <button onClick={ this.test.bind(this) }>Test</button>
+                { this.state.res }
+            </div>
+        );
+    }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -198,6 +239,7 @@ class App extends Component {
                         <Breadcrumbs />
                     </header>
             
+                    <TestWebAPi />
                     <div className="main-container">
                             <TopScroller />
                             <CookieMessage cookies={cookies} />

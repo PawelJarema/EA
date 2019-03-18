@@ -10,6 +10,8 @@ const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const requireAppAuth = require('./middleware/requireAppAuth');
+
 require('./services/Passport');
 
 mongoose.connect(keys.mongoURI);
@@ -25,6 +27,8 @@ app.use(cookieSession({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/api/webapi', requireAppAuth, require('./routes/apiRoutes'));
 
 require('./services/Chat')(app);
 
