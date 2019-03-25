@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import md5 from 'md5';
 import './App.css';
 import './Mobile.css';
 
@@ -110,47 +109,7 @@ class CookieMessage extends Component {
         } else {
             return null;
         }
-        
-    }
-}
 
-class TestWebAPi extends Component {
-    state = { res: '' };
-
-    // /api/webapi              - test connection
-    // /api/user_exists         - check if account exists with particular email 
-    // /api/webapi/user         - get user data
-    // /api/webapi/post_auction - check if user account exists and creates post if provided data is sufficient
-
-    test() {
-        const
-        appAuthSecret = 'Polmarket_12WsdfRghjnlPqwWefdsgeqwerIjh34%6%2dgdhsSl1_',
-        date = Date.now(),
-        email = 'pawel.jarema@dd1studio.com',
-        password = 'boguspassword',
-        bogusData = {
-            date_milliseconds: date,
-            user_email: email,
-            user_password: password,
-            token: md5(`${ date }|${ appAuthSecret }|${ email }|${ password }`)
-        };
-
-        fetch('/api/webapi/user_exists', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bogusData)
-        })
-        .then(res => res.text())
-        .then(res => this.setState({ res }));
-    }
-
-    render() {
-        return (
-            <div>
-                <button onClick={ this.test.bind(this) }>Test</button>
-                { this.state.res }
-            </div>
-        );
     }
 }
 
@@ -160,7 +119,7 @@ class App extends Component {
     this.state = {
         search_query: '',
         category_filter_data: {},
-        endpoint: process.env.REACT_APP_CHAT_URL, 
+        endpoint: process.env.REACT_APP_CHAT_URL,
         socket: null,
         chatBox: null,
         windowWidth: window.innerWidth
@@ -175,7 +134,7 @@ class App extends Component {
   onResize(e) {
     this.setState({ windowWidth: window.innerWidth });
   }
-  
+
   setQuery(search_query) {
     this.setState({ search_query })
   }
@@ -217,11 +176,11 @@ class App extends Component {
   }
 
   render() {
-    const 
+    const
         { socket, chatBox, category_filter_data, search_query } = this.state,
         { user, flash, tech_break, cookies, categories } = this.props;
 
-    const 
+    const
         message = flash !== null && flash !== false ? <div className={ "flash-message " + flash.type }>{ flash.message }</div> : null,
         windowWidth = this.state.windowWidth,
         onMobile = windowWidth <= 1024;
@@ -229,7 +188,7 @@ class App extends Component {
     if (tech_break && tech_break.techbreak === false) {
         return (
           <div className="App">
-            { 
+            {
                 message
             }
             <BrowserRouter>
@@ -238,12 +197,11 @@ class App extends Component {
                         <Navi socket={ socket } callback={ this.callback } setQuery={ this.setQuery } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } />
                         <Breadcrumbs />
                     </header>
-            
-                    <TestWebAPi />
+
                     <div className="main-container">
                             <TopScroller />
                             <CookieMessage cookies={cookies} />
-                            
+
                             <Route exact path="/" render={ props => <FrontPage {...props} categories={ categories } categoryCallback={ this.categoryFilterCallback } categoryData={ category_filter_data } windowWidth={ windowWidth } onMobile={ onMobile } user={ user } /> } />
                             <Route exact path="/aukcje" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />
                             <Route exact path="/aukcje/szukaj/:category/:query" render={ props => <AuctionListSearch {...props} user={user} query={search_query} categories={categories} categoryData={ category_filter_data } categoryCallback={ this.categoryFilterCallback } /> } />

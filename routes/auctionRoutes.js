@@ -53,7 +53,7 @@ module.exports = app => {
         rate._rater = ObjectId(req.user._id);
 
         await removeUserFromRateArray(req.user, ObjectId(rate._auction), rate._user, rate.buynow, rate.count);
-        
+
         delete rate.buynow;
         delete rate._auction;
         delete rate.count;
@@ -76,7 +76,7 @@ module.exports = app => {
 
         mailer.send();
 
-        const 
+        const
             _auction_id = ObjectId(auction_id),
             _user_id = ObjectId(user_id),
             auction = await Auction.findOne({ _id: _auction_id });
@@ -92,7 +92,7 @@ module.exports = app => {
             rows = [],
             owner = req.user;
 
-        let 
+        let
             data, auction, buyers, i, j;
 
         console.log('request rows');
@@ -100,7 +100,7 @@ module.exports = app => {
         data = await getItemsToSend(owner, false);
         for (let i = 0; i < data.length; i++) {
             console.log('auction item found');
-  
+
             auction = data[i];
             buyers = auction.auctionpaid;
 
@@ -112,13 +112,13 @@ module.exports = app => {
                     false,
                     true,
                     false
-                )); 
+                ));
             }
         }
 
         data = await getItemsToSend(owner, true);
         for (let i = 0; i < data.length; i++) {
- 
+
             auction = data[i];
             buyers = auction.buynowpaid.filter(filterUnique);
 
@@ -136,7 +136,7 @@ module.exports = app => {
 
         data = await getItemsToRate(owner, false);
         for (let i = 0; i < data.length; i++) {
- 
+
             auction = data[i];
             buyers = auction.auctionpaid;
 
@@ -149,12 +149,12 @@ module.exports = app => {
                     false,
                     true
                 ));
-            }  
+            }
         }
 
         data = await getItemsToRate(owner, true);
         for (let i = 0; i < data.length; i++) {
- 
+
             auction = data[i],
             buyers = auction.buynowpaid.filter(filterUnique);
 
@@ -185,7 +185,7 @@ module.exports = app => {
             res.send(false);
             return;
         }
-                
+
         const img       = Buffer.from(photo.data, 'base64');
 
         res.writeHead(200, {
@@ -213,13 +213,13 @@ module.exports = app => {
 
         delete rate._auction;
         const newRate = new Rate(rate).save().then(
-            doc => { 
+            doc => {
                 auction.save().then(
                     doc => {
                         req.session.message = 'Pomyślnie dodano opinię';
                         res.send({});
                     },
-                    err => { 
+                    err => {
                         console.log(err);
                         req.session.error = 'Błąd przy zapisie stanu aukcji. Spróbuj później';
                         res.send({});
@@ -242,7 +242,7 @@ module.exports = app => {
         await auction.remove().then(
             () => { req.session.message = 'Skasowano aukcję'; res.send({}); },
             err => { console.log(err); req.session.error = 'Nastąpił błąd'; res.send({}); }
-        ); 
+        );
     });
 
     app.post('/auction/my_bids/:page/:per_page', requireLogin, async (req, res) => {
@@ -252,7 +252,7 @@ module.exports = app => {
 
         let query;
         if (mode === 'ended') {
-            query = { 
+            query = {
                 $or: [
                     {
                         $and: [
@@ -260,20 +260,20 @@ module.exports = app => {
                             { ended: (mode === 'ended' ? true : ({ $ne: true })) }
                         ]
                     },
-                    { 
+                    {
                         $or: [
                             { buynowpayees: user_id },
                             { payees: user_id },
                             { buynowpaid: user_id },
                             { raters: user_id }
-                        ] 
+                        ]
                     }
                 ],
-                
+
             };
         } else {
-            query = { 
-                bids: { $elemMatch: { _user: user_id }}, 
+            query = {
+                bids: { $elemMatch: { _user: user_id }},
                 ended: (mode === 'ended' ? true : ({ $ne: true }))
             };
         }
@@ -281,8 +281,8 @@ module.exports = app => {
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(
-            query, 
-            projection, 
+            query,
+            projection,
             options
         ).lean();
 
@@ -309,8 +309,8 @@ module.exports = app => {
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
 
         const auctions = await Auction.find(
-            query, 
-            projection, 
+            query,
+            projection,
             options
         ).lean();
 
@@ -331,10 +331,10 @@ module.exports = app => {
         const query = { _user: req.user._id, ended: (mode === 'ended' ? true : ({ $ne: true })) };
         const projection = { title: 1, shortdescription: 1, price: 1, bids: 1, date: 1, ended: 1 }; // photos: { $slice: 1 },
         const options = { skip: (+page - 1) * +per_page, limit: +per_page, sort: { 'date.start_date': 1 }};
-        
+
         const auctions = await Auction.find(
-            query, 
-            projection, 
+            query,
+            projection,
             options
         ).lean();
 
@@ -415,15 +415,15 @@ module.exports = app => {
             } else {
                 auction.bids.push(newBid);
             }
-            
-            auction.price.current_price = price > highestPrice ? 
-                (price > highestPrice + 10 ? highestPrice + 10 : price) 
-                : 
+
+            auction.price.current_price = price > highestPrice ?
+                (price > highestPrice + 10 ? highestPrice + 10 : price)
+                :
                 (highestPrice > price + 10 ? price + 10 : highestPrice);
 
         } else {
             auction.bids.push(
-                { 
+                {
                     date,
                     _user: req.user._id,
                     price
@@ -457,7 +457,7 @@ module.exports = app => {
             .then(async doc => {
                 req.session.message = 'Wziąłeś udział w licytacji';
                 doc = doc.toObject();
-                
+
                 let bidders_object = {};
 
                 bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
@@ -469,7 +469,7 @@ module.exports = app => {
                 req.session.error = 'Nastąpił błąd podczas licytacji. Spróbuj jeszcze raz';
                 console.log(err);
                 auction = auction.toObject();
-                
+
                 let bidders_object = {};
                 bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
                 auction.bidders = bidders_object;
@@ -493,14 +493,14 @@ module.exports = app => {
             auction.likes   = auction.likes - 1;
             await like.remove();
         }
-     
+
         await auction.save();
     });
 
     app.get('/auction/edit/:id', requireLogin, async (req, res) => {
         const id = req.params.id;
         let auction = await Auction.findOne(
-            { _id: ObjectId(id) }, 
+            { _id: ObjectId(id) },
             {}
         ).lean();
         const bidder_ids = auction.bids.map(bid => ObjectId(bid._user));
@@ -514,14 +514,14 @@ module.exports = app => {
         let bidders_object = {};
         bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
         auction.bidders = bidders_object;
-  
+
         res.send(auction);
     });
 
     app.get('/auction/get/:id', async (req, res) => {
         const id = req.params.id;
         let auction = await Auction.findOne(
-            { _id: ObjectId(id) }, 
+            { _id: ObjectId(id) },
             {},
             { select: '-photos' }
         ).lean();
@@ -542,16 +542,16 @@ module.exports = app => {
         let bidders_object = {};
         bidders.map(bidder => (bidders_object[bidder._id] = bidder ));
         auction.bidders = bidders_object;
-  
+
         res.send(auction);
     });
 
     app.post('/auction/front_page_auctions/:mode', async (req, res) => {
-        const 
+        const
             { mode } = req.params,
             { itemCount, itemsPerFetch } = req.body;
 
-        let 
+        let
             query = { ended: { $ne:true } };
 
         switch(mode) {
@@ -563,12 +563,12 @@ module.exports = app => {
         }
 
         const auctions = await Auction.find(
-            query, 
+            query,
             { title: 1, shortdescription: 1, price: 1, date: 1 },
-            { 
-                sort: { 'date.start_date': -1 }, 
-                skip: +itemCount, 
-                limit: +itemsPerFetch 
+            {
+                sort: { 'date.start_date': -1 },
+                skip: +itemCount,
+                limit: +itemsPerFetch
             }
         );
 
@@ -605,7 +605,7 @@ module.exports = app => {
          console.log(req.body);
          console.log(category, subcategory, subsubcategory);
 
-         
+
         const
             keys                    = Object.keys(req.body),
             property_keys           = keys.filter((key) => key.startsWith('_')),
@@ -644,7 +644,7 @@ module.exports = app => {
                     // multiple input
                     const
                         propNames = Object.keys(innerProps);
-                    
+
                     if (propNames.indexOf('wszystkie') !== -1) {
                         continue;
                     } else {
@@ -694,25 +694,25 @@ module.exports = app => {
         // sort.unshift([ 'premium.forever', 1 ]);
 
         const mongo_query = {
-            title: { 
-                $regex: title, $options: 'i' 
-            }, 
+            title: {
+                $regex: title, $options: 'i'
+            },
             'price.current_price': { $lte: max, $gte: min },
             ended: { $ne: true }
         };
 
         if (category) mongo_query['categories.main'] = category;
         if (subcategory) mongo_query['categories.sub'] = subcategory;
-        if (subsubcategory) mongo_query['category.subsub'] = subsubcategory;
+        if (subsubcategory) mongo_query['categories.subsub'] = subsubcategory;
 
         // properties
         if (property_$and.length > 0) {
             mongo_query['$and'] = property_$and;
         }
-        
+
         const projection = { _user: 1, title: 1, shortdescription: 1, price: 1, date: 1, premium: 1 }; // photos:{ $slice: 1 }
         const options = { skip: (page-1) * per_page, limit: per_page };
-        
+
         if (sort) {
             options.sort = sort;
         }
@@ -732,8 +732,8 @@ module.exports = app => {
 
         const count = await Auction.countDocuments({});
         const auctions = await Auction.find(
-            { _user: { $ne: currentUserId(req) } }, 
-            { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } }, 
+            { _user: { $ne: currentUserId(req) } },
+            { title: 1, shortdescription: 1, price: 1, photos:{ $slice: 1 } },
             { skip: (page-1) * per_page, limit: per_page}
         ).lean();
 
@@ -754,20 +754,20 @@ module.exports = app => {
             mongo_query = {
                 ended: { $ne: true }
             };
-            
+
             const user = await findUserByNames(query);
             if (user) {
                 mongo_query._user = user._id;
             }
         } else {
-            mongo_query = { 
+            mongo_query = {
                 _user: { $ne: currentUserId(req) },
-                title: { $regex: query, $options: 'i' }, 
+                title: { $regex: query, $options: 'i' },
                 $or: [{ 'categories.main': { $regex: category, $options: 'i' } }, { 'categories.sub': { $regex: category, $options: 'i'} }],
                 ended: { $ne: true }
             };
         }
-  
+
         const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
 
@@ -818,13 +818,13 @@ module.exports = app => {
 
         const mongo_query = {
             _user: { $ne: currentUserId(req) },
-            title: { 
-                $regex: query, $options: 'i' 
-            }, 
-            'price.start_price': { $lte: max, $gte: min },   // change to current_price 
+            title: {
+                $regex: query, $options: 'i'
+            },
+            'price.start_price': { $lte: max, $gte: min },   // change to current_price
             $or: [
-                { 'categories.main': { $regex: category, $options: 'i' } }, 
-                { 'categories.sub': { $regex: category, $options: 'i'} }  
+                { 'categories.main': { $regex: category, $options: 'i' } },
+                { 'categories.sub': { $regex: category, $options: 'i'} }
             ],
             ended: { $ne: true }
         };
@@ -835,7 +835,7 @@ module.exports = app => {
 
         const projection = { title: 1, shortdescription: 1, price: 1, date: 1, photos:{ $slice: 1 } };
         const options = { skip: (page-1) * per_page, limit: per_page };
-        
+
         if (sort) {
             options.sort = { [sort[0]]: sort[1] };
         }
@@ -851,13 +851,13 @@ module.exports = app => {
 
     app.get('/auction/count/:category', async (req, res) => {
         const category = req.params.category;
-        
+
         const mains = await Category.find({}).lean();
         const main_names = mains.map(c => c.name);
 
         const is_main = category === 'Kategorie' || main_names.indexOf(category) !== -1;
         const is_user = category === 'Szukaj Sprzedawcy';
-        
+
         if (is_main || is_user) {
             let result = [];
             let items = 0;
@@ -878,22 +878,22 @@ module.exports = app => {
                         })
                 });
             } else {
-                await main_names.map(c => { 
+                await main_names.map(c => {
                     Auction
                         .count({ 'categories.main': c })
-                        .then(count => { 
+                        .then(count => {
                             result.push({ name: c, count });
                             items++;
                             if (items === main_names.length) {
                                 res.send(result);
                                 return;
                             }
-                        }, 
+                        },
                         (err) => console.log('error'));
                 });
             }
 
-            
+
         } else {
             const parent = mains.filter(c => c.subcategories.filter(sub => sub.name.indexOf(category) !== -1).length)[0];
             const subs = parent.subcategories.map(c => c.name);
@@ -901,41 +901,41 @@ module.exports = app => {
             let result = [];
             let items = 0;
 
-            await subs.map(c => { 
+            await subs.map(c => {
                 Auction
                     .countDocuments({ 'categories.sub': c })
-                    .then(count => { 
+                    .then(count => {
                         result.push({ name: c, count }) ;
                         items++;
                         if (items === subs.length) {
                             res.send(result);
                         }
-                    }, 
+                    },
                     (err) => console.log('error'));
             });
         }
     });
 
-    app.get('/auction/get_all', async (req, res) => {        
+    app.get('/auction/get_all', async (req, res) => {
         const auctions = await Auction.find(
             { _user: { $ne: currentUserId(req) }, ended: { $ne: true } },
             { title: 1, shortdescription: 1, price: 1, photos: { $slice: 1 } }
         ).limit(10);
         res.send(auctions);
     });
-    
+
     app.post('/auction/create_or_update', [requireLogin, upload.any()], async (req, res) => {
         const data = req.body;
         const update = data.auction_id ? true : false;
         //const attributes = Object.keys(data).filter(key => key.startsWith('attribute_')).map(key => ({ name: key.replace('attribute_', ''), value: data[key] }));
         const
             keys = Object.keys(data),
-            properties = [], 
+            properties = [],
             int_properties = [],
             deliveries = [];
 
         keys.filter(key => key.startsWith('property_')).map(key => {
-            const 
+            const
                 name  = key.replace('property_', ''),
                 value = data[key];
 
@@ -948,14 +948,14 @@ module.exports = app => {
         });
 
         keys.filter(key => key.startsWith('delivery_')).map(key => {
-            const 
+            const
                 arr = key.split('_'),
                 name = arr[1],
                 price = parseInt(arr[2]);
 
             if (name && price >= 0) {
                 deliveries.push({ name, price });
-            } 
+            }
         });
 
         let auction = new Auction({
@@ -1010,11 +1010,11 @@ module.exports = app => {
 
             Auction.findOneAndUpdate({ _id: ObjectId(data.auction_id) }, auction, function(err, doc) {
                 if (err) {
-                    console.log('error', err); 
+                    console.log('error', err);
                     req.session.error = 'Edycja aukcji nie powiodła się';
                     res.send(false);
                     return;
-                }  
+                }
 
                 if (doc) {
                     req.session.message = 'Pomyślnie dokonano edycji aukcji';
@@ -1025,9 +1025,9 @@ module.exports = app => {
             await auction
                 .save()
                 .then(
-                    async doc => { 
+                    async doc => {
                         req.session.message = 'Pomyślnie dodano aukcję';
-                        
+
                         // const user = req.user;
                         // const { credits } = user.balance;
                         // user.balance.credits = credits ? (+credits - 1) : 4;
@@ -1044,8 +1044,8 @@ module.exports = app => {
               files = req.files;
 
         const auction = (
-            _id 
-            ? 
+            _id
+            ?
             await Auction.findOne({ _id: ObjectId(_id) })
             :
             await Auction.findOne({ _user: req.user._id }, null, { sort: { 'date.start_date' : -1 } })
@@ -1070,7 +1070,7 @@ async function savePhotos(auction, files) {
     let progress = 0;
 
     promises.map(promise => {
-        const 
+        const
             type  = promise.type,
             order = promise.order;
 
@@ -1088,7 +1088,7 @@ async function savePhotos(auction, files) {
                 auction.photos[order] = { type: type, data: optimisedBuffer.toString('base64') };
 
                 if (progress === files.length) {
-                    auction.save(); 
+                    auction.save();
                 }
             });
         });
@@ -1106,15 +1106,15 @@ async function checkIfLiked(auctions, req) {
         return;
     }
 
-    let 
+    let
         ids         = await Like
             .find({ _user: ObjectId(req.user._id) })
-            .lean(); 
+            .lean();
         ids         = ids.map(like => String(like._auction));
 
     if (ids && ids.length) {
         return auctions.map(auction => {
-            if (ids.indexOf(String(auction._id)) !== -1) 
+            if (ids.indexOf(String(auction._id)) !== -1)
                 auction.liked = true;
             return auction;
         });
@@ -1125,17 +1125,17 @@ function sortByViews(a, b) {
     if (a.views > b.views) return 1;
     if (a.views < b.views) return -1;
     return 0;
-} 
+}
 
 async function rotatePremium() {
-    let 
+    let
         premiums = await Auction.find(
-            { ended: { $ne: true }, 'premium.isPremium': true }, 
+            { ended: { $ne: true }, 'premium.isPremium': true },
             { title: 1, shortdescription: 1, price: 1, date: 1 }, //photos: { $slice: 1 },
         ).lean();
 
     for (let i = 0; i < premiums.length; i++) {
-        const 
+        const
             auction = premiums[i],
             views = await Views.findOne({ _auction: auction._id });
 
@@ -1161,7 +1161,7 @@ async function buyNowNotifications(user, owner, auction) {
 
     const price = auction.price.buy_now_price;
     const username = `${user.firstname || ''} ${user.lastname || (!user.firstname ? 'Anonim' : '')}`;
-    
+
     subject = 'Kupiłeś przedmiot ' + auction.title;
     recipients = [{ email: user.contact.email }];
     mailer = new Mailer({ subject, recipients }, buyNowWonTemplate(auction._id, auction.title, price));
@@ -1174,3 +1174,5 @@ async function buyNowNotifications(user, owner, auction) {
 
     helpers.sendChatMessagesOnAuctionEnd(user._id, owner._id, auction, price);
 }
+
+module.exports.savePhotos = savePhotos;

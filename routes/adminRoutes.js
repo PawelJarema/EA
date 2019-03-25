@@ -34,10 +34,10 @@ module.exports = app => {
 	app.post('/api/contact_eaukcje', [requireLogin, upload.any()], async(req, res) => {
 		const
 			to 	 = 'pawel.jarema@dd1studio.com',
-			from = req.user.contact.email, 
+			from = req.user.contact.email,
 			{ message } = req.body,
 			mailer = new Mailer(
-				{ subject: 'Pomoc eaukcje.pl', recipients: [{ email: to }] }, 
+				{ subject: 'Pomoc eaukcje.pl', recipients: [{ email: to }] },
 				contactEaukcjeTemplate(from, message)
 			);
 
@@ -71,7 +71,7 @@ module.exports = app => {
 		                    subcategories: []
 		                }),
 		                subcategories = categoryItem.children;
-		            
+
 		            if (isNotEmpty(subcategories)) {
 			            for (let sc = 0; sc < subcategories.length; sc++) {
 			                const
@@ -148,22 +148,22 @@ module.exports = app => {
 		Auction.remove({ _id: ObjectId(auction_id) })
 			.then(
 				async doc => {
-					req.session.message = 'Usunięto aukcję i przesłano wiadomość'; 
+					req.session.message = 'Usunięto aukcję i przesłano wiadomość';
 					const mailer = new Mailer(
-						{ 
-							subject: 'Wiadomość administracyjna z portalu ' + business.name, 
+						{
+							subject: 'Wiadomość administracyjna z portalu ' + business.name,
 							recipients: [{ email }]
-						}, 
+						},
 						auctionDeletedTemplate(title, reason)
 					);
 
 					await mailer.send();
 
-					res.send(await paginateAuctions(page, per_page)); 
+					res.send(await paginateAuctions(page, per_page));
 				},
-				async err => { 
-					console.log(err); 
-					req.session.error = 'Nastąpił błąd. Spróbuj później'; 
+				async err => {
+					console.log(err);
+					req.session.error = 'Nastąpił błąd. Spróbuj później';
 					res.send(await paginateAuctions(page, per_page));
 				}
 			);
@@ -171,7 +171,7 @@ module.exports = app => {
 
 	app.post('/api/mail_all_users', upload.any(), async (req, res) => {
 		const { admin_id, subject, message } = req.body;
-		
+
 		const admin = await Admin.findOne({ _id: ObjectId(admin_id) });
 		if (!admin) {
 			res.send(false);
@@ -205,9 +205,9 @@ module.exports = app => {
 		} else {
 			mailer = new Mailer({ subject, recipients: [{ email }] }, mailUserTemplate(subject, message));
 		}
-	
+
 		const response = await mailer.send();
-		
+
 		req.session.message = 'Wysłano wiadomość';
 		res.send(true);
 	});
@@ -221,24 +221,24 @@ module.exports = app => {
 
 		const user = await User.findOne({ _id: ObjectId(user_id) });
 		const mailer = new Mailer(
-			{ 
-				subject: 'Wiadomość administracyjna z portalu ' + business.name, 
+			{
+				subject: 'Wiadomość administracyjna z portalu ' + business.name,
 				recipients: [{ email: user.contact.email }]
-			}, 
+			},
 			userDeletedTemplate(reason)
 		);
 
 		await mailer.send();
 		User.deleteOne({ _id: ObjectId(user_id) })
 			.then(
-				async doc => { 
+				async doc => {
 					await Auction.deleteMany({ _user: ObjectId(user_id) });
-					
-					req.session.message = 'Usunięto konto użytkownika i przesłano wiadomość'; 
-					res.send(await paginateUsers(page, per_page)); 
+
+					req.session.message = 'Usunięto konto użytkownika i przesłano wiadomość';
+					res.send(await paginateUsers(page, per_page));
 				},
-				async err => { 
-					console.log(err); 
+				async err => {
+					console.log(err);
 					req.session.error = 'Nastąpił błąd. Spróbuj później';
 					res.send(await paginateUsers(page, per_page)); }
 			);
@@ -283,7 +283,7 @@ module.exports = app => {
 	});
 
 	app.get('/api/tech_break', async (req, res) => {
-		const admin = await Admin.findOne({});		
+		const admin = await Admin.findOne({});
 		if (admin) {
 			res.send({ techbreak: admin.techbreak || false, provision: admin.provision, premium7daysPrice: admin.premium7daysPrice, premiumForeverPrice: admin.premiumForeverPrice });
 			return;
@@ -324,7 +324,7 @@ async function paginateAuctions(page, per_page) {
 		{},{},
 		{ skip: (+page - 1) * +per_page, limit: +per_page, sort: { joindate: -1 }}
 	).lean();
-	
+
 	const 	count = await Auction.countDocuments(),
 			pages = Math.ceil(count / +per_page);
 

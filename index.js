@@ -3,6 +3,7 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const app = express();
+const upload = require('multer')();
 
 const keys = require('./config/keys');
 const path = require('path');
@@ -28,7 +29,7 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/webapi', requireAppAuth, require('./routes/apiRoutes'));
+app.use('/api/webapi', [upload.any(), requireAppAuth], require('./routes/apiRoutes'));
 
 require('./services/Chat')(app);
 

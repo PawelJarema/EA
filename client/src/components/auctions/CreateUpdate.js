@@ -25,9 +25,9 @@ import PromoteAuction from './PromoteAuction';
 class CreateUpdateAuction extends Component {
    constructor(props) {
        super(props);
-       
+
        let emptyValue = RichTextEditor.createEmptyValue();
-       this.state = { 
+       this.state = {
         subcategories: [], images: [], richText: emptyValue, description: emptyValue.toString('html'), message: [],
         categoryData: null, propertyData: null,
         editPhotoIndex: null,
@@ -35,7 +35,7 @@ class CreateUpdateAuction extends Component {
         preview: null,
         promote: null
        };
-       
+
        this.addAttribute = this.addAttribute.bind(this);
        this.onDrop = this.onDrop.bind(this);
        this.shiftImageLeft = this.shiftImageLeft.bind(this);
@@ -50,7 +50,7 @@ class CreateUpdateAuction extends Component {
        this.preview = this.preview.bind(this);
        this.promote = this.promote.bind(this);
    }
-    
+
    componentWillMount() {
         if (this.props.categories && this.state.subcategories.length === 0) {
             this.setState({ subcategories: this.props.categories[0].subcategories });
@@ -62,20 +62,20 @@ class CreateUpdateAuction extends Component {
            this.setState({ subcategories: props.categories[0].subcategories });
        }
    }
-    
+
    handleRichText(text) {
        this.setState({ richText: text, description: text.toString('html') });
    }
-    
+
    componentDidMount() {
         this.props.clearAuction();
         let editor = document.querySelector('.rich-text-editor select');
-        if (!editor) 
+        if (!editor)
             return;
 
         let options = editor.childNodes,
            option_text = ['Akapit', 'Duży nagłówek', 'Średni nagłówek', 'Mały nagłówek', 'Linia kodu'];
-       
+
        for (let i = 0, l = options.length; i < l; i++) {
            options[i].innerHTML = option_text.shift();
        }
@@ -120,20 +120,20 @@ class CreateUpdateAuction extends Component {
             input.value = auction.title;
 
             // categories and properties
-    
+
 
             //input = queryByName('main');
             //input.value = auction.categories.main;
-            //this.handleCategory({ target: input });          
+            //this.handleCategory({ target: input });
             // setTimeout(() => {
             //     input = queryByName('sub');
             //     input.value = auction.categories.sub;
             // }, 1000);
-            
+
             // prices
             input = queryByName('start_price');
             input.value = auction.price.start_price;
-            
+
 
             if (auction.price.buy_now_price) {
                 this.setState({ buyNowOption: true }, () => {
@@ -141,7 +141,7 @@ class CreateUpdateAuction extends Component {
                     input.value = auction.price.buy_now_price;
                 })
             }
- 
+
 
             input = queryByName('min_price');
             input.value = auction.price.min_price;
@@ -160,7 +160,7 @@ class CreateUpdateAuction extends Component {
                 auction.photos.forEach(photo => {
                     const   type    = photo.type || 'image/jpeg',
                             blob    = b64toBlob(photo.data, type);
- 
+
                     files.push(blob);
                 });
 
@@ -199,7 +199,7 @@ class CreateUpdateAuction extends Component {
             //deliveries
             if (auction.deliveries) {
                 for (let i = 0; i < auction.deliveries.length; i++) {
-                    const 
+                    const
                         delivery = auction.deliveries[i],
                         name     = `delivery_${delivery.name}_${delivery.price}`;
 
@@ -209,22 +209,22 @@ class CreateUpdateAuction extends Component {
             }
         }
    }
-    
+
    componentWillUnmount() {
        const { images } = this.state;
-       
+
        for (let i = 0, l = images.length; i < l; i++) {
             const image = images[i];
             URL.revokeObjectURL(image.preview);
        }
    }
-    
+
     addAttribute(update_name) {
         let name = typeof update_name === 'string' ? update_name : window.prompt('Podaj nazwę atrybutu', 'Rozmiar');
 
         if (!name)
             return;
-        
+
         let input = document.createElement('input');
         input.name = 'attribute_' + name;
         input.type = 'text';
@@ -232,7 +232,7 @@ class CreateUpdateAuction extends Component {
         let label = document.createElement('label');
         label.for = 'attribute_' + name;
         label.innerText = name;
-        
+
         this.attributesRef.appendChild(label);
         this.attributesRef.appendChild(input);
     }
@@ -240,7 +240,7 @@ class CreateUpdateAuction extends Component {
     onDropRejected() {
         alert('Zdjęcie ma niewłaściwy format pliku lub jest za duże');
     }
-    
+
     onDrop(files) {
         if (!files) return;
 
@@ -248,19 +248,19 @@ class CreateUpdateAuction extends Component {
             alert('Dodaj maksymalnie 8 zdjęć');
             return;
         }
-        
+
         if (files.length > (8 - this.state.images.length)) {
             files = files.slice(0, (8 - this.state.images.length));
         }
 
-        this.setState(prevState => ({    
+        this.setState(prevState => ({
             images: prevState.images.concat(files.map(file => ({ file: file, preview: URL.createObjectURL(file) })))
         }));
     }
 
     shiftImageLeft(index) {
         this.setState(prev => {
-            const 
+            const
                 images = prev.images,
                 prevImg = images[index - 1];
 
@@ -273,7 +273,7 @@ class CreateUpdateAuction extends Component {
 
     shiftImageRight(index) {
         this.setState(prev => {
-            const 
+            const
                 images = prev.images,
                 nextImg = images[index + 1];
 
@@ -316,14 +316,14 @@ class CreateUpdateAuction extends Component {
             case 'shortdescription':
                 if (!/.{10,}/i.test(value)) message[4] = 'Podaj krótki opis przedmiotu dla wyników wyszukiwań';
                 break;
-        } 
+        }
 
         this.setState({ message });
         return message.length === 0;
     }
-    
+
     preview() {
-        const 
+        const
             photos = this.state.images.map(item => item.preview),
             auction = makeAuction(new FormData(this.formRef));
 
@@ -337,7 +337,7 @@ class CreateUpdateAuction extends Component {
 
         const images = this.state.images;
         const formData = new FormData(this.formRef);
-        
+
         const photoData = new FormData();
         if (this.props.auctions) {
             photoData.append('_id', this.props.auctions._id || null);
@@ -366,7 +366,7 @@ class CreateUpdateAuction extends Component {
             alert('Wybierz sposób dostawy towaru');
             allValid = false;
         }
-        
+
 
         if (allValid) {
             if (this.props.update) {
@@ -383,7 +383,7 @@ class CreateUpdateAuction extends Component {
                 this.props.showSpinner();
                 this.props.newAuction(formData)
                     .then(
-                        () => { 
+                        () => {
                             this.props.postPhotos(photoData);
                             this.promote(this.props.last_auction);
                         }
@@ -430,9 +430,9 @@ class CreateUpdateAuction extends Component {
             this.setState({ promote: true });
         }
     }
-    
+
    render() {
-       const 
+       const
             { user, update, categories, auctions } = this.props,
             { categoryData, propertyData, preview } = this.state,
             userDataComplete = user && user.firstname && user.lastname && user.address,
@@ -457,7 +457,7 @@ class CreateUpdateAuction extends Component {
         // <p>
         //     <span className="label add-horizontal-margin"><span className="orange">*</span> Stan przedmiotu:
         //         <input name="attribute_Stan" type="radio" value="nowy" defaultChecked /><span className="label">nowy</span>
-        
+
         //         <input name="attribute_Stan" type="radio" value="używany" /><span className="label">używany</span>
         //     </span>
         // </p>
@@ -467,9 +467,9 @@ class CreateUpdateAuction extends Component {
         // </p>
 
         if (this.state.promote) return (
-            <PromoteAuction 
-                user={ user } 
-                auction={ this.state.promote } 
+            <PromoteAuction
+                user={ user }
+                auction={ this.state.promote }
                 close={ () => this.setState({ promote: null }) } />
         );
 
@@ -478,7 +478,7 @@ class CreateUpdateAuction extends Component {
                 {
                     preview && (
                         <div className="AuctionPreview">
-                            <h1><i className="material-icons clickable" onClick={ () => this.setState({ preview: null }) }>close</i> Podgląd ogłoszenia: </h1> 
+                            <h1><i className="material-icons clickable" onClick={ () => this.setState({ preview: null }) }>close</i> Podgląd ogłoszenia: </h1>
                             <br />
                             <AuctionPreview user={ user } auction={ preview && preview.auction } photos={ preview && preview.photos } />
                         </div>
@@ -504,7 +504,7 @@ class CreateUpdateAuction extends Component {
                         }
                     <form ref={ e => this.formRef = e } className={"user-settings" + (!is18 || !isVerified || !userDataComplete || !deliveries || blockAllChanges ? ' disabled' : '')} action="/auction/create_or_update" method="post" encType="multipart/form-data">
                         <h1>{ update ? 'Edytuj aukcję' : 'Dodaj aukcję' }</h1>
-            
+
                         <fieldset>
                             <legend><i className="material-icons">title</i>Tytuł</legend>
                             <p>
@@ -513,19 +513,19 @@ class CreateUpdateAuction extends Component {
                                 <span className="validation-message">{ this.state.message[0] }</span>
                             </p>
                         </fieldset>
-           
+
                         <fieldset>
                             <legend><i className="material-icons">category</i>Kategorie i Cechy</legend>
                             <CategoryPicker categories={categories} update={ update } categoryData={ categoryData } propertyData={ propertyData } />
                         </fieldset>
-           
+
                         <fieldset>
                             <legend><span className="lettr-icon">PLN</span>Cena</legend>
                             <p>
                                 <span className="label add-horizontal-margin">
                                     <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: false }) } checked={ !this.state.buyNowOption } />
                                     <span className="label"> Czysta licytacja</span>
-                            
+
                                     <input name="buy_now_option" type="radio" onClick={ () => this.setState({ buyNowOption: true }) } checked={ this.state.buyNowOption } />
                                     <span className="label"> Z opcją "Kup Teraz"</span>
                                 </span>
@@ -536,7 +536,7 @@ class CreateUpdateAuction extends Component {
                                 <span className="validation-message">{ this.state.message[1] }</span>
                             </p>
                             {
-                                this.state.buyNowOption && 
+                                this.state.buyNowOption &&
                                 (
                                     <p>
                                         <label htmlFor="buy_now_price">Cena "Kup Teraz" <span style={{ opacity: 0.3 }}>{ (blockBuyNowPriceChange ? '- nie można zmienić ceny, ponieważ ktoś już kupił przedmiot' : null) }</span></label>
@@ -576,7 +576,7 @@ class CreateUpdateAuction extends Component {
                         </fieldset>
                         {
                             isSet(this.state.editPhotoIndex)
-                            ? 
+                            ?
                             (
                                 <ImageEditor src={ this.state.images[this.state.editPhotoIndex].preview } callback={ this.saveEditedPhoto } />
                             )
@@ -585,14 +585,14 @@ class CreateUpdateAuction extends Component {
                                 <fieldset>
                                     <legend><i className="material-icons">photo</i>Zdjęcia</legend>
                                     <p><label className="required" style={{ marginBottom: 4 }}>Dodaj chociaż 1 zdjęcie.</label></p>
-                                    <Dropzone className="drag-and-drop-images" 
+                                    <Dropzone className="drag-and-drop-images"
                                         onDrop={ this.onDrop }
                                         onClick={ (e) => { if (e.target.className.indexOf('drag-and-drop-images') === -1) e.preventDefault() }}
-                                        accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg" 
+                                        accept="image/jpeg,image/jpg,image/tiff,image/gif,image/png,image/svg"
                                         multiple={ true }
                                         onDropRejected={ this.onDropRejected }
                                     >
-                                        <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } editPhoto={ this.editPhoto } /> 
+                                        <ThumbnailPreview images={this.state.images} onSortEnd={ this.onSortEnd } removeImage={ this.removeImage } editPhoto={ this.editPhoto } />
                                     </Dropzone>
                                 </fieldset>
                             )
@@ -634,7 +634,7 @@ class CreateUpdateAuction extends Component {
                                 <button type="submit" onClick={this.submit}><i className="material-icons">save</i> Zapisz</button>
                             </span>
                         </fieldset>
-                        <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />   
+                        <input type="hidden" name="start_date" value={ auctions && auctions.date ? auctions.date.start_date : new Date().getTime() } />
                     </form>
 
                     </div>
@@ -645,7 +645,7 @@ class CreateUpdateAuction extends Component {
 }
 
 function makeAuction(formData) {
-    const 
+    const
         data = [...formData],
         auction = {};
         auction.deliveries = [];
@@ -653,7 +653,7 @@ function makeAuction(formData) {
         auction.int_properties = [];
 
     for (let i = 0; i < data.length; i++) {
-        const 
+        const
             keyValuePair = data[i],
             key = String(keyValuePair[0]),
             value = String(keyValuePair[1]);
